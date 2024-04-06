@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    android:orientation="vertical"
+    tools:context=".ProfileFragment">
+
+    <LinearLayout
+        android:id="@+id/layout_login_in"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/iv_profile_avatar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_launcher_background"
+            android:layout_weight="0.3"
+            android:scaleType="fitCenter" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_profile_nickname"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3"
+                android:text="nickname"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/tv_profile_email"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.7"
+                android:text="email"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_logout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:layout_gravity="center"
+            android:text="退出" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_login"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_height="120dp">
+
+        <Button
+            android:id="@+id/btn_open_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="登录" />
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:dividerHeight="18dp"
+        android:divider="#00000000" />
+
+    <ListView
+        android:id="@+id/lv_download_book"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:dividerHeight="18dp"
+        android:divider="#00000000" />
+
+</LinearLayout>

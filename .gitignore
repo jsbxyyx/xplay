@@ -1,0 +1,16 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+!/.idea/vcs.xml
+!/.idea/misc.xml
+!/.idea/gradle.xml
+!/.idea/compiler.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+app/debug
+app/release

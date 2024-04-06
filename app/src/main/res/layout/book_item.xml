@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/book_image"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_weight="0.3"
+        android:src="@drawable/ic_launcher_background"
+        android:scaleType="fitCenter"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.7"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/book_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="title"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/book_publish"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="publish"/>
+
+        <TextView
+            android:id="@+id/book_author"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="author"/>
+
+        <TextView
+            android:id="@+id/book_file"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="file"/>
+
+        <TextView
+            android:id="@+id/book_language_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="language year"/>
+
+    </LinearLayout>
+
+</LinearLayout>
