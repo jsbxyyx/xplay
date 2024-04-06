@@ -6,7 +6,6 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>pdf</title>
-    <script src="pdf.js" type="text/javascript"></script>
     <style>
         #pdf-container {
             margin-bottom: 40px;
@@ -39,7 +38,9 @@
     <button class="prev" id="prev">上一页</button>
     <button class="next" id="next">下一页</button>
 </div>
-<script type="text/javascript">
+
+<script src="pdf.js"></script>
+<script>
 function getUrlParam(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
     var r = window.location.search.substring(1).match(reg);
@@ -58,8 +59,12 @@ if (cur != null && cur != '') {
 }
 var container = document.getElementById('pdf-container');
 
-pdfjsLib.workSrc = "pdf.worker.js"
-pdfjsLib.getDocument(file).then((pdf) => {
+//pdfjsLib.GlobalWorkerOptions.workerSrc = "pdf.worker.js"
+pdfjsLib.getDocument({
+    url: file,
+    cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.489/cmaps/',
+    cMapPacked: true,
+}).then((pdf) => {
     console.log('pdf ready');
 
     //console.log(pdf.numPages);
@@ -76,15 +81,6 @@ pdfjsLib.getDocument(file).then((pdf) => {
       pdf.getPage(pageNumber).then(function(page) {
         var scale = 1.5;
         var viewport = page.getViewport(scale);
-        var temp = 3674.7 - viewport.width;
-        if (temp > 0) {
-            scale = Math.abs(3674.7 - viewport.width) / 1854.5;
-        } else {
-            scale = Math.abs(6587 - viewport.width) / 7894.7;
-        }
-        //console.log('scale:' + scale + ', ' + viewport.width);
-        viewport = page.getViewport(scale);
-
         var canvas = document.createElement('canvas');
         var context = canvas.getContext('2d');
         canvas.width = viewport.width

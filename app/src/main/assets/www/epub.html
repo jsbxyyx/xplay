@@ -6,8 +6,6 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>epub</title>
-    <script src="jszip.min.js" type="text/javascript"></script>
-    <script src="epub.min.js" type="text/javascript"></script>
     <style>
         #area {
             margin-bottom: 40px;
@@ -69,6 +67,9 @@
     <button onclick="prev()" class="prev">上一页</button>
     <button onclick="next()" class="next">下一页</button>
 </div>
+
+<script src="jszip.min.js"></script>
+<script src="epub.min.js"></script>
 <script type="text/javascript">
 function getUrlParam(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
