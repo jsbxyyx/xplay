@@ -3,7 +3,6 @@ package com.github.jsbxyyx.xbook;
 import android.Manifest;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;

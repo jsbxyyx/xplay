@@ -12,7 +12,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -190,7 +189,8 @@ public class ProfileFragment extends Fragment {
                                     boolean delete = new File(file_path).delete();
                                     LogUtil.d(TAG, "onClick: delete [%s] : %s", file_path, delete);
                                     onResume();
-                                }})
+                                }
+                            })
                             .setNegativeButton(android.R.string.no, null).show();
                 } else if (Common.action_upload.equals(type)) {
                     Book book = mBookDownloadAdapter.getDataList().get(position);

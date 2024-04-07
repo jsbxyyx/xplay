@@ -133,7 +133,7 @@ public class BookNetHelper {
                         dataCallback.call(new ArrayList<>(), new HttpStatusException(status + "", status, reqUrl));
                         return;
                     }
-                        JsonNode data = jsonObject.get("data");
+                    JsonNode data = jsonObject.get("data");
                     LogUtil.d(TAG, "total: %s", data.get("total").asText());
                     List<Book> list = JsonUtil.convertValue(data.get("list"), new TypeReference<List<Book>>() {
                     });

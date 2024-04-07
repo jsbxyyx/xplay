@@ -1,7 +1,5 @@
 package com.github.jsbxyyx.xbook.httpserver;
 
-import android.util.Log;
-
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 
@@ -9,8 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -59,10 +55,12 @@ public class HttpServer extends NanoHTTPD {
                 File[] files = rootFile.listFiles();
                 answer = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; " +
                         "charset=utf-8\"><title> HTTP File Browser</title>";
-                for (File file : files) {
-                    String name = file.getAbsolutePath().replace(Common.xbook_dir + "/", "");
-                    String href = Common.urlEncode(name);
-                    answer += "<a href=\"" + href + "\" alt = \"\">" + name + "</a><br>";
+                if (files != null && files.length > 0) {
+                    for (File file : files) {
+                        String name = file.getAbsolutePath().replace(Common.xbook_dir + "/", "");
+                        String href = Common.urlEncode(name);
+                        answer += "<a href=\"" + href + "\" alt = \"\">" + name + "</a><br>";
+                    }
                 }
                 answer += "</head></html>";
             } else {

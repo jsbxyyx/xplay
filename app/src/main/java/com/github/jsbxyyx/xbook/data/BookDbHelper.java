@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.github.jsbxyyx.xbook.common.LogUtil;
 
@@ -88,7 +87,6 @@ public class BookDbHelper extends SQLiteOpenHelper {
                 f_book_reader_remark + " TEXT " +
                 ")");
     }
-
 
 
     @Override

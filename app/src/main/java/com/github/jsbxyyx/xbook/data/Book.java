@@ -184,7 +184,7 @@ public class Book {
     @Override
     public String toString() {
         return "Book{" +
-                "id=" + id  +
+                "id=" + id +
                 ", bid='" + bid + '\'' +
                 ", isbn='" + isbn + '\'' +
                 ", coverImage='" + coverImage + '\'' +

@@ -120,7 +120,7 @@ public class ContentDispositionParser {
                 byteArrayOutputStream.write((char) b);
                 index++;
             } else if (b == '%' && index < value.length - 2) {
-                char[] array = new char[] {(char) value[index + 1], (char) value[index + 2]};
+                char[] array = new char[]{(char) value[index + 1], (char) value[index + 2]};
                 try {
                     byteArrayOutputStream.write(Integer.parseInt(String.valueOf(array), 16));
                 } catch (NumberFormatException ex) {
@@ -129,7 +129,7 @@ public class ContentDispositionParser {
                 }
                 index += 3;
             } else {
-                System.out.println(INVALID_HEADER_FIELD_PARAMETER_FORMAT);;
+                System.out.println(INVALID_HEADER_FIELD_PARAMETER_FORMAT);
             }
         }
         try {

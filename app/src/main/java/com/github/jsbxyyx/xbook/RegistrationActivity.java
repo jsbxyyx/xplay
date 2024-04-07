@@ -44,18 +44,18 @@ public class RegistrationActivity extends AppCompatActivity {
             bookNetHelper.sendCode(user, password, new DataCallback<JsonNode>() {
                 @Override
                 public void call(JsonNode dataObject, Throwable err) {
-                        runOnUiThread(() -> {
-                            if (err != null) {
-                                Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
-                                return;
-                            }
-                            int success = dataObject.get("success").asInt();
-                            if (success == 1) {
-                                Toast.makeText(getBaseContext(), "发送成功", Toast.LENGTH_LONG).show();
-                            } else {
-                                Toast.makeText(getBaseContext(), dataObject.get("err").asText(), Toast.LENGTH_LONG).show();
-                            }
-                        });
+                    runOnUiThread(() -> {
+                        if (err != null) {
+                            Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        int success = dataObject.get("success").asInt();
+                        if (success == 1) {
+                            Toast.makeText(getBaseContext(), "发送成功", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getBaseContext(), dataObject.get("err").asText(), Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             });
         });

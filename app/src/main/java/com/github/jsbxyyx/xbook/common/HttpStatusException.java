@@ -7,6 +7,7 @@ package com.github.jsbxyyx.xbook.common;
 public class HttpStatusException extends RuntimeException {
     private int statusCode;
     private String url;
+
     public HttpStatusException(String message, int statusCode, String url) {
         super(message);
         this.statusCode = statusCode;
