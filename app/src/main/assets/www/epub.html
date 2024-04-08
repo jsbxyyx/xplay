@@ -129,11 +129,15 @@ var displayed = rendition.display();
 
 rendition.themes.default({
   'pre': {
-    'overflow': 'scroll',
+    'overflow': 'visible',
+    'white-space': 'pre-wrap',
+    'word-break': 'break-word',
     'max-height': '60%',
   },
   'code': {
-    'overflow': 'scroll',
+    'overflow': 'visible',
+    'white-space': 'pre-wrap',
+    'word-break': 'break-word',
     'max-height': '60%',
   }
 });
