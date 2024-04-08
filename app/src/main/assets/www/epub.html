@@ -88,7 +88,7 @@
     </style>
 </head>
 <body>
-<div id="epub-tool" style="display: none; height: 1.5rem; margin: 0.8rem 0.6rem 0.3rem 0.6rem;">
+<div id="epub-tool" style="display: none; height: 1.5rem; margin: 0.8rem 0.6rem 0.2rem 0.6rem;">
     <div onclick="outlineClick(this)" style="width: 1rem; cursor: pointer; float: left;">三</div>
     <div style="float: right; margin-left: 35%;">
         <input id="curPage" type="number" value="" style="max-width: 3rem" onkeydown="goPage(event)">
@@ -122,7 +122,7 @@ console.log('book_id:' + book_id + ', cur:' + cur + ', pages:' + pages);
 var book = ePub(file, {});
 var rendition = book.renderTo("epub-container", {
     manager: "continuous",
-    width: '100%',
+    width: (window.innerWidth) + 'px',
     height: (window.innerHeight - 60) + "px"
 });
 var displayed = rendition.display();
