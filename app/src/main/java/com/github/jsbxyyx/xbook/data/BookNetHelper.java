@@ -194,7 +194,7 @@ public class BookNetHelper {
                     });
                     dataCallback.call(book, null);
                 } catch (Exception e) {
-                    dataCallback.call(new ArrayList<>(), e);
+                    dataCallback.call(null, e);
                 }
             }
         });
@@ -726,14 +726,14 @@ public class BookNetHelper {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
-                dataCallback.call(null, e);
+                dataCallback.call(new byte[0], e);
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), xburl));
+                    dataCallback.call(new byte[0], new HttpStatusException(response.code() + "", response.code(), xburl));
                     return;
                 }
                 byte[] bytes = response.body().bytes();
@@ -767,36 +767,32 @@ public class BookNetHelper {
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
 
-        try {
-            syncClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
-                    dataCallback.call(null, e);
-                }
+        syncClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
+                dataCallback.call(null, e);
+            }
 
-                @Override
-                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                    if (!response.isSuccessful()) {
-                        LogUtil.d(TAG, "onResponse: %s", response.code());
-                        dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), xburl));
-                        return;
-                    }
-                    String string = response.body().string();
-                    LogUtil.d(TAG, "log response: %s", string);
-                    JsonNode jsonObject = JsonUtil.readTree(string);
-                    int status = jsonObject.get("status").asInt();
-                    if (!Common.statusSuccessful(status)) {
-                        LogUtil.d(TAG, "onResponse: %s", status);
-                        dataCallback.call(null, new HttpStatusException(status + "", status, xburl));
-                        return;
-                    }
-                    dataCallback.call(jsonObject, null);
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    LogUtil.d(TAG, "onResponse: %s", response.code());
+                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), xburl));
+                    return;
                 }
-            });
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+                String string = response.body().string();
+                LogUtil.d(TAG, "log response: %s", string);
+                JsonNode jsonObject = JsonUtil.readTree(string);
+                int status = jsonObject.get("status").asInt();
+                if (!Common.statusSuccessful(status)) {
+                    LogUtil.d(TAG, "onResponse: %s", status);
+                    dataCallback.call(null, new HttpStatusException(status + "", status, xburl));
+                    return;
+                }
+                dataCallback.call(jsonObject, null);
+            }
+        });
     }
 
     private void cloudSha(Book book, DataCallback dataCallback) {

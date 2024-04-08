@@ -316,6 +316,10 @@ public class ProfileFragment extends Fragment {
                         @Override
                         public void call(byte[] bytes, Throwable err) {
                             try {
+                                if (err != null) {
+                                    LogUtil.e(TAG, "%s cloud download err. %s", name, LogUtil.getStackTraceString(err));
+                                    return;
+                                }
                                 if (name.endsWith(Common.book_metadata_suffix)) {
                                     JsonNode tree = JsonUtil.readTree(new String(bytes, StandardCharsets.UTF_8));
                                     LogUtil.d(TAG, "call: 2 : %d : %s", idx, tree);
@@ -347,7 +351,7 @@ public class ProfileFragment extends Fragment {
                                     });
                                 }
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                LogUtil.e(TAG, "cloud download err. %s", LogUtil.getStackTraceString(e));
                             } finally {
                                 latch.countDown();
                             }

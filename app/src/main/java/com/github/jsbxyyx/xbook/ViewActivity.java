@@ -118,6 +118,10 @@ public class ViewActivity extends AppCompatActivity {
         bookNetHelper.cloudSyncMeta(book, new DataCallback<JsonNode>() {
             @Override
             public void call(JsonNode o, Throwable err) {
+                if (err != null) {
+                    LogUtil.e(getClass().getSimpleName(), "view sync meta err. %s", LogUtil.getStackTraceString(err));
+                    return;
+                }
                 LogUtil.d(getClass().getSimpleName(), "view sync meta: %s : %s", book.getId(), book.getTitle());
                 String sha = o.get("data").get("sha").asText();
                 book.putRemarkProperty("sha", sha);

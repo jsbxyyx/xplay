@@ -40,16 +40,21 @@ public class LifecycleApplication extends Application {
                 bookNetHelper.cloudLog(mLog, new DataCallback() {
                     @Override
                     public void call(Object o, Throwable err) {
-                        new Thread(() -> {
-                            Looper.prepare();
-                            Toast.makeText(getBaseContext(), "闪退异常上报成功", Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                        }).start();
                         try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
+                            if (err != null) {
+                                LogUtil.e(getClass().getSimpleName(), "cloud log err. %s", LogUtil.getStackTraceString(err));
+                            } else {
+                                new Thread(() -> {
+                                    Looper.prepare();
+                                    Toast.makeText(getBaseContext(), "闪退异常上报成功", Toast.LENGTH_LONG).show();
+                                    Looper.loop();
+                                }).start();
+                                Thread.sleep(2000);
+                            }
+                        } catch (InterruptedException ignore) {
+                        } finally {
+                            latch.countDown();
                         }
-                        latch.countDown();
                         android.os.Process.killProcess(android.os.Process.myPid());
                         System.exit(1);
                     }
