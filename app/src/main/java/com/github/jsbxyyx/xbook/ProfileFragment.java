@@ -198,7 +198,7 @@ public class ProfileFragment extends Fragment {
                         @Override
                         public void call(JsonNode o, Throwable err) {
                             if (err != null) {
-                                LogUtil.d(TAG, "upload 1: %s", book.getTitle());
+                                LogUtil.d(TAG, "upload error 1: %s", book.getTitle());
                                 return;
                             }
                             String name = o.get("data").get("name").asText();

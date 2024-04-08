@@ -590,62 +590,60 @@ public class BookNetHelper {
     }
 
     public void cloudSyncRaw(Book book, DataCallback dataCallback) {
-        Map<String, Object> object = new HashMap<>();
-
-        object.put("method", "POST");
-        object.put("url", "/sync");
-
-        Map<String, Object> headers = new HashMap<>();
-        headers.put("User-Agent", userAgent);
-        headers.put(cookie_key, SessionManager.getSession());
-        object.put("headers", headers);
-
-        String file_path = book.getRemarkProperty("file_path");
-        byte[] bytes = null;
         try {
-            bytes = Files.readAllBytes(new File(file_path).toPath());
-        } catch (IOException e) {
+            Map<String, Object> object = new HashMap<>();
+
+            object.put("method", "POST");
+            object.put("url", "/sync");
+
+            Map<String, Object> headers = new HashMap<>();
+            headers.put("User-Agent", userAgent);
+            headers.put(cookie_key, SessionManager.getSession());
+            object.put("headers", headers);
+
+            String file_path = book.getRemarkProperty("file_path");
+            byte[] bytes = Files.readAllBytes(new File(file_path).toPath());
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("title", Common.urlEncode(book.getId() + "-" + book.getTitle() + "." + MediaTypeFactory.getFilenameExtension(file_path)));
+            data.put("raw", Base64.getEncoder().encodeToString(bytes));
+            object.put("data", data);
+
+            String s = JsonUtil.toJson(object);
+            LogUtil.d(TAG, "cloud sync data request: %s", s);
+            Request request = new Request.Builder()
+                    .url(xburl)
+                    .post(RequestBody.create(s, MediaType.parse("application/json")))
+                    .build();
+            syncClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
+                    dataCallback.call(null, e);
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if (!response.isSuccessful()) {
+                        LogUtil.d(TAG, "onResponse: %s", response.code());
+                        dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), xburl));
+                        return;
+                    }
+                    String string = response.body().string();
+                    LogUtil.d(TAG, "cloud sync data response: %s", string);
+                    JsonNode jsonObject = JsonUtil.readTree(string);
+                    int status = jsonObject.get("status").asInt();
+                    if (!Common.statusSuccessful(status)) {
+                        LogUtil.d(TAG, "onResponse: %s", status);
+                        dataCallback.call(null, new HttpStatusException(status + "", status, xburl));
+                        return;
+                    }
+                    dataCallback.call(jsonObject, null);
+                }
+            });
+        } catch (Throwable e) {
             dataCallback.call(null, e);
-            return;
         }
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("title", Common.urlEncode(book.getId() + "-" + book.getTitle() + "." + MediaTypeFactory.getFilenameExtension(file_path)));
-        data.put("raw", Base64.getEncoder().encodeToString(bytes));
-        object.put("data", data);
-
-        String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud sync data request: %s", s);
-        Request request = new Request.Builder()
-                .url(xburl)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        syncClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
-                dataCallback.call(null, e);
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), xburl));
-                    return;
-                }
-                String string = response.body().string();
-                LogUtil.d(TAG, "cloud sync data response: %s", string);
-                JsonNode jsonObject = JsonUtil.readTree(string);
-                int status = jsonObject.get("status").asInt();
-                if (!Common.statusSuccessful(status)) {
-                    LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(status + "", status, xburl));
-                    return;
-                }
-                dataCallback.call(jsonObject, null);
-            }
-        });
     }
 
     public void cloudList(DataCallback dataCallback) {
