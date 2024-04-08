@@ -31,6 +31,7 @@ import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
+import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.data.Book;
@@ -212,6 +213,23 @@ public class ProfileFragment extends Fragment {
                             });
                         }
                     });
+                } else if (Common.action_file_download.equals(type)) {
+                    Book book = mBookDownloadAdapter.getDataList().get(position);
+                    if (!new File(book.getRemarkProperty("file_path")).exists()) {
+                        View parent = (View) view.getParent();
+                        TextView tv_text = parent.findViewById(R.id.tv_text);
+                        bookNetHelper.download(book.getDownloadUrl(), Common.xbook_dir, book.getBid(), new DataCallback.NopDataCallback(), new ProgressListener() {
+                            @Override
+                            public void onProgress(long bytesRead, long total) {
+                                double percent = bytesRead * 1.0 / total * 100;
+                                LogUtil.d(TAG, "下载进度：%.1f%%", percent);
+                                mActivity.runOnUiThread(() -> {
+                                    tv_text.setVisibility(View.VISIBLE);
+                                    tv_text.setText(String.format("进度条：%.1f%%", percent));
+                                });
+                            }
+                        });
+                    }
                 }
             }
         });

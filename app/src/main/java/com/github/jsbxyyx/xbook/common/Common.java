@@ -31,6 +31,7 @@ public class Common {
 
     public static String action_delete = "delete";
     public static String action_upload = "upload";
+    public static String action_file_download = "file_download";
 
     public static String urlEncode(String str) {
         try {

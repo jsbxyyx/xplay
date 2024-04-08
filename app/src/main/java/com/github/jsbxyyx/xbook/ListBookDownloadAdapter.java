@@ -16,6 +16,7 @@ import com.github.jsbxyyx.xbook.data.Book;
 import com.github.jsbxyyx.xbook.data.BookReader;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,7 @@ public class ListBookDownloadAdapter extends BaseAdapter {
         public TextView book_reader_pages_total;
         public Button book_reader_btn_del;
         public Button book_reader_btn_upload;
+        public Button book_reader_btn_file_download;
     }
 
     @Override
@@ -75,6 +77,7 @@ public class ListBookDownloadAdapter extends BaseAdapter {
             holder.book_reader_pages_total = convertView.findViewById(R.id.book_reader_pages_total);
             holder.book_reader_btn_del = convertView.findViewById(R.id.book_reader_btn_del);
             holder.book_reader_btn_upload = convertView.findViewById(R.id.book_reader_btn_upload);
+            holder.book_reader_btn_file_download = convertView.findViewById(R.id.book_reader_btn_file_download);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -115,6 +118,21 @@ public class ListBookDownloadAdapter extends BaseAdapter {
                     int position = (int) v.getTag();
                     LogUtil.d(TAG, "onClick btn upload : %d", position);
                     listItemClickListener.onClick(v, Common.action_upload, position);
+                }
+            }
+        });
+
+
+        boolean exists = new File(book.getRemarkProperty("file_path")).exists();
+        holder.book_reader_btn_file_download.setTag(position);
+        holder.book_reader_btn_file_download.setVisibility(exists ? View.GONE : View.VISIBLE);
+        holder.book_reader_btn_file_download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listItemClickListener != null) {
+                    int position = (int) v.getTag();
+                    LogUtil.d(TAG, "onClick btn file download : %d", position);
+                    listItemClickListener.onClick(v, Common.action_file_download, position);
                 }
             }
         });

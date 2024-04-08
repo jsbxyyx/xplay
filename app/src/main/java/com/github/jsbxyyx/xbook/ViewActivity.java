@@ -59,6 +59,11 @@ public class ViewActivity extends AppCompatActivity {
             f.mkdirs();
         }
 
+        if (!new File(file_path).exists()) {
+            Toast.makeText(getBaseContext(), "书籍不存在，请重新下载", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         int port = 5200;
         mHttpd = new HttpServer(port, new MediaTypeFactory(getBaseContext()));
         try {
