@@ -2,6 +2,7 @@ package com.github.jsbxyyx.xbook;
 
 import android.app.Application;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -9,11 +10,14 @@ import androidx.annotation.NonNull;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
+import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.MLog;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -29,6 +33,15 @@ public class LifecycleApplication extends Application {
         super.onCreate();
 
         bookNetHelper = new BookNetHelper();
+
+        String languages = "chinese,japanese,traditional chinese,english,korean,";
+        SPUtils.putData(getBaseContext(), Common.search_language_key, languages);
+
+        String data = SPUtils.getData(getBaseContext(), Common.search_ext_key);
+        if (TextUtils.isEmpty(data)) {
+            data = "PDF,EPUB,TXT,";
+            SPUtils.putData(getBaseContext(), Common.search_ext_key, data);
+        }
 
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override

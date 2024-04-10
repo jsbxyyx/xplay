@@ -16,9 +16,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
+import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.data.Book;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author jsbxyyx
@@ -85,7 +90,9 @@ public class ListFragment extends Fragment {
             Toast.makeText(mActivity, "搜索关键词为空", Toast.LENGTH_LONG).show();
             return;
         }
-        bookNetHelper.search(keyword, page, (list, err) -> {
+        List<String> languages = Common.split(SPUtils.getData(mActivity, Common.search_language_key), Common.comma);
+        List<String> extensions = Common.split(SPUtils.getData(mActivity, Common.search_ext_key), Common.comma);
+        bookNetHelper.search(keyword, page, languages, extensions, (list, err) -> {
             LogUtil.d(TAG, "onResponse: book size: %d", list.size());
             mActivity.runOnUiThread(() -> {
                 if (err != null) {

@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author jsbxyyx
@@ -20,13 +22,15 @@ public class Common {
     public static final String xburl = "https://http2.idingdang.org/xbookb";
     public static final String zurl = "";
     public static final String xbook_dir = sdcard + "/xbook";
+    public static String comma = ",";
 
     public static final String login_key = "userdata";
-
     public static String profile_nickname_key = "profile_nickname";
     public static String profile_email_key = "profile_email";
-    public static String log_suffix = ".exception";
+    public static String search_ext_key = "search_ext";
+    public static String search_language_key = "search_language";
 
+    public static String log_suffix = ".exception";
     public static String book_metadata_suffix = ".meta";
 
     public static String action_delete = "delete";
@@ -53,6 +57,23 @@ public class Common {
             out.write(buf, 0, length);
             out.flush();
         }
+    }
+
+    public static List<String> split(String str, String regex) {
+        if (str == null || str.length() == 0) {
+            return new ArrayList<>();
+        }
+        String[] split = str.split(regex);
+        if (split.length == 0) {
+            return new ArrayList<>();
+        }
+        List<String> list = new ArrayList<>(split.length);
+        for (String s : split) {
+            if (s != null && !"".equals(s.trim())) {
+                list.add(s.trim());
+            }
+        }
+        return list;
     }
 
 }

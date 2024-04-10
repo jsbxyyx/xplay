@@ -65,7 +65,7 @@ public class BookNetHelper {
 
     private String TAG = getClass().getSimpleName();
 
-    public void search(String keyword, int page, DataCallback<List<Book>> dataCallback) {
+    public void search(String keyword, int page, List<String> languages, List<String> extensions, DataCallback<List<Book>> dataCallback) {
         Map<String, Object> object = new HashMap<>();
 
         String reqUrl = zurl + "/s/" + Common.urlEncode(keyword);
@@ -81,27 +81,21 @@ public class BookNetHelper {
         p0.add("page");
         p0.add(page + "");
         params.add(p0);
-        List<String> languages = new ArrayList<>();
-        languages.add("chinese");
-        languages.add("japanese");
-        languages.add("traditional chinese");
-        languages.add("english");
-        languages.add("korean");
-        for (String name : languages) {
-            List<String> lang = new ArrayList<>();
-            lang.add("languages[]");
-            lang.add(name);
-            params.add(lang);
+        if (languages != null && !languages.isEmpty()) {
+            for (String name : languages) {
+                List<String> lang = new ArrayList<>();
+                lang.add("languages[]");
+                lang.add(name);
+                params.add(lang);
+            }
         }
-        List<String> extensions = new ArrayList<>();
-        extensions.add("EPUB");
-        extensions.add("PDF");
-        extensions.add("TXT");
-        for (String name : extensions) {
-            List<String> ext = new ArrayList<>();
-            ext.add("extensions[]");
-            ext.add(name);
-            params.add(ext);
+        if (extensions != null && !extensions.isEmpty()) {
+            for (String name : extensions) {
+                List<String> ext = new ArrayList<>();
+                ext.add("extensions[]");
+                ext.add(name);
+                params.add(ext);
+            }
         }
         object.put("params", params);
 
