@@ -82,6 +82,7 @@ public class SettingsActivity extends AppCompatActivity {
         btn_update.setOnClickListener((v) -> {
             runOnUiThread(() -> {
                 notificationManager.notify(0, builder.build());
+                Toast.makeText(context, "开始下载", Toast.LENGTH_LONG).show();
             });
             if (TextUtils.isEmpty(downloadUrl)) {
                 Toast.makeText(context, "已经是最新版本", Toast.LENGTH_LONG).show();
@@ -95,6 +96,7 @@ public class SettingsActivity extends AppCompatActivity {
                             });
                             return;
                         }
+                        LogUtil.d(getClass().getSimpleName(), "下载成功，开始安装");
                         Intent install = new Intent(Intent.ACTION_VIEW);
                         install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -139,6 +141,7 @@ public class SettingsActivity extends AppCompatActivity {
                         setDownloadUrl(downloadUrl);
                         runOnUiThread(() -> {
                             btn_update.setVisibility(View.VISIBLE);
+                            btn_update.setText(cloudName + "");
                         });
                     }
                 } catch (Exception e) {

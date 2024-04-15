@@ -31,6 +31,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -306,6 +307,7 @@ public class BookNetHelper {
                 String contentDisposition = response.headers().get("Content-Disposition");
                 LogUtil.d(TAG, "contentDisposition: %s", contentDisposition);
                 String filename = ContentDispositionParser.parse(contentDisposition);
+                filename = Common.isEmpty(filename) ? "tmp-" + UUID.randomUUID().toString() : filename;
 
                 File f = new File(destDir, Common.isEmpty(uid) ? filename : uid + "-" + filename);
                 long total = response.body().contentLength();
