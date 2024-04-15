@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.jsbxyyx.xbook.data.Book;
+import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

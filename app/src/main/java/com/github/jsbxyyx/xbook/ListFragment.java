@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
-import com.github.jsbxyyx.xbook.data.Book;
+import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 
 import java.util.List;

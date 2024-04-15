@@ -1,4 +1,4 @@
-package com.github.jsbxyyx.xbook.data;
+package com.github.jsbxyyx.xbook.data.bean;
 
 import android.text.TextUtils;
 

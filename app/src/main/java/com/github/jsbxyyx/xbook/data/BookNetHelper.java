@@ -18,6 +18,9 @@ import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SessionManager;
+import com.github.jsbxyyx.xbook.data.bean.Book;
+import com.github.jsbxyyx.xbook.data.bean.MLog;
+import com.github.jsbxyyx.xbook.data.bean.Profile;
 import com.github.jsbxyyx.xbook.httpserver.MediaTypeFactory;
 
 import java.io.File;

@@ -5,9 +5,9 @@ import android.webkit.JavascriptInterface;
 
 import com.github.jsbxyyx.xbook.common.IdUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
-import com.github.jsbxyyx.xbook.data.Book;
+import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
-import com.github.jsbxyyx.xbook.data.BookReader;
+import com.github.jsbxyyx.xbook.data.bean.BookReader;
 
 /**
  * @author jsbxyyx

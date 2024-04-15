@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
-import com.github.jsbxyyx.xbook.data.Book;
-import com.github.jsbxyyx.xbook.data.BookReader;
+import com.github.jsbxyyx.xbook.data.bean.Book;
+import com.github.jsbxyyx.xbook.data.bean.BookReader;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;

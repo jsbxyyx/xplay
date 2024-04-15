@@ -12,7 +12,7 @@ import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
-import com.github.jsbxyyx.xbook.data.MLog;
+import com.github.jsbxyyx.xbook.data.bean.MLog;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
