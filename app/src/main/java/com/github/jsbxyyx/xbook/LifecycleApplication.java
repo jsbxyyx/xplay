@@ -39,7 +39,7 @@ public class LifecycleApplication extends Application {
 
         String data = SPUtils.getData(getBaseContext(), Common.search_ext_key);
         if (TextUtils.isEmpty(data)) {
-            data = "PDF,EPUB,TXT,";
+            data = "EPUB,";
             SPUtils.putData(getBaseContext(), Common.search_ext_key, data);
         }
 
