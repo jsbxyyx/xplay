@@ -249,6 +249,9 @@ public class ProfileFragment extends Fragment {
                                     }
                                     LogUtil.d(TAG, "call: insert book: %s", book.getTitle());
                                 }
+                                mActivity.runOnUiThread(() -> {
+                                    Toast.makeText(mActivity, "同步阅读进度成功", Toast.LENGTH_LONG).show();
+                                });
                             }
                         }
                     });
