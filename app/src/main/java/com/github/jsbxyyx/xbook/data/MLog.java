@@ -4,7 +4,9 @@ package com.github.jsbxyyx.xbook.data;
  * @author jsbxyyx
  * @since 1.0
  */
-public class MLog {
+public class MLog implements java.io.Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String title;
     private String raw;

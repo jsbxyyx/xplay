@@ -20,3 +20,4 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keeppackagenames org.jsoup.nodes
+-keep class * implements java.io.Serializable {*;}
