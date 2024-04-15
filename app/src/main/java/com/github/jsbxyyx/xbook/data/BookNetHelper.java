@@ -272,7 +272,7 @@ public class BookNetHelper {
         Map<String, Object> headers = new HashMap<>();
         headers.put("User-Agent", userAgent);
         headers.put(cookie_key, cookie);
-        headers.put("b", Common.isEmpty(cookie) ? "2" : "1");
+        headers.put("b", "1");
         object.put("headers", headers);
 
         Map<String, Object> params = new HashMap<>();

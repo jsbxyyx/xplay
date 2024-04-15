@@ -3,6 +3,7 @@ package com.github.jsbxyyx.xbook;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.FileProvider;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -94,11 +95,16 @@ public class SettingsActivity extends AppCompatActivity {
                             });
                             return;
                         }
-                        Intent intent = new Intent();
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setAction(android.content.Intent.ACTION_VIEW);
-                        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-                        context.startActivity(intent);
+                        Intent install = new Intent(Intent.ACTION_VIEW);
+                        install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            install.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            Uri contentUri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileProvider", file);
+                            install.setDataAndType(contentUri, "application/vnd.android.package-archive");
+                        } else {
+                            install.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+                        }
+                        context.startActivity(install);
                     }
                 }, new ProgressListener() {
                     @Override
