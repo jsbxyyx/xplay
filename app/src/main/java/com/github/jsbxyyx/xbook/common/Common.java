@@ -77,4 +77,8 @@ public class Common {
         return list;
     }
 
+    public static boolean isEmpty(String str) {
+        return str == null || str.isEmpty();
+    }
+
 }

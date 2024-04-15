@@ -260,6 +260,10 @@ public class BookNetHelper {
     }
 
     public void download(String downloadUrl, String destDir, String uid, DataCallback dataCallback, ProgressListener listener) {
+        downloadWithCookie(downloadUrl, destDir, uid, SessionManager.getSession(), dataCallback, listener);
+    }
+
+    public void downloadWithCookie(String downloadUrl, String destDir, String uid, String cookie, DataCallback dataCallback, ProgressListener listener) {
         Map<String, Object> object = new HashMap<>();
         String reqUrl = downloadUrl;
         object.put("method", "GET");
@@ -267,8 +271,8 @@ public class BookNetHelper {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("User-Agent", userAgent);
-        headers.put(cookie_key, SessionManager.getSession());
-        headers.put("b", "1");
+        headers.put(cookie_key, cookie);
+        headers.put("b", Common.isEmpty(cookie) ? "2" : "1");
         object.put("headers", headers);
 
         Map<String, Object> params = new HashMap<>();
@@ -303,7 +307,7 @@ public class BookNetHelper {
                 LogUtil.d(TAG, "contentDisposition: %s", contentDisposition);
                 String filename = ContentDispositionParser.parse(contentDisposition);
 
-                File f = new File(destDir, uid + "-" + filename);
+                File f = new File(destDir, Common.isEmpty(uid) ? filename : uid + "-" + filename);
                 long total = response.body().contentLength();
                 try (InputStream input = response.body().byteStream();
                      FileOutputStream output = new FileOutputStream(f)) {
@@ -837,4 +841,53 @@ public class BookNetHelper {
             }
         });
     }
+
+    public void cloudVersions(DataCallback dataCallback) {
+        Map<String, Object> object = new HashMap<>();
+
+        object.put("method", "POST");
+        object.put("url", "/versions");
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("User-Agent", userAgent);
+        object.put("headers", headers);
+
+        Map<String, Object> data = new HashMap<>();
+        object.put("data", data);
+
+        String s = JsonUtil.toJson(object);
+        LogUtil.d(TAG, "cloud versions request: %s", s);
+
+        Request request = new Request.Builder()
+                .url(xburl)
+                .post(RequestBody.create(s, MediaType.parse("application/json")))
+                .build();
+        syncClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                LogUtil.d(TAG, "onFailure: %s", e);
+                dataCallback.call(null, e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    LogUtil.d(TAG, "onResponse: %s", response.code());
+                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), xburl));
+                    return;
+                }
+                String string = response.body().string();
+                LogUtil.d(TAG, "cloud versions response: %s", string);
+                JsonNode jsonObject = JsonUtil.readTree(string);
+                int status = jsonObject.get("status").asInt();
+                if (!Common.statusSuccessful(status)) {
+                    LogUtil.d(TAG, "onResponse: %s", status);
+                    dataCallback.call(null, new HttpStatusException(status + "", status, xburl));
+                    return;
+                }
+                dataCallback.call(jsonObject, null);
+            }
+        });
+    }
+
 }
