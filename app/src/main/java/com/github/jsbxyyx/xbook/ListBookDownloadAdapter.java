@@ -1,7 +1,6 @@
 package com.github.jsbxyyx.xbook;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +46,7 @@ public class ListBookDownloadAdapter extends BaseAdapter {
         public TextView book_reader_pages_total;
         public Button book_reader_btn_del;
         public Button book_reader_btn_upload;
+        public Button book_reader_btn_download_meta;
         public Button book_reader_btn_file_download;
     }
 
@@ -77,6 +77,7 @@ public class ListBookDownloadAdapter extends BaseAdapter {
             holder.book_reader_pages_total = convertView.findViewById(R.id.book_reader_pages_total);
             holder.book_reader_btn_del = convertView.findViewById(R.id.book_reader_btn_del);
             holder.book_reader_btn_upload = convertView.findViewById(R.id.book_reader_btn_upload);
+            holder.book_reader_btn_download_meta = convertView.findViewById(R.id.book_reader_btn_download_meta);
             holder.book_reader_btn_file_download = convertView.findViewById(R.id.book_reader_btn_file_download);
             convertView.setTag(holder);
         } else {
@@ -106,6 +107,18 @@ public class ListBookDownloadAdapter extends BaseAdapter {
                     int position = (int) v.getTag();
                     LogUtil.d(TAG, "onClick btn delete : %d", position);
                     listItemClickListener.onClick(v, Common.action_delete, position);
+                }
+            }
+        });
+
+        holder.book_reader_btn_download_meta.setTag(position);
+        holder.book_reader_btn_download_meta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listItemClickListener != null) {
+                    int position = (int) v.getTag();
+                    LogUtil.d(TAG, "onClick btn download_meta : %d", position);
+                    listItemClickListener.onClick(v, Common.action_download_meta, position);
                 }
             }
         });

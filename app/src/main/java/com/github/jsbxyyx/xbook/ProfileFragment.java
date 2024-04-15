@@ -44,6 +44,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -214,6 +215,41 @@ public class ProfileFragment extends Fragment {
                             mActivity.runOnUiThread(() -> {
                                 Toast.makeText(mActivity, "同步成功《" + book.getTitle() + "》", Toast.LENGTH_LONG).show();
                             });
+                        }
+                    });
+                } else if (Common.action_download_meta.equals(type)) {
+                    Book book = mBookDownloadAdapter.getDataList().get(position);
+                    bookNetHelper.cloudGetMeta(book, new DataCallback<JsonNode>() {
+                        @Override
+                        public void call(JsonNode o, Throwable err) {
+                            if (err != null) {
+                                mActivity.runOnUiThread(() -> {
+                                    Toast.makeText(mActivity, "同步阅读进度失败", Toast.LENGTH_LONG).show();
+                                });
+                                return;
+                            }
+                            if (o.get("data").has("content")) {
+                                String content = o.get("data").get("content").asText().replace("\n", "");
+                                String sha = o.get("data").get("sha").asText();
+                                JsonNode tree = JsonUtil.readTree(new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8));
+                                Book book = JsonUtil.convertValue(tree, new TypeReference<Book>() {
+                                });
+                                Book book_db = bookDbHelper.findBookById(book.getId() + "");
+                                if (book_db != null) {
+                                    book_db.putRemarkProperty("sha", sha);
+                                    bookDbHelper.updateBook(book_db);
+                                    if (book.getBookReader() != null) {
+                                        bookDbHelper.updateBookReaderByBookId(book.getBookReader());
+                                    }
+                                    LogUtil.d(TAG, "call: update book: %s", book_db.getTitle());
+                                } else {
+                                    bookDbHelper.insertBook(book);
+                                    if (book.getBookReader() != null) {
+                                        bookDbHelper.insertBookReader(book.getBookReader());
+                                    }
+                                    LogUtil.d(TAG, "call: insert book: %s", book.getTitle());
+                                }
+                            }
                         }
                     });
                 } else if (Common.action_file_download.equals(type)) {

@@ -522,7 +522,7 @@ public class BookNetHelper {
 
     public void cloudSyncMeta(Book book, DataCallback dataCallback) {
 
-        cloudSha(book, new DataCallback<JsonNode>() {
+        cloudGetMeta(book, new DataCallback<JsonNode>() {
             @Override
             public void call(JsonNode o, Throwable err) {
                 if (o != null && o.get("data") != null && o.get("data").get("sha") != null) {
@@ -787,7 +787,7 @@ public class BookNetHelper {
         });
     }
 
-    private void cloudSha(Book book, DataCallback dataCallback) {
+    public void cloudGetMeta(Book book, DataCallback dataCallback) {
         Map<String, Object> object = new HashMap<>();
 
         object.put("method", "POST");
@@ -804,7 +804,7 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud sha request: %s", s);
+        LogUtil.d(TAG, "cloud get meta request: %s", s);
 
         Request request = new Request.Builder()
                 .url(xburl)
@@ -825,7 +825,7 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "cloud sha response: %s", string);
+                LogUtil.d(TAG, "cloud get meta response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {

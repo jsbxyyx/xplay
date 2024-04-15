@@ -68,6 +68,14 @@
                 />
 
             <Button
+                android:id="@+id/book_reader_btn_download_meta"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="2dp"
+                android:background="@drawable/baseline_import_export_24"
+                />
+
+            <Button
                 android:visibility="gone"
                 android:id="@+id/book_reader_btn_file_download"
                 android:layout_width="30dp"
