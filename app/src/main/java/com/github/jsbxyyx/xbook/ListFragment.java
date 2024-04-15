@@ -22,7 +22,6 @@ import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.data.Book;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
