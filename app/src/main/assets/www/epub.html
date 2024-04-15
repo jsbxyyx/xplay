@@ -112,6 +112,7 @@ function getUrlParam(name) {
     var r = window.location.search.substring(1).match(reg);
     if (r != null) return unescape(r[2]); return null;
 }
+var bodyNode = document.getElementsByTagName('body')[0];
 var base = window.location.protocol + "//" + window.location.host;
 var file = base + "/" + getUrlParam("name") + "?_=" + new Date().getTime();
 var book_id = getUrlParam("book_id");
@@ -127,7 +128,11 @@ var rendition = book.renderTo("epub-container", {
 });
 var displayed = rendition.display();
 
-rendition.themes.default({
+var gold_theme = {
+  'body': {
+    'color': '#000000',
+    'background': '#f0edd8',
+  },
   'pre': {
     'overflow': 'visible',
     'white-space': 'pre-wrap',
@@ -140,7 +145,10 @@ rendition.themes.default({
     'word-break': 'break-word',
     'max-height': '60%',
   }
-});
+}
+bodyNode.style.color = gold_theme['body']['color'];
+bodyNode.style.background = gold_theme['body']['background'];
+rendition.themes.default(gold_theme);
 
 book.ready.then(function () {
     console.log('epub ready 1');
