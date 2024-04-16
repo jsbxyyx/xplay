@@ -239,6 +239,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
             ContentValues values = new ContentValues();
+            values.put(f_book_reader_id, e.getId());
             values.put(f_book_reader_book_id, e.getBookId());
             values.put(f_book_reader_cur, e.getCur());
             values.put(f_book_reader_pages, e.getPages());

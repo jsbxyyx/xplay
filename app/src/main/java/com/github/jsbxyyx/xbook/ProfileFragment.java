@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,7 +104,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void initData() {
-        if (TextUtils.isEmpty(SPUtils.getData(mActivity, Common.login_key))) {
+        if (Common.isEmpty(SPUtils.getData(mActivity, Common.login_key))) {
             mView.findViewById(R.id.layout_login_in).setVisibility(View.GONE);
             View layout_login = mView.findViewById(R.id.layout_login);
             layout_login.setVisibility(View.VISIBLE);
@@ -131,7 +130,7 @@ public class ProfileFragment extends Fragment {
                 onResume();
             });
             String email = SPUtils.getData(mActivity, Common.profile_email_key);
-            if (TextUtils.isEmpty(email)) {
+            if (Common.isEmpty(email)) {
                 bookNetHelper.profile(new DataCallback<Profile>() {
                     @Override
                     public void call(Profile profile, Throwable err) {

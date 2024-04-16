@@ -50,7 +50,7 @@ public class DetailActivity extends AppCompatActivity {
         bookDbHelper = new BookDbHelper(this);
 
         String detailUrl = getIntent().getStringExtra("detailUrl");
-        if (TextUtils.isEmpty(detailUrl)) {
+        if (Common.isEmpty(detailUrl)) {
             Toast.makeText(getBaseContext(), "书籍地址为空", Toast.LENGTH_LONG).show();
             return;
         }
@@ -84,7 +84,7 @@ public class DetailActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_detail_download).setOnClickListener(v -> {
             String downloadUrl = mBook.getDownloadUrl();
-            if (TextUtils.isEmpty(downloadUrl)) {
+            if (Common.isEmpty(downloadUrl)) {
                 Toast.makeText(getBaseContext(), "下载地址为空，请登录", Toast.LENGTH_LONG).show();
                 return;
             }
@@ -106,24 +106,27 @@ public class DetailActivity extends AppCompatActivity {
                     if (by == null) {
                         mBook.setId(IdUtil.nextId());
                         bookDbHelper.insertBook(mBook);
-                        bookNetHelper.cloudSync(bookDbHelper.findBookByBid(mBook.getBid()), new DataCallback<JsonNode>() {
-                            @Override
-                            public void call(JsonNode o, Throwable err) {
-                                runOnUiThread(() -> {
-                                    if (err != null) {
-                                        Toast.makeText(getBaseContext(), "同步失败", Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-                                    String sha = o.get("data").get("sha").asText();
-                                    Book book_db = bookDbHelper.findBookById(mBook.getId() + "");
-                                    if (book_db != null) {
-                                        book_db.putRemarkProperty("sha", sha);
-                                        bookDbHelper.updateBook(book_db);
-                                        Toast.makeText(getBaseContext(), "同步成功", Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
-                        });
+                        String sync_data = SPUtils.getData(getBaseContext(), Common.sync_key);
+                        if (Common.sync_key_checked.equals(sync_data)) {
+                            bookNetHelper.cloudSync(bookDbHelper.findBookByBid(mBook.getBid()), new DataCallback<JsonNode>() {
+                                @Override
+                                public void call(JsonNode o, Throwable err) {
+                                    runOnUiThread(() -> {
+                                        if (err != null) {
+                                            Toast.makeText(getBaseContext(), "同步失败", Toast.LENGTH_LONG).show();
+                                            return;
+                                        }
+                                        String sha = o.get("data").get("sha").asText();
+                                        Book book_db = bookDbHelper.findBookById(mBook.getId() + "");
+                                        if (book_db != null) {
+                                            book_db.putRemarkProperty("sha", sha);
+                                            bookDbHelper.updateBook(book_db);
+                                            Toast.makeText(getBaseContext(), "同步成功", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     }
                     runOnUiThread(() -> {
                         Toast.makeText(getBaseContext(), "下载成功", Toast.LENGTH_LONG).show();

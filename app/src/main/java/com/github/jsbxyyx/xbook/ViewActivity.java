@@ -3,7 +3,6 @@ package com.github.jsbxyyx.xbook;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.webkit.WebView;
 import android.widget.Toast;
 
@@ -103,7 +102,7 @@ public class ViewActivity extends AppCompatActivity {
             } else if ("pdf".equalsIgnoreCase(extension)) {
                 html = "pdf.html";
             }
-            if (TextUtils.isEmpty(html)) {
+            if (Common.isEmpty(html)) {
                 Toast.makeText(getBaseContext(), "不支持的文件格式:" + extension, Toast.LENGTH_LONG).show();
                 return;
             }

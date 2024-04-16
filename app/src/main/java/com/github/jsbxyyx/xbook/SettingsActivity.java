@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -81,7 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
                 notificationManager.notify(0, builder.build());
                 Toast.makeText(context, "开始下载", Toast.LENGTH_LONG).show();
             });
-            if (TextUtils.isEmpty(downloadUrl)) {
+            if (Common.isEmpty(downloadUrl)) {
                 Toast.makeText(context, "已经是最新版本", Toast.LENGTH_LONG).show();
             } else {
                 bookNetHelper.downloadWithCookie(downloadUrl, Common.sdcard, "", "", new DataCallback<File>() {
@@ -158,8 +157,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         String ext_data = SPUtils.getData(getBaseContext(), Common.search_ext_key);
         LinearLayout ll_ext = findViewById(R.id.ll_ext);
-        int count = ll_ext.getChildCount();
-        for (int i = 0; i < count; i++) {
+        int ll_ext_count = ll_ext.getChildCount();
+        for (int i = 0; i < ll_ext_count; i++) {
             View view = ll_ext.getChildAt(i);
             if (view instanceof CheckBox) {
                 String text = ((CheckBox) view).getText().toString();
@@ -183,6 +182,23 @@ public class SettingsActivity extends AppCompatActivity {
                 });
             }
         }
+
+        String sync_data = SPUtils.getData(getBaseContext(), Common.sync_key);
+        CheckBox cb_sync = findViewById(R.id.cb_sync);
+        if (Common.sync_key_checked.equals(sync_data)) {
+            cb_sync.setChecked(true);
+        } else {
+            cb_sync.setChecked(false);
+        }
+        cb_sync.setOnClickListener((v) -> {
+            CheckBox cb = (CheckBox) v;
+            if (cb.isChecked()) {
+                SPUtils.putData(getBaseContext(), Common.sync_key, Common.sync_key_checked);
+            } else {
+                SPUtils.putData(getBaseContext(), Common.sync_key, Common.sync_key_unchecked);
+            }
+            LogUtil.d(getClass().getSimpleName(), "sync checked : %s", cb.isChecked());
+        });
 
     }
 

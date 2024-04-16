@@ -72,3 +72,38 @@
 -keepclassmembers class ** {
     public void onEvent*(**);
 }
+#
+-keep public class * extends android.app.Fragment
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.preference.Preference
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class * extends android.preference.Preference
+-keep public class * extends android.view.View
+-keep class android.support.** {*;}
+-dontwarn android.support.**
+-keep interface android.support.** { *; }
+
+-keep class androidx.** {*;}
+-keep interface androidx.** {*;}
+-keep public class * extends androidx.**
+-dontwarn androidx.**
+
+-dontwarn android.support.design.**
+-keep class android.support.design.** { *; }
+-keep interface android.support.design.** { *; }
+-keep public class android.support.design.R$* { *; }
+
+-keep class com.google.android.material.** {*;}
+-dontwarn com.google.android.material.**
+-dontnote com.google.android.material.**
+
+-keep class androidx.annotation.Keep
+#
+-dontwarn com.squareup.okhttp3.**
+-keep class com.squareup.okhttp3.** { *;}
+-dontwarn okio.**
+

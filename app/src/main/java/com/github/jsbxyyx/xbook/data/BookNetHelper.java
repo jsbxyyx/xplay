@@ -388,7 +388,7 @@ public class BookNetHelper {
                 JsonNode data = jsonObject.get("data");
                 Profile profile = JsonUtil.convertValue(data, new TypeReference<Profile>() {
                 });
-                if (TextUtils.isEmpty(profile.getEmail())) {
+                if (Common.isEmpty(profile.getEmail())) {
                     dataCallback.call(null, new HttpStatusException(401 + "", 401, reqUrl));
                     return;
                 }

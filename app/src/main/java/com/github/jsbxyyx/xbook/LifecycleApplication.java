@@ -35,10 +35,16 @@ public class LifecycleApplication extends Application {
         String languages = "chinese,japanese,traditional chinese,english,korean,";
         SPUtils.putData(getBaseContext(), Common.search_language_key, languages);
 
-        String data = SPUtils.getData(getBaseContext(), Common.search_ext_key);
-        if (TextUtils.isEmpty(data)) {
-            data = "EPUB,";
-            SPUtils.putData(getBaseContext(), Common.search_ext_key, data);
+        String extData = SPUtils.getData(getBaseContext(), Common.search_ext_key);
+        if (Common.isEmpty(extData)) {
+            extData = "EPUB,";
+            SPUtils.putData(getBaseContext(), Common.search_ext_key, extData);
+        }
+
+        String syncData = SPUtils.getData(getBaseContext(), Common.sync_key);
+        if (Common.isEmpty(syncData)) {
+            syncData = Common.sync_key_checked;
+            SPUtils.putData(getBaseContext(), Common.sync_key, syncData);
         }
 
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {

@@ -29,6 +29,9 @@ public class Common {
     public static String profile_email_key = "profile_email";
     public static String search_ext_key = "search_ext";
     public static String search_language_key = "search_language";
+    public static String sync_key = "sync";
+    public static String sync_key_checked = "1";
+    public static String sync_key_unchecked = "0";
 
     public static String log_suffix = ".exception";
     public static String book_metadata_suffix = ".meta";

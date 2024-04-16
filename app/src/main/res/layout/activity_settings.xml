@@ -12,38 +12,83 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:gravity="center_vertical"
-            android:text="书籍格式" />
-
         <LinearLayout
-            android:id="@+id/ll_ext"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="35dp">
+            android:layout_height="wrap_content">
 
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PDF" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center_vertical"
+                android:text="搜索书籍格式"
+                android:textStyle="bold"
+                />
 
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="EPUB" />
+            <com.github.jsbxyyx.xbook.AutoLinearLayout
+                android:id="@+id/ll_ext"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TXT" />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PDF" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EPUB" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TXT" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AZW" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AZW3" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MOBI" />
+
+            </com.github.jsbxyyx.xbook.AutoLinearLayout>
 
         </LinearLayout>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center_vertical"
+                android:text="是否同步"
+                android:textStyle="bold"
+                />
+
+            <CheckBox
+                android:id="@+id/cb_sync"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="同步"
+                />
+
+        </LinearLayout>
 
         <LinearLayout
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="100dp"
             android:orientation="vertical"
             android:gravity="center"
             android:layout_gravity="center"
@@ -55,24 +100,27 @@
                 android:gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="当前版本：" />
+
                 <TextView
                     android:id="@+id/tv_version"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="0.1" />
+
             </LinearLayout>
 
             <Button
                 android:id="@+id/btn_update"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal|top"
+                android:gravity="center_vertical"
                 app:iconGravity="textStart"
                 android:visibility="gone"
                 android:text="0.1"

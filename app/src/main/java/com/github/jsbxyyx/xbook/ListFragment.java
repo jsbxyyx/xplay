@@ -3,7 +3,6 @@ package com.github.jsbxyyx.xbook;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +84,7 @@ public class ListFragment extends Fragment {
         Button btn_more = mView.findViewById(R.id.btn_more);
         EditText et_keyword = mView.findViewById(R.id.et_keyword);
         String keyword = et_keyword.getText().toString();
-        if (TextUtils.isEmpty(keyword)) {
+        if (Common.isEmpty(keyword)) {
             Toast.makeText(mActivity, "搜索关键词为空", Toast.LENGTH_LONG).show();
             return;
         }

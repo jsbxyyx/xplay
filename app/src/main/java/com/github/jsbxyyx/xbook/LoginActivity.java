@@ -2,7 +2,6 @@ package com.github.jsbxyyx.xbook;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -49,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
                         SessionManager.setSession(str);
                         SPUtils.putData(getBaseContext(), Common.login_key, str);
                         Intent goIntent = new Intent();
-                        if (!TextUtils.isEmpty(className)) {
+                        if (!Common.isEmpty(className)) {
                             goIntent.setClassName(getPackageName(), className);
                         } else {
                             goIntent.setClassName(getPackageName(), MainActivity.class.getName());

@@ -1,9 +1,8 @@
 package com.github.jsbxyyx.xbook.data.bean;
 
-import android.text.TextUtils;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.JsonUtil;
 
 /**
@@ -162,10 +161,10 @@ public class Book implements java.io.Serializable {
     }
 
     public String getRemarkProperty(String key) {
-        if (TextUtils.isEmpty(remark)) {
+        if (Common.isEmpty(remark)) {
             throw new IllegalArgumentException("remark is empty");
         }
-        if (TextUtils.isEmpty(key)) {
+        if (Common.isEmpty(key)) {
             throw new IllegalArgumentException("key is empty");
         }
         JsonNode remarkObject = JsonUtil.readTree(remark);
@@ -174,7 +173,7 @@ public class Book implements java.io.Serializable {
 
     public void putRemarkProperty(String key, String value) {
         ObjectNode node = null;
-        if (TextUtils.isEmpty(remark)) {
+        if (Common.isEmpty(remark)) {
             node = JsonUtil.fromJson("{}", ObjectNode.class);
         } else {
             node = JsonUtil.fromJson(remark, ObjectNode.class);
