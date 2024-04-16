@@ -252,12 +252,16 @@ public class BookNetHelper {
                     dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
                     return;
                 }
-                JsonNode headers1 = jsonObject.get("headers");
-                JsonNode data1 = JsonUtil.readTree(jsonObject.get("data").asText());
-                JsonNode response1 = data1.get("response");
-                String forceRedirection = response1.get("forceRedirection").asText();
+                JsonNode respData = JsonUtil.readTree(jsonObject.get("data").asText());
+                JsonNode respResponse = respData.get("response");
+                if (!respResponse.has("forceRedirection")) {
+                    dataCallback.call(null, new HttpStatusException(respResponse.get("message").asText(), status, reqUrl));
+                    return;
+                }
+                JsonNode respHeaders = jsonObject.get("headers");
+                String forceRedirection = respResponse.get("forceRedirection").asText();
                 String session = forceRedirection.substring(2).replace("&", ";") + ";";
-                session += headers1.get("set-cookie") != null ? headers1.get("set-cookie").asText() : "";
+                session += respHeaders.get("set-cookie") != null ? respHeaders.get("set-cookie").asText() : "";
                 dataCallback.call(session, null);
             }
         });

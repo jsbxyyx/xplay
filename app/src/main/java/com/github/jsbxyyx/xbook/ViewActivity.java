@@ -13,9 +13,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
-import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.httpserver.HttpServer;
 import com.github.jsbxyyx.xbook.httpserver.MediaTypeFactory;
 
@@ -31,7 +31,7 @@ import java.io.InputStream;
 public class ViewActivity extends AppCompatActivity {
 
     private HttpServer mHttpd;
-
+    private WebView webView;
     private String bookId;
 
     private BookDbHelper bookDbHelper;
@@ -86,9 +86,11 @@ public class ViewActivity extends AppCompatActivity {
                 }
             }
 
-            WebView wv_view = findViewById(R.id.wv_view);
-            wv_view.getSettings().setJavaScriptEnabled(true);
-            wv_view.addJavascriptInterface(new BookJavascript(this), "xbook");
+            webView = findViewById(R.id.wv_view);
+            webView.getSettings().setJavaScriptEnabled(true);
+            // webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+            // webView.clearCache(true);
+            webView.addJavascriptInterface(new BookJavascript(this), "xbook");
             String name = Common.urlEncode(
                     Common.urlEncode(
                             file_path.replace(Common.xbook_dir + "/", "")
@@ -105,9 +107,13 @@ public class ViewActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), "不支持的文件格式:" + extension, Toast.LENGTH_LONG).show();
                 return;
             }
-            String url = String.format("http://127.0.0.1:%s/%s/%s?cur=%s&pages=%s&book_id=%s&name=%s",
-                    port, www, html, cur, pages, bookId, name);
-            wv_view.loadUrl(url);
+            String url = String.format(
+                    "http://127.0.0.1:%s/%s/%s?%s",
+                    port, www, html,
+                    String.format("cur=%s&pages=%s&book_id=%s&name=%s&t=%s",
+                            cur, pages, bookId, name, System.currentTimeMillis())
+            );
+            webView.loadUrl(url);
         } catch (IOException e) {
             LogUtil.e(getClass().getSimpleName(), "onCreate: %s", LogUtil.getStackTraceString(e));
         }
@@ -117,7 +123,12 @@ public class ViewActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         LogUtil.d(getClass().getSimpleName(), "onDestroy");
-        mHttpd.stop();
+        if (mHttpd != null) {
+            mHttpd.stop();
+        }
+        if (webView != null) {
+            webView.destroy();
+        }
 
         Book book = bookDbHelper.findBookById(bookId);
         bookNetHelper.cloudSyncMeta(book, new DataCallback<JsonNode>() {

@@ -77,6 +77,9 @@
 
 <script src="pdf.js"></script>
 <script>
+window.onerror = function (message, source, lineno, colno, error) {
+  console.log("Error: " + message + "\n" + "Source: " + source + "\n" + "Line: " + lineno + "\n" + "Column: " + colno + "\n" + "Stack: " + error.stack);
+}
 function getUrlParam(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
     var r = window.location.search.substring(1).match(reg);
