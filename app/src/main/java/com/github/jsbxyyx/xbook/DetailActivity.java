@@ -116,9 +116,11 @@ public class DetailActivity extends AppCompatActivity {
                                     }
                                     String sha = o.get("data").get("sha").asText();
                                     Book book_db = bookDbHelper.findBookById(mBook.getId() + "");
-                                    book_db.putRemarkProperty("sha", sha);
-                                    bookDbHelper.updateBook(book_db);
-                                    Toast.makeText(getBaseContext(), "同步成功", Toast.LENGTH_LONG).show();
+                                    if (book_db != null) {
+                                        book_db.putRemarkProperty("sha", sha);
+                                        bookDbHelper.updateBook(book_db);
+                                        Toast.makeText(getBaseContext(), "同步成功", Toast.LENGTH_LONG).show();
+                                    }
                                 });
                             }
                         });
