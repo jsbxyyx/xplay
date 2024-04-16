@@ -1,11 +1,5 @@
 package com.github.jsbxyyx.xbook;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.FileProvider;
-
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -20,9 +14,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.FileProvider;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
@@ -128,15 +125,24 @@ public class SettingsActivity extends AppCompatActivity {
         bookNetHelper.cloudVersions(new DataCallback<JsonNode>() {
             @Override
             public void call(JsonNode jsonNode, Throwable err) {
-                JsonNode data = jsonNode.get("data").get(0);
+                if (err != null) {
+                    LogUtil.d(getClass().getSimpleName(), "%s", LogUtil.getStackTraceString(err));
+                    return;
+                }
+                JsonNode data = jsonNode.get("data");
+                if (data.isEmpty()) {
+                    LogUtil.d(getClass().getSimpleName(), "versions empty.");
+                    return;
+                }
                 try {
+                    JsonNode update = data.get(0);
                     double localName = Double.parseDouble(tv_version.getText().toString().trim());
-                    double cloudName = Double.parseDouble(data.get("name").asText().trim());
-                    String body = data.get("body").asText();
-                    String published_at = data.get("published_at").asText();
-                    String downloadUrl = data.get("assets").get("download_url").asText();
-                    String name = data.get("assets").get("name").asText();
-                    String size = data.get("assets").get("name").asText();
+                    double cloudName = Double.parseDouble(update.get("name").asText().trim());
+                    String body = update.get("body").asText();
+                    String published_at = update.get("published_at").asText();
+                    String downloadUrl = update.get("assets").get("download_url").asText();
+                    String name = update.get("assets").get("name").asText();
+                    String size = update.get("assets").get("name").asText();
                     if (cloudName > localName) {
                         setDownloadUrl(downloadUrl);
                         runOnUiThread(() -> {

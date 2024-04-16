@@ -19,27 +19,44 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# bean
+-keep class com.github.jsbxyyx.xbook.data.bean.** {*;}
 # jsoup
 -keeppackagenames org.jsoup.nodes
 # Jackson
 -keep @com.fasterxml.jackson.annotation.JsonIgnoreProperties class * { *; }
+-keep @com.fasterxml.jackson.annotation.JsonCreator class * { *; }
+-keep @com.fasterxml.jackson.annotation.JsonValue class * { *; }
 -keep class com.fasterxml.** { *; }
 -keep class org.codehaus.** { *; }
 -keepnames class com.fasterxml.jackson.** { *; }
+-dontwarn com.fasterxml.jackson.databind.**
 -keepclassmembers public final enum com.fasterxml.jackson.annotation.JsonAutoDetect$Visibility {
     public static final com.fasterxml.jackson.annotation.JsonAutoDetect$Visibility *;
 }
+-keep class com.fasterxml.jackson.databind.ObjectMapper {
+    public <methods>;
+    protected <methods>;
+}
+-keep class com.fasterxml.jackson.databind.ObjectWriter {
+    public ** writeValueAsString(**);
+}
+-keepclassmembers class * {
+     @com.fasterxml.jackson.annotation.* *;
+}
+-keep class * implements com.fasterxml.jackson.core.type.TypeReference
 # General
 -keepattributes SourceFile,LineNumberTable,*Annotation*,EnclosingMethod,Signature,Exceptions,InnerClasses
-# bean
--keep class com.github.jsbxyyx.xbook.data.bean.** {*;}
 # js
--keepattributes *Javascript
-#
+-keepattributes *JavascriptInterface*
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+# native
 -keepclasseswithmembernames class * {
     native <methods>;
 }
-#
+# Serializable
 -keep public class * implements java.io.Serializable {
         public *;
 }
@@ -51,7 +68,7 @@
     java.lang.Object writeReplace();
     java.lang.Object readResolve();
 }
-#
+# EventBus
 -keepclassmembers class ** {
     public void onEvent*(**);
 }
