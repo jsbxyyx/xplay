@@ -4,6 +4,7 @@ import android.Manifest;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private HomeFragment homeFragment;
     private ProfileFragment profileFragment;
     private ListFragment listFragment;
+    private int position = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +48,16 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.nav_home:
-                    showFragment(1);
+                    position = 1;
+                    showFragment(position);
                     break;
                 case R.id.nav_list:
-                    showFragment(2);
+                    position = 2;
+                    showFragment(position);
                     break;
                 case R.id.nav_profile:
-                    showFragment(3);
+                    position = 3;
+                    showFragment(position);
                     break;
             }
             return true;
@@ -100,6 +105,19 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         ft.commit();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        position = savedInstanceState.getInt("position");
+        showFragment(position);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("position", position);
     }
 
     private void requestPermissions() {
