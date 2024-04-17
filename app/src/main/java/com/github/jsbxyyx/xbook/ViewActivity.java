@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
+import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
@@ -129,20 +130,25 @@ public class ViewActivity extends AppCompatActivity {
             webView.destroy();
         }
 
-        Book book = bookDbHelper.findBookById(bookId);
-        bookNetHelper.cloudSyncMeta(book, new DataCallback<JsonNode>() {
-            @Override
-            public void call(JsonNode o, Throwable err) {
-                if (err != null) {
-                    LogUtil.e(getClass().getSimpleName(), "view sync meta err. %s", LogUtil.getStackTraceString(err));
-                    return;
-                }
-                LogUtil.d(getClass().getSimpleName(), "view sync meta: %s : %s", book.getId(), book.getTitle());
-                String sha = o.get("data").get("sha").asText();
-                book.putRemarkProperty("sha", sha);
-                bookDbHelper.updateBook(book);
+        String syncData = SPUtils.getData(getBaseContext(), Common.sync_key);
+        if (Common.sync_key_checked.equals(syncData)) {
+            Book book = bookDbHelper.findBookById(bookId);
+            if (book != null) {
+                bookNetHelper.cloudSyncMeta(book, new DataCallback<JsonNode>() {
+                    @Override
+                    public void call(JsonNode o, Throwable err) {
+                        if (err != null) {
+                            LogUtil.e(getClass().getSimpleName(), "view sync meta err. %s", LogUtil.getStackTraceString(err));
+                            return;
+                        }
+                        LogUtil.d(getClass().getSimpleName(), "view sync meta: %s : %s", book.getId(), book.getTitle());
+                        String sha = o.get("data").get("sha").asText();
+                        book.putRemarkProperty("sha", sha);
+                        bookDbHelper.updateBook(book);
+                    }
+                });
             }
-        });
+        }
     }
 
 }
