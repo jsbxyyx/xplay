@@ -156,7 +156,6 @@ public class ProfileFragment extends Fragment {
 
         lv_profile = mView.findViewById(R.id.lv_profile);
         List<Object> data = new ArrayList<>();
-        data.add("本地同步云");
         data.add("云同步本地");
         data.add("设置");
         data.add("测试");
@@ -166,10 +165,8 @@ public class ProfileFragment extends Fragment {
             if (position == data.size() - 1) {
                 test();
             } else if (position == 0) {
-                upAllBook();
-            } else if (position == 1) {
                 downAllBook();
-            } else if (position == 2) {
+            } else if (position == 1) {
                 settings();
             }
         });
