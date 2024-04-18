@@ -2,12 +2,17 @@
     <item
         android:id="@+id/nav_home"
         android:title="首页"
-        android:icon="@drawable/baseline_menu_book_24"/>
+        android:icon="@drawable/baseline_home_24"/>
 
     <item
         android:id="@+id/nav_list"
-        android:title="列表"
-        android:icon="@drawable/baseline_manage_search_24"/>
+        android:title="图书"
+        android:icon="@drawable/baseline_menu_book_24"/>
+
+    <item
+        android:id="@+id/nav_video_list"
+        android:title="视频"
+        android:icon="@drawable/baseline_video_library_24"/>
 
     <item
         android:id="@+id/nav_profile"

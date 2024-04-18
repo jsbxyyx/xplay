@@ -27,8 +27,10 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private FragmentManager fm;
     private HomeFragment homeFragment;
-    private ProfileFragment profileFragment;
+
     private ListFragment listFragment;
+    private VideoListFragment videoListFragment;
+    private ProfileFragment profileFragment;
     private int position = 1;
 
     @Override
@@ -49,17 +51,18 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.nav_home:
                     position = 1;
-                    showFragment(position);
                     break;
                 case R.id.nav_list:
                     position = 2;
-                    showFragment(position);
+                    break;
+                case R.id.nav_video_list:
+                    position = 3;
                     break;
                 case R.id.nav_profile:
-                    position = 3;
-                    showFragment(position);
+                    position = 4;
                     break;
             }
+            showFragment(position);
             return true;
         });
     }
@@ -71,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (listFragment != null) {
             ft.hide(listFragment);
+        }
+        if (videoListFragment != null) {
+            ft.hide(videoListFragment);
         }
         if (profileFragment != null) {
             ft.hide(profileFragment);
@@ -95,6 +101,14 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case 3:
+                if (videoListFragment != null) {
+                    ft.show(videoListFragment);
+                } else {
+                    videoListFragment = new VideoListFragment();
+                    ft.add(R.id.fragment_container, videoListFragment);
+                }
+                break;
+            case 4:
                 if (profileFragment != null) {
                     ft.show(profileFragment);
                     profileFragment.onResume();
