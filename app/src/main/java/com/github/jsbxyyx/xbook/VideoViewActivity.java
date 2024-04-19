@@ -1,19 +1,21 @@
 package com.github.jsbxyyx.xbook;
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.github.jsbxyyx.xbook.common.LogUtil;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * @author jsbxyyx
@@ -41,11 +43,44 @@ public class VideoViewActivity extends AppCompatActivity {
         settings.setLoadWithOverviewMode(true);
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setUseWideViewPort(true);
+        settings.setDomStorageEnabled(true);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
 
+        webView.setWebViewClient(new WebViewClient() {
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                LogUtil.d(getClass().getSimpleName(), "url: %s", url);
+                view.loadUrl(url);
+                return true;
+            }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                try {
+                    URL url = new URL(request.getUrl().toString());
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                LogUtil.e(getClass().getSimpleName(), request + "");
+                return super.shouldInterceptRequest(view, request);
+            }
+        });
+
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+            }
+        });
+
+        //webView.clearCache(true);
         webView.loadUrl(playUrl);
     }
 

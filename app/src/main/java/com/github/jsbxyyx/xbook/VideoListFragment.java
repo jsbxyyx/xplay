@@ -86,8 +86,7 @@ public class VideoListFragment extends Fragment {
         EditText et_video_keyword = mView.findViewById(R.id.et_video_keyword);
         String q = et_video_keyword.getText().toString();
         if (Common.isEmpty(q)) {
-            Toast.makeText(mActivity, "搜索关键词为空", Toast.LENGTH_LONG).show();
-            return;
+            q = et_video_keyword.getHint().toString();
         }
         videoNetHelper.search(q, new DataCallback<List<QqVideo>>() {
             @Override
