@@ -19,10 +19,7 @@ import android.widget.Toast;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
-import com.github.jsbxyyx.xbook.common.SPUtils;
-import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.VideoNetHelper;
-import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.QqVideo;
 
 import java.util.List;
@@ -69,7 +66,7 @@ public class VideoListFragment extends Fragment {
                 QqVideo.QqPlaylist playlist = video.getPlaylist().get(position);
                 String playUrl = video.getPlayer() + playlist.getUrl();
                 LogUtil.d(TAG, "%s", playUrl);
-                Intent intent = new Intent(mActivity, VideoViewActivity.class);
+                Intent intent = new Intent(mActivity, VideoViewActivity2.class);
                 intent.putExtra("playUrl", playUrl);
                 startActivity(intent);
             }

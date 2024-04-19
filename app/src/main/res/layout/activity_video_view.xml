@@ -16,8 +16,8 @@
         android:gravity="center"
         android:textColor="#ff0000" />
 
-    <WebView
-        android:id="@+id/wv_view"
+    <org.mozilla.geckoview.GeckoView
+        android:id="@+id/wv_video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

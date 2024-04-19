@@ -27,6 +27,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".VideoViewActivity2"
+            android:configChanges="orientation|screenSize"
+            android:exported="false" />
+
+        <activity
             android:name=".VideoViewActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />

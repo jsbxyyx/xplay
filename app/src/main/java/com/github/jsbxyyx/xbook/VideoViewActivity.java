@@ -31,7 +31,7 @@ public class VideoViewActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String playUrl = intent.getStringExtra("playUrl");
-        webView = findViewById(R.id.wv_view);
+        webView = findViewById(R.id.wv_video_view);
 
         WebSettings settings = webView.getSettings();
         settings.setUserAgentString("Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36");
