@@ -17,6 +17,7 @@ public class VideoViewActivity2 extends AppCompatActivity {
 
     private GeckoView webView;
     private String playUrl;
+    private static GeckoRuntime runtime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,15 +28,15 @@ public class VideoViewActivity2 extends AppCompatActivity {
 
         webView = findViewById(R.id.wv_video_view);
         GeckoSession session = new GeckoSession();
-        GeckoRuntime runtime = GeckoRuntime.create(this);
+        if (runtime == null) {
+            runtime = GeckoRuntime.create(this);
+        }
         session.open(runtime);
         webView.setSession(session);
 
-        try {
-            LogUtil.d(getClass().getSimpleName(), "ua: %s", webView.getSession().getUserAgent().poll());
-        } catch (Throwable e) {
-            LogUtil.e(getClass().getSimpleName(), "%s", e);
-        }
+        webView.getSession().getUserAgent().accept((a) -> {
+            LogUtil.d(getClass().getSimpleName(), "ua: %s", a);
+        });
 
         session.loadUri(playUrl);
     }
@@ -44,7 +45,7 @@ public class VideoViewActivity2 extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (webView != null) {
-            webView.destroyDrawingCache();
+            webView.releaseSession().close();
         }
     }
 }

@@ -106,4 +106,6 @@
 -dontwarn com.squareup.okhttp3.**
 -keep class com.squareup.okhttp3.** { *;}
 -dontwarn okio.**
+# geckoview
+-keep class org.mozilla.geckoview.** { *; }
 
