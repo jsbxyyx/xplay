@@ -20,6 +20,7 @@ import java.net.URL;
 /**
  * @author jsbxyyx
  */
+@Deprecated
 public class VideoViewActivity extends AppCompatActivity {
 
     private WebView webView;
