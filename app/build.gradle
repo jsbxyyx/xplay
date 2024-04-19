@@ -48,6 +48,6 @@ dependencies {
 
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
 
-//    implementation 'org.mozilla.geckoview:geckoview-nightly-armeabi-v7a:120.0.20231006092133'
-    implementation 'org.mozilla.geckoview:geckoview-nightly:120.0.20231006092133'
+    debugImplementation 'org.mozilla.geckoview:geckoview-nightly:120.0.20231006092133'
+    releaseImplementation 'org.mozilla.geckoview:geckoview-nightly-armeabi-v7a:120.0.20231006092133'
 }
