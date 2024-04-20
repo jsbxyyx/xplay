@@ -3,11 +3,6 @@ package com.github.jsbxyyx.xbook;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
@@ -84,6 +83,7 @@ public class VideoListFragment extends Fragment {
         String q = et_video_keyword.getText().toString();
         if (Common.isEmpty(q)) {
             q = et_video_keyword.getHint().toString();
+            et_video_keyword.setText(q);
         }
         videoNetHelper.search(q, new DataCallback<List<QqVideo>>() {
             @Override

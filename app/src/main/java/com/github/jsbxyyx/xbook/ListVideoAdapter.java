@@ -6,12 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.data.bean.QqVideo;
 import com.squareup.picasso.Picasso;
 
@@ -65,12 +64,15 @@ public class ListVideoAdapter extends BaseAdapter {
             holder.video_playlist.removeAllViews();
             for (QqVideo.QqPlaylist pl : playlist) {
                 TextView textView = new TextView(mContext);
-                textView.setText(pl.getTitle());
                 AutoLinearLayout.LayoutParams params = new AutoLinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.setMargins(20, 20, 10, 0);
                 textView.setLayoutParams(params);
                 textView.setTextSize(23);
+                textView.setText(pl.getTitle());
+                if (!Common.isEmpty(pl.getMarkLabel()) && pl.getMarkLabel().contains("VIP")) {
+                    textView.setTextColor(Color.parseColor("#ebd078"));
+                }
                 final int finalSubPosition = subPosition;
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override

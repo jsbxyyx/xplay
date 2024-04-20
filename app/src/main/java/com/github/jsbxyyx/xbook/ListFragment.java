@@ -18,8 +18,8 @@ import androidx.fragment.app.Fragment;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
-import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.bean.Book;
 
 import java.util.List;
 
@@ -85,8 +85,8 @@ public class ListFragment extends Fragment {
         EditText et_keyword = mView.findViewById(R.id.et_keyword);
         String keyword = et_keyword.getText().toString();
         if (Common.isEmpty(keyword)) {
-            Toast.makeText(mActivity, "搜索关键词为空", Toast.LENGTH_LONG).show();
-            return;
+            keyword = et_keyword.getHint().toString();
+            et_keyword.setText(keyword);
         }
         List<String> languages = Common.split(SPUtils.getData(mActivity, Common.search_language_key), Common.comma);
         List<String> extensions = Common.split(SPUtils.getData(mActivity, Common.search_ext_key), Common.comma);

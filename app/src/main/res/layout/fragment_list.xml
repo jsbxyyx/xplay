@@ -19,6 +19,7 @@
             android:layout_weight="0.7"
             android:maxLines="1"
             android:singleLine="true"
+            android:hint="C程序设计语言"
             />
 
         <Button

@@ -35,7 +35,8 @@
                 android:layout_height="match_parent"
                 android:maxLines="5"
                 android:ellipsize="end"
-                android:text="desc" />
+                android:text="desc"
+                android:textSize="10sp"/>
 
         </LinearLayout>
 
@@ -44,8 +45,6 @@
     <com.github.jsbxyyx.xbook.AutoLinearLayout
         android:id="@+id/ll_playlist"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </com.github.jsbxyyx.xbook.AutoLinearLayout>
-
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
