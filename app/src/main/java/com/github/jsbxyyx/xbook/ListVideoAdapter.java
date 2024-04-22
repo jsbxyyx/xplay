@@ -50,8 +50,6 @@ public class ListVideoAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        QqVideo video = dataList.get(position);
-
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = LayoutInflater.from(mContext).inflate(R.layout.video_item, null);
@@ -59,41 +57,43 @@ public class ListVideoAdapter extends BaseAdapter {
             holder.video_name = convertView.findViewById(R.id.video_name);
             holder.video_desc = convertView.findViewById(R.id.video_desc);
             holder.video_playlist = convertView.findViewById(R.id.ll_playlist);
-            List<QqVideo.QqPlaylist> playlist = video.getPlaylist();
-            int subPosition = 0;
-            holder.video_playlist.removeAllViews();
-            for (QqVideo.QqPlaylist pl : playlist) {
-                TextView textView = new TextView(mContext);
-                AutoLinearLayout.LayoutParams params = new AutoLinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.setMargins(20, 20, 10, 0);
-                textView.setLayoutParams(params);
-                textView.setTextSize(23);
-                textView.setText(pl.getTitle());
-                if (!Common.isEmpty(pl.getMarkLabel()) && pl.getMarkLabel().contains("VIP")) {
-                    textView.setTextColor(Color.parseColor("#ebd078"));
-                }
-                final int finalSubPosition = subPosition;
-                textView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mListener != null) {
-                            mListener.onClick(v, position + "", finalSubPosition);
-                        }
-                    }
-                });
-                holder.video_playlist.addView(textView);
-                subPosition++;
-            }
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+        QqVideo video = dataList.get(position);
 
         Picasso.get().load(video.getCoverImage()).into(holder.video_image);
         holder.video_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
         holder.video_name.setText(video.getName());
         holder.video_desc.setText(video.getDescText());
+
+        List<QqVideo.QqPlaylist> playlist = video.getPlaylist();
+        int subPosition = 0;
+        holder.video_playlist.removeAllViews();
+        for (QqVideo.QqPlaylist pl : playlist) {
+            TextView textView = new TextView(mContext);
+            AutoLinearLayout.LayoutParams params = new AutoLinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMargins(20, 20, 10, 0);
+            textView.setLayoutParams(params);
+            textView.setTextSize(23);
+            textView.setText(pl.getTitle());
+            if (!Common.isEmpty(pl.getMarkLabel()) && pl.getMarkLabel().contains("VIP")) {
+                textView.setTextColor(Color.parseColor("#ebd078"));
+            }
+            final int finalSubPosition = subPosition;
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onClick(v, position + "", finalSubPosition);
+                    }
+                }
+            });
+            holder.video_playlist.addView(textView);
+            subPosition++;
+        }
 
         return convertView;
     }
