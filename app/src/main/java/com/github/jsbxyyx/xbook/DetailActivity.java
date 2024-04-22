@@ -64,9 +64,12 @@ public class DetailActivity extends AppCompatActivity {
         TextView tv_detail_file = findViewById(R.id.tv_detail_file);
         TextView tv_download_progress = findViewById(R.id.tv_download_progress);
 
+        LoadingDialog loading = new LoadingDialog(this);
+        loading.show();
         bookNetHelper.detail(detailUrl, new DataCallback<Book>() {
             @Override
             public void call(Book book, Throwable err) {
+                loading.dismiss();
                 LogUtil.d(TAG, "call: %s", book);
                 mBook = book;
                 mBook.setDetailUrl(detailUrl);

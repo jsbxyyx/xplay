@@ -88,11 +88,17 @@ public class ListFragment extends Fragment {
             keyword = et_keyword.getHint().toString();
             et_keyword.setText(keyword);
         }
+
+        LoadingDialog loading = new LoadingDialog(mActivity);
+        mActivity.runOnUiThread(() -> {
+            loading.show();
+        });
         List<String> languages = Common.split(SPUtils.getData(mActivity, Common.search_language_key), Common.comma);
         List<String> extensions = Common.split(SPUtils.getData(mActivity, Common.search_ext_key), Common.comma);
         bookNetHelper.search(keyword, page, languages, extensions, (list, err) -> {
             LogUtil.d(TAG, "onResponse: book size: %d", list.size());
             mActivity.runOnUiThread(() -> {
+                loading.dismiss();
                 if (err != null) {
                     Toast.makeText(mActivity, "err: " + err.getMessage(), Toast.LENGTH_LONG).show();
                     return;

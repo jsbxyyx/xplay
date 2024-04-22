@@ -33,9 +33,9 @@ import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.SessionManager;
-import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.BookReader;
 import com.github.jsbxyyx.xbook.data.bean.Profile;
 
@@ -324,11 +324,16 @@ public class ProfileFragment extends Fragment {
     }
 
     private void downAllBook() {
+        LoadingDialog loading = new LoadingDialog(mActivity);
+        mActivity.runOnUiThread(() -> {
+            loading.show();
+        });
         bookNetHelper.cloudList(new DataCallback<JsonNode>() {
             @Override
             public void call(JsonNode o, Throwable err) {
                 if (err != null) {
                     mActivity.runOnUiThread(() -> {
+                        loading.dismiss();
                         Toast.makeText(mActivity, "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
                     });
                     return;
@@ -420,6 +425,7 @@ public class ProfileFragment extends Fragment {
                     }
                 }
                 mActivity.runOnUiThread(() -> {
+                    loading.dismiss();
                     Toast.makeText(mActivity, "云同步到本地完成", Toast.LENGTH_LONG).show();
                 });
             }
@@ -433,7 +439,8 @@ public class ProfileFragment extends Fragment {
 
     private void test() {
         LogUtil.d(TAG, "test: ");
-        Toast.makeText(mActivity, "test", Toast.LENGTH_LONG).show();
+        LoadingDialog loading = new LoadingDialog(mActivity);
+        loading.show();
     }
 
     private Bitmap headBitmap(String name, int size, String colorHex) {

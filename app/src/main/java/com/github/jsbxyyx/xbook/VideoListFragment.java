@@ -85,11 +85,16 @@ public class VideoListFragment extends Fragment {
             q = et_video_keyword.getHint().toString();
             et_video_keyword.setText(q);
         }
+        LoadingDialog loading = new LoadingDialog(mActivity);
+        mActivity.runOnUiThread(() -> {
+            loading.show();
+        });
         videoNetHelper.search(q, new DataCallback<List<QqVideo>>() {
             @Override
             public void call(List<QqVideo> list, Throwable err) {
                 LogUtil.d(TAG, "onResponse: video size: %d", list.size());
                 mActivity.runOnUiThread(() -> {
+                    loading.dismiss();
                     if (err != null) {
                         Toast.makeText(mActivity, "err: " + err.getMessage(), Toast.LENGTH_LONG).show();
                         return;
