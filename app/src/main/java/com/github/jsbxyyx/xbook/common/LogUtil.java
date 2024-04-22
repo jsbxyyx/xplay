@@ -2,6 +2,8 @@ package com.github.jsbxyyx.xbook.common;
 
 import android.util.Log;
 
+import com.github.jsbxyyx.xbook.BuildConfig;
+
 /**
  * @author jsbxyyx
  * @since 1.0
@@ -9,23 +11,27 @@ import android.util.Log;
 public class LogUtil {
 
     public static void v(String tag, String format, Object... args) {
-        if (tag == null) {
-            tag = "";
+        if (BuildConfig.DEBUG) {
+            if (tag == null) {
+                tag = "";
+            }
+            if (format == null) {
+                format = "";
+            }
+            Log.v(tag, String.format(format, args));
         }
-        if (format == null) {
-            format = "";
-        }
-        Log.v(tag, String.format(format, args));
     }
 
     public static void d(String tag, String format, Object... args) {
-        if (tag == null) {
-            tag = "";
+        if (BuildConfig.DEBUG) {
+            if (tag == null) {
+                tag = "";
+            }
+            if (format == null) {
+                format = "";
+            }
+            Log.d(tag, String.format(format, args));
         }
-        if (format == null) {
-            format = "";
-        }
-        Log.d(tag, String.format(format, args));
     }
 
     public static void i(String tag, String format, Object... args) {
