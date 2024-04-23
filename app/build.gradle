@@ -2,6 +2,12 @@ plugins {
     id 'com.android.application'
 }
 
+def releaseTime() {
+    java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("yyMMddHHmm");
+    Date curDate = new Date(System.currentTimeMillis());
+    return formatter.format(curDate);
+}
+
 android {
     namespace 'com.github.jsbxyyx.xbook'
     compileSdk 33
@@ -12,11 +18,17 @@ android {
         targetSdk 33
         versionCode 14
         versionName "1.4"
+        archivesBaseName = "xplay-v${versionName}-${releaseTime()}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
 
-        ndk {
-            abiFilters 'armeabi-v7a', 'x86'
+    splits {
+        abi {
+            enable true
+            reset()
+            include "x86", "x86_64", "arm64-v8a", "armeabi-v7a"
+            universalApk false
         }
     }
 
