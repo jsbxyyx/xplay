@@ -158,6 +158,7 @@ public class ProfileFragment extends Fragment {
         List<Object> data = new ArrayList<>();
         data.add("云同步本地");
         data.add("设置");
+        data.add("意见反馈");
         data.add("测试");
         lv_profile.setAdapter(new ArrayAdapter(mActivity, R.layout.profile_item, R.id.tv_profile_item, data));
         lv_profile.setOnItemClickListener((parent, view1, position, id) -> {
@@ -168,6 +169,8 @@ public class ProfileFragment extends Fragment {
                 downAllBook();
             } else if (position == 1) {
                 settings();
+            } else if (position == 2) {
+                issues();
             }
         });
 
@@ -434,6 +437,11 @@ public class ProfileFragment extends Fragment {
 
     private void settings() {
         Intent intent = new Intent(getContext(), SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    private void issues() {
+        Intent intent = new Intent(getContext(), IssuesActivity.class);
         startActivity(intent);
     }
 

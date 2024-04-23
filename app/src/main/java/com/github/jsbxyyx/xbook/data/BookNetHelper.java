@@ -4,8 +4,6 @@ import static com.github.jsbxyyx.xbook.common.Common.xburl;
 import static com.github.jsbxyyx.xbook.common.Common.xurl;
 import static com.github.jsbxyyx.xbook.common.Common.zurl;
 
-import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -887,6 +885,56 @@ public class BookNetHelper {
                 }
                 String string = response.body().string();
                 LogUtil.d(TAG, "cloud versions response: %s", string);
+                JsonNode jsonObject = JsonUtil.readTree(string);
+                int status = jsonObject.get("status").asInt();
+                if (!Common.statusSuccessful(status)) {
+                    LogUtil.d(TAG, "onResponse: %s", status);
+                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    return;
+                }
+                dataCallback.call(jsonObject, null);
+            }
+        });
+    }
+
+    public void cloudIssues(String title, String body, DataCallback dataCallback) {
+        Map<String, Object> object = new HashMap<>();
+        String reqUrl = "/issues";
+        object.put("method", "POST");
+        object.put("url", reqUrl);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("User-Agent", userAgent);
+        object.put("headers", headers);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("title", title);
+        data.put("body", body);
+        object.put("data", data);
+
+        String s = JsonUtil.toJson(object);
+        LogUtil.d(TAG, "cloud issues request: %s", s);
+
+        Request request = new Request.Builder()
+                .url(xburl)
+                .post(RequestBody.create(s, MediaType.parse("application/json")))
+                .build();
+        syncClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                LogUtil.d(TAG, "onFailure: %s", e);
+                dataCallback.call(null, e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    LogUtil.d(TAG, "onResponse: %s", response.code());
+                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    return;
+                }
+                String string = response.body().string();
+                LogUtil.d(TAG, "cloud issues response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {

@@ -2,7 +2,6 @@ package com.github.jsbxyyx.xbook;
 
 import android.app.Application;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -52,7 +51,7 @@ public class LifecycleApplication extends Application {
             public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
                 MLog mLog = new MLog();
                 mLog.setTitle(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + Common.log_suffix);
-                mLog.setRaw(LogUtil.getStackTraceString(e));
+                mLog.setRaw(("[" + android.os.Build.MODEL + " " + android.os.Build.VERSION.RELEASE + "]\n\n") + LogUtil.getStackTraceString(e));
                 CountDownLatch latch = new CountDownLatch(1);
                 bookNetHelper.cloudLog(mLog, new DataCallback() {
                     @Override
