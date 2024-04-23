@@ -18,7 +18,7 @@ android {
         targetSdk 33
         versionCode 14
         versionName "1.4"
-        archivesBaseName = "xplay-v${versionName}-${releaseTime()}"
+        archivesBaseName = "xplay-v${versionName}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
