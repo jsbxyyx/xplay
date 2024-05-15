@@ -101,6 +101,12 @@ public class ViewActivity extends AppCompatActivity {
             if ("epub".equalsIgnoreCase(extension)) {
                 html = "epub.html";
             } else if ("pdf".equalsIgnoreCase(extension)) {
+                webView.getSettings().setUseWideViewPort(true);
+                webView.getSettings().setLoadWithOverviewMode(true);
+                webView.getSettings().setSupportZoom(true);
+                webView.getSettings().setBuiltInZoomControls(true);
+                webView.getSettings().setDisplayZoomControls(false);
+                webView.setInitialScale(10);
                 html = "pdf.html";
             }
             if (Common.isEmpty(html)) {
