@@ -183,6 +183,34 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
+        String language_data = SPUtils.getData(getBaseContext(), Common.search_language_key);
+        LinearLayout ll_lang = findViewById(R.id.ll_lang);
+        int ll_lang_count = ll_lang.getChildCount();
+        for (int i = 0; i < ll_lang_count; i++) {
+            View view = ll_lang.getChildAt(i);
+            if (view instanceof CheckBox) {
+                String text = ((CheckBox) view).getText().toString();
+                if (language_data.contains(text + Common.comma)) {
+                    ((CheckBox) view).setChecked(true);
+                }
+                view.setOnClickListener((v) -> {
+                    CheckBox cb = (CheckBox) v;
+                    String text_ = cb.getText().toString();
+                    String data_ = SPUtils.getData(getBaseContext(), Common.search_language_key);
+                    if (cb.isChecked()) {
+                        if (!data_.contains(text_ + Common.comma)) {
+                            data_ += (text_ + Common.comma);
+                            SPUtils.putData(getBaseContext(), Common.search_language_key, data_);
+                        }
+                    } else {
+                        data_ = data_.replace(text_ + Common.comma, "");
+                        SPUtils.putData(getBaseContext(), Common.search_language_key, data_);
+                    }
+                    LogUtil.d(getClass().getSimpleName(), "language: %s", SPUtils.getData(getBaseContext(), Common.search_language_key));
+                });
+            }
+        }
+
         String sync_data = SPUtils.getData(getBaseContext(), Common.sync_key);
         CheckBox cb_sync = findViewById(R.id.cb_sync);
         if (Common.sync_key_checked.equals(sync_data)) {

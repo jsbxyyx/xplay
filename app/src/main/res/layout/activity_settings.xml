@@ -74,6 +74,54 @@
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:gravity="center_vertical"
+                android:text="搜索书籍语言"
+                android:textStyle="bold"
+                />
+
+            <com.github.jsbxyyx.xbook.AutoLinearLayout
+                android:id="@+id/ll_lang"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="chinese" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="japanese" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="traditional chinese" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="english" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="korean" />
+
+            </com.github.jsbxyyx.xbook.AutoLinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center_vertical"
                 android:text="是否同步"
                 android:textStyle="bold"
                 />
