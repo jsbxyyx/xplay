@@ -28,11 +28,11 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: 11
-      - uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: current
-          arguments: assembleRelease
+          java-version: 17
+      - id: build
+        name: build apk
+        run: |
+          ./gradlew assembleRelease
       - uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
