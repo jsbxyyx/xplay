@@ -32,6 +32,8 @@ jobs:
       - id: build
         name: build apk
         run: |
+          ls -al
+          chmod +x gradlew
           ./gradlew assembleRelease
       - uses: r0adkll/sign-android-release@v1
         id: sign_app
