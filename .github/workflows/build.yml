@@ -36,6 +36,7 @@ jobs:
           ls /usr/local/lib/android/sdk/build-tools/
           chmod +x gradlew
           ./gradlew assembleRelease
+          ls -al app/build/outputs/apk/release/
       - uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
@@ -47,9 +48,8 @@ jobs:
         env:
           # override default build-tools version (29.0.3) -- optional
           BUILD_TOOLS_VERSION: "34.0.0"
-      - run: ls -al
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "*.apk"
+          artifacts: "app/build/outputs/apk/release/*.apk"
           token: ${{ github.token }}
           generateReleaseNotes: true
