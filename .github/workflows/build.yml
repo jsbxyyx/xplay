@@ -33,6 +33,7 @@ jobs:
         name: build apk
         run: |
           ls -al
+          ls /usr/local/lib/android/sdk/build-tools/
           chmod +x gradlew
           ./gradlew assembleRelease
       - uses: r0adkll/sign-android-release@v1
@@ -43,6 +44,9 @@ jobs:
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          # override default build-tools version (29.0.3) -- optional
+          BUILD_TOOLS_VERSION: "34.0.0"
       - run: ls -al
       - uses: ncipollo/release-action@v1
         with:
