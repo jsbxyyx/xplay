@@ -1,22 +1,22 @@
 name: Build
 
-#on:
-#  push:
-#    tags:
-#      - "*"
-
 on:
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'
-        required: true
-        default: 'info'
-        type: choice
-        options:
-        - info
-        - warning
-        - debug
+  push:
+    tags:
+      - "*"
+
+#on:
+#  workflow_dispatch:
+#    inputs:
+#      logLevel:
+#        description: 'Log level'
+#        required: true
+#        default: 'info'
+#        type: choice
+#        options:
+#        - info
+#        - warning
+#        - debug
 
 jobs:
   build:
