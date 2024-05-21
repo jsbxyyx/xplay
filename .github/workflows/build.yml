@@ -34,22 +34,17 @@ jobs:
         run: |
           ls -al
           ls /usr/local/lib/android/sdk/build-tools/
+          echo "${{ secrets.SIGNING_KEY }}" | base64 --decode --wrap=0 > keystore.jks
+          export KEY_STORE_FILE='../keystore.jks'
+          export KEY_ALIAS=${{ secrets.ALIAS }}
+          export KEY_STORE_PASSWORD=${{ secrets.KEY_STORE_PASSWORD }}
+          export KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
           chmod +x gradlew
           ./gradlew assembleRelease
           ls -al app/build/outputs/apk/release/
-      - uses: r0adkll/sign-android-release@v1
-        id: sign_app
-        with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          # override default build-tools version (29.0.3) -- optional
-          BUILD_TOOLS_VERSION: "34.0.0"
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "app/build/outputs/apk/release/*.apk"
+          # github auto generate temporary token
           token: ${{ github.token }}
           generateReleaseNotes: true
