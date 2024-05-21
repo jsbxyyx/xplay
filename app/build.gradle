@@ -1,3 +1,4 @@
+
 plugins {
     id 'com.android.application'
 }
@@ -11,6 +12,15 @@ def releaseTime() {
 android {
     namespace 'com.github.jsbxyyx.xbook'
     compileSdk 33
+
+    signingConfigs {
+        config {
+            storeFile file(System.getenv('KEY_STORE_FILE'))
+            keyAlias System.getenv('KEY_ALIAS')
+            storePassword System.getenv('KEY_STORE_PASSWORD')
+            keyPassword System.getenv('KEY_PASSWORD')
+        }
+    }
 
     defaultConfig {
         applicationId "com.github.jsbxyyx.xbook"
@@ -34,6 +44,7 @@ android {
 
     buildTypes {
         release {
+            signingConfigs signingConfigs.config
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
