@@ -1,12 +1,17 @@
 package com.github.jsbxyyx.xbook;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -14,6 +19,7 @@ import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.SessionManager;
+import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
@@ -33,11 +39,46 @@ public class MainActivity extends AppCompatActivity {
     private ProfileFragment profileFragment;
     private int position = 1;
 
+    private BookNetHelper bookNetHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         requestPermissions();
+
+        bookNetHelper = new BookNetHelper();
+
+        if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) {
+            new AlertDialog.Builder(this)
+                    .setTitle("提示")
+                    .setMessage("未开启通知，跳转到设置开启")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Intent localIntent = new Intent();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                // android 8.0引导
+                                localIntent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                                localIntent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
+                            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                // android 5.0-7.0
+                                localIntent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                                localIntent.putExtra("app_package", getPackageName());
+                                localIntent.putExtra("app_uid", getApplicationInfo().uid);
+                            } else {
+                                // 其他
+                                localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+                                localIntent.setData(Uri.fromParts("package", getPackageName(), null));
+                            }
+                            startActivity(localIntent);
+                        }
+                    }).setNegativeButton(android.R.string.no, null)
+                    .setCancelable(false)
+                    .show();
+        }
+
+
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
