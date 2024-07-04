@@ -49,26 +49,32 @@
         .page-tool {
             position: fixed;
             width: 100%;
-            height: 30px;
+            height: 70px;
             bottom: 5px;
             z-index: 1000;
         }
         .focus {
-            position: fixed;
-            left: 0px;
+            left: 5px;
             width: 1rem;
         }
         .prev {
-            position: fixed;
-            left: 6%;
-            width: 45%;
+            margin-top: 1%;
+            margin-left: 1%;
+            margin-right: 1%;
+            width: 98%;
         }
         .next {
-            position: fixed;
-            right: 1%;
-            width: 45%;
+            margin-top: 1%;
+            margin-left: 1%;
+            margin-right: 1%;
+            width: 98%;
         }
         #epub-outline {
+            position: fixed;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        #epub-dialog {
             position: fixed;
             overflow-x: hidden;
             overflow-y: auto;
@@ -90,6 +96,7 @@
 <body>
 <div id="epub-tool" style="display: none; height: 1.5rem; margin: 0.8rem 0.6rem 0.2rem 0.6rem;">
     <div onclick="outlineClick(this)" style="width: 1rem; cursor: pointer; float: left;">三</div>
+    <div onclick="fontClick(this)" style="width: 1rem; cursor: pointer; float: left; margin-left: 5px;">Aa</div>
     <div style="float: right; margin-left: 35%;">
         <input id="curPage" type="number" value="" style="max-width: 3rem" onkeydown="goPage(event)">
         &nbsp;/&nbsp;
@@ -97,8 +104,9 @@
     </div>
 </div>
 <div style="display: none;" id="epub-outline"></div>
+<div style="display: none;" id="epub-dialog"></div>
 <div id="epub-container"></div>
-<div class="page-tool">
+<div class="page-tool" id="page-tool">
     <div onclick="focusMode()" class="focus">〇</div>
     <button onclick="prev()" class="prev">上一页</button>
     <button onclick="next()" class="next">下一页</button>
@@ -115,26 +123,14 @@ function getUrlParam(name) {
     var r = window.location.search.substring(1).match(reg);
     if (r != null) return unescape(r[2]); return null;
 }
-var bodyNode = document.getElementsByTagName('body')[0];
+var body_ele = document.getElementsByTagName('body')[0];
 var base = window.location.protocol + "//" + window.location.host;
-var file = base + "/" + getUrlParam("name") + "?_=" + new Date().getTime();
-var book_id = getUrlParam("book_id");
-var cur = getUrlParam("cur");
-var pages = getUrlParam("pages");
-console.log('book_id:' + book_id + ', cur:' + cur + ', pages:' + pages);
-
-var book = ePub(file, {});
-var rendition = book.renderTo("epub-container", {
-    manager: "continuous",
-    width: (window.innerWidth) + 'px',
-    height: (window.innerHeight - 60) + "px"
-});
-var displayed = rendition.display();
 
 var gold_theme = {
   'body': {
     'color': '#000000',
     'background': '#f0edd8',
+    'font-size': '16px !important',
   },
   'pre': {
     'overflow': 'visible',
@@ -149,8 +145,29 @@ var gold_theme = {
     'max-height': '60%',
   }
 }
-bodyNode.style.color = gold_theme['body']['color'];
-bodyNode.style.background = gold_theme['body']['background'];
+
+var file = base + "/" + getUrlParam("name") + "?_=" + new Date().getTime();
+var book_id = getUrlParam("book_id");
+var cur = getUrlParam("cur");
+var pages = getUrlParam("pages");
+console.log('book_id:' + book_id + ', cur:' + cur + ', pages:' + pages);
+
+var page_tool_ele = document.getElementById('page-tool');
+var pageToolHeight = page_tool_ele.clientHeight;
+
+page_tool_ele.style.color = gold_theme['body']['color'];
+page_tool_ele.style.background = gold_theme['body']['background'];
+
+var book = ePub(file, {});
+var rendition = book.renderTo("epub-container", {
+    manager: "continuous",
+    width: (window.innerWidth) + 'px',
+    height: (window.innerHeight - pageToolHeight) + "px"
+});
+var displayed = rendition.display();
+
+body_ele.style.color = gold_theme['body']['color'];
+body_ele.style.background = gold_theme['body']['background'];
 rendition.themes.default(gold_theme);
 
 book.ready.then(function () {
@@ -228,13 +245,17 @@ function next() {
 }
 
 function createToc(navigation) {
+    var epub_outline_ele = document.getElementById('epub-outline');
     var html = outlineGenerate(navigation.toc);
-    html += '<div class="close" onclick="outlineClose()">关闭</div>';
-    document.getElementById('epub-outline').innerHTML = html;
-    document.getElementById('outline-ul').style.marginBottom = '100px';
-    document.getElementById('outline-ul').style.marginLeft = '5px';
-    document.getElementById('outline-ul').style.marginRight = '5px';
-    document.getElementById('outline-ul').style.marginTop = '5px';
+    html += '<div class="close" onclick="outlineClose(\'epub-outline\')">关闭</div>';
+    epub_outline_ele.innerHTML = html;
+    var outline_ul_ele = document.getElementById('outline-ul');
+    outline_ul_ele.style.marginBottom = '100px';
+    outline_ul_ele.style.marginLeft = '5px';
+    outline_ul_ele.style.marginRight = '5px';
+    outline_ul_ele.style.marginTop = '5px';
+    outline_ul_ele.style.color = gold_theme['body']['color'];
+    outline_ul_ele.style.background = gold_theme['body']['background'];
 }
 function outlineGenerate(tocArray) {
     var html = '';
@@ -265,12 +286,45 @@ function outlineClick(obj) {
     outline.style.height = (window.innerHeight - obj.offsetTop - obj.offsetHeight) + "px";
     outline.style.top = (obj.offsetTop + obj.offsetHeight) + "px";
     outline.style.left = 0 + "px";
-    outline.style.backgroundColor = '#ffffff';
     outline.style.zIndex = 1001;
+    outline.style.color = gold_theme['body']['color'];
+    outline.style.background = gold_theme['body']['background'];
 }
-function outlineClose() {
-    var outline = document.getElementById('epub-outline');
+function outlineClose(element_id) {
+    var outline = document.getElementById(element_id);
     outline.style.display = 'none';
+}
+function fontClick(obj) {
+    var dialog = document.getElementById('epub-dialog');
+
+    var html = '<div>字体大小:'
+    + '<button onclick="fontSet(this, \'small\')">S</button>'
+    + '<button onclick="fontSet(this, \'medium\')">M</button>'
+    + '<button onclick="fontSet(this, \'large\')">L</button>'
+    + '<button onclick="fontSet(this, \'x-large\')">XL</button>'
+    + '</div>';
+    html += '<div class="close" onclick="outlineClose(\'epub-dialog\')">关闭</div>';
+
+    dialog.innerHTML = html;
+
+    if (dialog.style.display == 'block') {
+        dialog.style.display = 'none';
+    } else {
+        dialog.style.display = 'block';
+    }
+    dialog.style.width = window.innerWidth + "px";
+    dialog.style.height = (window.innerHeight - obj.offsetTop - obj.offsetHeight) + "px";
+    dialog.style.top = (obj.offsetTop + obj.offsetHeight) + "px";
+    dialog.style.left = 0 + "px";
+    dialog.style.zIndex = 1002;
+    dialog.style.color = gold_theme['body']['color'];
+    dialog.style.background = gold_theme['body']['background'];
+}
+function fontSet(obj, fontsize) {
+    if (rendition != null) {
+        rendition.themes.default({ "p": { "font-size": fontsize + " !important"}});
+    }
+    outlineClose('epub-dialog');
 }
 </script>
 </body>
