@@ -13,6 +13,7 @@ import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
@@ -47,6 +48,8 @@ public class ViewActivity extends AppCompatActivity {
 
         bookDbHelper = new BookDbHelper(this);
         bookNetHelper = new BookNetHelper();
+
+        int navH = UiUtils.getNavigationBarRealHeight(this);
 
         Intent intent = getIntent();
         String file_path = intent.getStringExtra("file_path");
@@ -116,8 +119,8 @@ public class ViewActivity extends AppCompatActivity {
             String url = String.format(
                     "http://127.0.0.1:%s/%s/%s?%s",
                     port, www, html,
-                    String.format("cur=%s&pages=%s&book_id=%s&name=%s&t=%s",
-                            cur, pages, bookId, name, System.currentTimeMillis())
+                    String.format("cur=%s&pages=%s&book_id=%s&name=%s&t=%s&navh=%s",
+                            cur, pages, bookId, name, System.currentTimeMillis(), navH)
             );
             webView.loadUrl(url);
         } catch (IOException e) {

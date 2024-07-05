@@ -50,7 +50,7 @@
             position: fixed;
             width: 100%;
             height: 70px;
-            bottom: 5px;
+            bottom: 20px;
             z-index: 1000;
         }
         .focus {
@@ -153,10 +153,10 @@ var pages = getUrlParam("pages");
 console.log('book_id:' + book_id + ', cur:' + cur + ', pages:' + pages);
 
 var page_tool_ele = document.getElementById('page-tool');
-var pageToolHeight = page_tool_ele.clientHeight;
+var pageToolHeight = page_tool_ele.offsetHeight;
 
 var epub_tool_ele = document.getElementById('epub-tool');
-var epubToolHeight = epub_tool_ele.clientHeight;
+var epubToolHeight = epub_tool_ele.offsetHeight;
 
 page_tool_ele.style.color = gold_theme['body']['color'];
 page_tool_ele.style.background = gold_theme['body']['background'];
