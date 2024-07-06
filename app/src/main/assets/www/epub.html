@@ -47,27 +47,29 @@
             margin-bottom: 40px;
         }
         .page-tool {
-            position: fixed;
-            width: 100%;
-            height: 70px;
-            bottom: 20px;
+            position: absolute;
+            height: 150px;
+            bottom: 0px;
+            left: 5px;
             z-index: 1000;
         }
+        .draggable-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 50px;
+            font-size: 16px;
+            opacity: 0.5;
+        }
         .focus {
-            left: 5px;
-            width: 1rem;
-        }
-        .prev {
-            margin-top: 1%;
-            margin-left: 1%;
-            margin-right: 1%;
-            width: 98%;
-        }
-        .next {
-            margin-top: 1%;
-            margin-left: 1%;
-            margin-right: 1%;
-            width: 98%;
+            width: 50px;
         }
         #epub-outline {
             position: fixed;
@@ -107,9 +109,9 @@
 <div style="display: none;" id="epub-dialog"></div>
 <div id="epub-container"></div>
 <div class="page-tool" id="page-tool">
-    <div onclick="focusMode()" class="focus">〇</div>
-    <button onclick="prev()" class="prev">上一页</button>
-    <button onclick="next()" class="next">下一页</button>
+    <button onclick="focusMode()" class="focus draggable-button">〇</button>
+    <button onclick="prev()" class="prev draggable-button">上</button>
+    <button onclick="next()" class="next draggable-button">下</button>
 </div>
 
 <script src="jszip.min.js"></script>
@@ -155,17 +157,64 @@ console.log('book_id:' + book_id + ', cur:' + cur + ', pages:' + pages);
 var page_tool_ele = document.getElementById('page-tool');
 var pageToolHeight = page_tool_ele.offsetHeight;
 
+let offsetX, offsetY, isDragging = false;
+
+// Touch events
+page_tool_ele.addEventListener('touchstart', (e) => {
+    const touch = e.touches[0];
+    startDragging(touch.clientX, touch.clientY);
+    document.addEventListener('touchmove', onTouchMove);
+    document.addEventListener('touchend', stopDragging);
+});
+
+function startDragging(clientX, clientY) {
+    offsetX = clientX - page_tool_ele.offsetLeft;
+    offsetY = clientY - page_tool_ele.offsetTop;
+    isDragging = true;
+}
+
+function onTouchMove(e) {
+    if (isDragging) {
+        const touch = e.touches[0];
+        moveButtonGroup(touch.clientX, touch.clientY);
+    }
+}
+
+function moveButtonGroup(clientX, clientY) {
+    const minX = 0;
+    const minY = 0;
+    const maxX = window.innerWidth - page_tool_ele.clientWidth;
+    const maxY = window.innerHeight - page_tool_ele.clientHeight;
+
+    let newLeft = clientX - offsetX;
+    let newTop = clientY - offsetY;
+
+    if (newLeft < minX) newLeft = minX;
+    if (newLeft > maxX) newLeft = maxX;
+    if (newTop < minY) newTop = minY;
+    if (newTop > maxY) newTop = maxY;
+
+    page_tool_ele.style.left = `${newLeft}px`;
+    page_tool_ele.style.top = `${newTop}px`;
+}
+
+function stopDragging() {
+    isDragging = false;
+    document.removeEventListener('touchmove', onTouchMove);
+    document.removeEventListener('touchend', stopDragging);
+}
+
 var epub_tool_ele = document.getElementById('epub-tool');
 var epubToolHeight = epub_tool_ele.offsetHeight;
 
-page_tool_ele.style.color = gold_theme['body']['color'];
-page_tool_ele.style.background = gold_theme['body']['background'];
+// page_tool_ele.style.color = gold_theme['body']['color'];
+// page_tool_ele.style.background = gold_theme['body']['background'];
 
 var book = ePub(file, {});
 var rendition = book.renderTo("epub-container", {
     manager: "continuous",
     width: (window.innerWidth) + 'px',
-    height: (window.innerHeight - pageToolHeight - epubToolHeight) + "px"
+    height: (window.innerHeight - epubToolHeight) + "px"
 });
 var displayed = rendition.display();
 
@@ -276,7 +325,7 @@ function outlineGenerate(tocArray) {
 function outlineGo(obj) {
     var href = obj.getAttribute('data-href');
     rendition.display(href);
-    outlineClose()
+    outlineClose('epub-outline')
 }
 function outlineClick(obj) {
     var outline = document.getElementById('epub-outline');
