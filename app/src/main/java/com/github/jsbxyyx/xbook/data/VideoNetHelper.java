@@ -12,6 +12,8 @@ import com.github.jsbxyyx.xbook.common.HttpStatusException;
 import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.data.bean.QqVideo;
+import com.github.jsbxyyx.xbook.data.bean.QqVideoHotRank;
+import com.github.jsbxyyx.xbook.data.bean.QqVideoHotWord;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -91,6 +93,112 @@ public class VideoNetHelper {
                     }
                     JsonNode data = jsonObject.get("data");
                     List<QqVideo> list = JsonUtil.convertValue(data.get("list"), new TypeReference<List<QqVideo>>() {
+                    });
+                    dataCallback.call(list, null);
+                } catch (Exception e) {
+                    dataCallback.call(new ArrayList<>(), e);
+                }
+            }
+        });
+    }
+
+    public void hotRank(DataCallback dataCallback) {
+        Map<String, Object> object = new HashMap<>();
+
+        String reqUrl = "/hotrank_vqq";
+        object.put("method", "POST");
+        object.put("url", reqUrl);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("User-Agent", userAgent);
+        object.put("headers", headers);
+
+        Map<String, Object> params = new HashMap<>();
+        object.put("params", params);
+
+        String s = JsonUtil.toJson(object);
+        LogUtil.d(TAG, "hotrank request: %s", s);
+        Request request = new Request.Builder()
+                .url(xburl)
+                .post(RequestBody.create(s, MediaType.parse("application/json")))
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
+                dataCallback.call(new ArrayList<>(), e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    return;
+                }
+                String string = response.body().string();
+                LogUtil.d(TAG, "hotrank response: %s", string);
+                try {
+                    JsonNode jsonObject = JsonUtil.readTree(string);
+                    int status = jsonObject.get("status").asInt();
+                    if (!Common.statusSuccessful(status)) {
+                        dataCallback.call(new ArrayList<>(), new HttpStatusException(status + "", status, reqUrl));
+                        return;
+                    }
+                    JsonNode data = jsonObject.get("data");
+                    List<QqVideoHotRank> list = JsonUtil.convertValue(data.get("list"), new TypeReference<List<QqVideoHotRank>>() {
+                    });
+                    dataCallback.call(list, null);
+                } catch (Exception e) {
+                    dataCallback.call(new ArrayList<>(), e);
+                }
+            }
+        });
+    }
+
+    public void hotWord(DataCallback dataCallback) {
+        Map<String, Object> object = new HashMap<>();
+
+        String reqUrl = "/hotwordlist_vqq";
+        object.put("method", "POST");
+        object.put("url", reqUrl);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("User-Agent", userAgent);
+        object.put("headers", headers);
+
+        Map<String, Object> params = new HashMap<>();
+        object.put("params", params);
+
+        String s = JsonUtil.toJson(object);
+        LogUtil.d(TAG, "hotrank request: %s", s);
+        Request request = new Request.Builder()
+                .url(xburl)
+                .post(RequestBody.create(s, MediaType.parse("application/json")))
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
+                dataCallback.call(new ArrayList<>(), e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    return;
+                }
+                String string = response.body().string();
+                LogUtil.d(TAG, "hotrank response: %s", string);
+                try {
+                    JsonNode jsonObject = JsonUtil.readTree(string);
+                    int status = jsonObject.get("status").asInt();
+                    if (!Common.statusSuccessful(status)) {
+                        dataCallback.call(new ArrayList<>(), new HttpStatusException(status + "", status, reqUrl));
+                        return;
+                    }
+                    JsonNode data = jsonObject.get("data");
+                    List<QqVideoHotWord> list = JsonUtil.convertValue(data.get("list"), new TypeReference<List<QqVideoHotWord>>() {
                     });
                     dataCallback.call(list, null);
                 } catch (Exception e) {
