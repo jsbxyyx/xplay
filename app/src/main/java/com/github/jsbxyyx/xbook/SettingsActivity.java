@@ -94,7 +94,6 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                         LogUtil.d(getClass().getSimpleName(), "下载成功，开始安装");
                         Intent install = new Intent(Intent.ACTION_VIEW);
-                        install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             install.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             Uri contentUri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileProvider", file);
@@ -102,7 +101,8 @@ public class SettingsActivity extends AppCompatActivity {
                         } else {
                             install.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
                         }
-                        context.startActivity(install);
+                        install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getApplicationContext().startActivity(install);
                     }
                 }, new ProgressListener() {
                     @Override
