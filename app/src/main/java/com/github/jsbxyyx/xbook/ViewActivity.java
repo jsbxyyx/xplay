@@ -3,6 +3,7 @@ package com.github.jsbxyyx.xbook;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.widget.Toast;
 
@@ -158,6 +159,20 @@ public class ViewActivity extends AppCompatActivity {
                 });
             }
         }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP) {
+                webView.evaluateJavascript("javascript:handleVolumeKey('up')", null);
+                return true;
+            } else if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                webView.evaluateJavascript("javascript:handleVolumeKey('down')", null);
+                return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
     }
 
 }

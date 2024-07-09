@@ -97,6 +97,31 @@ if (cur != null && cur != '') {
     currentPage = parseInt(cur);
 }
 var container = document.getElementById('pdf-container');
+var g_pdf = null;
+
+function renderPage(pdf, pageNumber) {
+  container.innerHTML = ''; // 清空容器
+  pdf.getPage(pageNumber).then(function(page) {
+    var scale = 1.5;
+    var viewport = page.getViewport(scale);
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    canvas.width = viewport.width
+    canvas.height = viewport.height;
+    page.render({
+      canvasContext: context,
+      viewport: viewport
+    });
+    container.appendChild(canvas);
+    currentPage = pageNumber;
+    console.log('currentPage:' + currentPage + ', totalPage:' + totalPage);
+    if (currentPage > 0 && totalPage > 0) {
+        if (window.xbook) {
+            window.xbook.report(book_id, currentPage, totalPage);
+        }
+    }
+  });
+}
 
 //pdfjsLib.GlobalWorkerOptions.workerSrc = "pdf.worker.js"
 pdfjsLib.getDocument({
@@ -105,6 +130,7 @@ pdfjsLib.getDocument({
     cMapPacked: true,
 }).then((pdf) => {
     console.log('pdf ready');
+    g_pdf = pdf;
 
     //console.log(pdf.numPages);
     var totalPage = pdf.numPages;
@@ -115,45 +141,35 @@ pdfjsLib.getDocument({
         //console.log('index:', pdf.getPageIndex(r[0]['dest'][0]))
     });
 
-    function renderPage(pageNumber) {
-      container.innerHTML = ''; // 清空容器
-      pdf.getPage(pageNumber).then(function(page) {
-        var scale = 1.5;
-        var viewport = page.getViewport(scale);
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext('2d');
-        canvas.width = viewport.width
-        canvas.height = viewport.height;
-        page.render({
-          canvasContext: context,
-          viewport: viewport
-        });
-        container.appendChild(canvas);
-        currentPage = pageNumber;
-        console.log('currentPage:' + currentPage + ', totalPage:' + totalPage);
-        if (currentPage > 0 && totalPage > 0) {
-            if (window.xbook) {
-                window.xbook.report(book_id, currentPage, totalPage);
-            }
-        }
-      });
-    }
-    renderPage(currentPage);
+    renderPage(pdf, currentPage);
 
     document.getElementById('prev').addEventListener('click', (e) => {
-        if (currentPage > 1) {
-            renderPage(currentPage - 1);
-        }
+        prev();
     });
 
     document.getElementById('next').addEventListener('click', (e) => {
-        if (currentPage < pdf.numPages) {
-            renderPage(currentPage + 1);
-        }
+        next();
     });
 
 });
-
+function prev() {
+    if (g_pdf && currentPage > 1) {
+        renderPage(g_pdf, currentPage - 1);
+    }
+}
+function next() {
+    if (g_pdf && currentPage < g_pdf.numPages) {
+        renderPage(g_pdf, currentPage + 1);
+    }
+}
+function handleVolumeKey(key) {
+    console.log('key:' + key);
+    if (key == 'up') {
+        prev();
+    } else if (key == 'down') {
+        next();
+    }
+}
 </script>
 </body>
 </html>

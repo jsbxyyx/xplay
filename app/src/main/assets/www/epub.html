@@ -47,29 +47,22 @@
             margin-bottom: 40px;
         }
         .page-tool {
-            position: absolute;
-            height: 150px;
+            position: fixed;
+            width: 100%;
+            height: 30px;
             bottom: 0px;
             left: 5px;
             z-index: 1000;
         }
-        .draggable-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 50px;
-            font-size: 16px;
-            opacity: 0.5;
+        .next {
+            width: 40%;
+        }
+        .prev {
+            width: 40%;
         }
         .focus {
-            width: 50px;
+            width: 10%;
+            /* width: 50px; */
         }
         #epub-outline {
             position: fixed;
@@ -109,9 +102,9 @@
 <div style="display: none;" id="epub-dialog"></div>
 <div id="epub-container"></div>
 <div class="page-tool" id="page-tool">
-    <button onclick="focusMode()" class="focus draggable-button">〇</button>
-    <button onclick="prev()" class="prev draggable-button">上</button>
-    <button onclick="next()" class="next draggable-button">下</button>
+    <button onclick="next()" class="next">下一页</button>
+    <button onclick="prev()" class="prev">上一页</button>
+    <button onclick="focusMode()" class="focus">〇</button>
 </div>
 
 <script src="jszip.min.js"></script>
@@ -214,7 +207,7 @@ var book = ePub(file, {});
 var rendition = book.renderTo("epub-container", {
     manager: "continuous",
     width: (window.innerWidth) + 'px',
-    height: (window.innerHeight - epubToolHeight) + "px"
+    height: (window.innerHeight - pageToolHeight - epubToolHeight) + "px"
 });
 var displayed = rendition.display();
 
@@ -377,6 +370,14 @@ function fontSet(obj, fontsize) {
         rendition.themes.default({ "p": { "font-size": fontsize + " !important"}});
     }
     outlineClose('epub-dialog');
+}
+function handleVolumeKey(key) {
+    console.log('key:' + key);
+    if (key == 'up') {
+        prev();
+    } else if (key == 'down') {
+        next();
+    }
 }
 </script>
 </body>
