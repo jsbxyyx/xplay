@@ -1,9 +1,11 @@
 package com.github.jsbxyyx.xbook;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 
 import org.mozilla.geckoview.GeckoRuntime;
@@ -25,6 +27,11 @@ public class VideoViewActivity2 extends AppCompatActivity {
         setContentView(R.layout.activity_video_view);
 
         playUrl = getIntent().getStringExtra("playUrl");
+
+        if (Common.isBlank(playUrl)) {
+            Toast.makeText(this, "没有播放URL", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         webView = findViewById(R.id.wv_video_view);
         GeckoSession session = new GeckoSession();
