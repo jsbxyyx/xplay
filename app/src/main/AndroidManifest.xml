@@ -34,11 +34,13 @@
             android:configChanges="orientation|screenSize"
             android:exported="false"
             android:screenOrientation="landscape" />
+        <!--
         <activity
             android:name=".VideoViewActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
             android:screenOrientation="landscape" />
+        -->
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
