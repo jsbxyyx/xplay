@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="5dp"
-    tools:context=".RegistrationActivity">
+    tools:context=".ForgetpwdActivity">
 
     <EditText
         android:id="@+id/et_login_user"
@@ -15,15 +15,6 @@
         android:maxLines="1"
         android:singleLine="true"
         android:hint="请输入邮箱" />
-
-    <EditText
-        android:id="@+id/et_login_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:hint="清输入密码" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,7 +29,7 @@
             android:inputType="text"
             android:maxLines="1"
             android:singleLine="true"
-            android:hint="清输入验证码" />
+            android:hint="请输入验证码" />
 
         <Button
             android:id="@+id/btn_send_code"
@@ -48,11 +39,20 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_registration"
+    <EditText
+        android:id="@+id/et_login_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="注册" />
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:hint="请输入密码" />
+
+    <Button
+        android:id="@+id/btn_resetpwd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="重置密码" />
 
     <TextView
         android:id="@+id/tv_login"
@@ -61,14 +61,5 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="登录" />
-
-    <TextView
-        android:id="@+id/tv_forgetpwd"
-        android:layout_marginTop="50dp"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="忘记密码" />
 
 </LinearLayout>

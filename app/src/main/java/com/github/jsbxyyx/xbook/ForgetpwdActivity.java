@@ -1,13 +1,13 @@
 package com.github.jsbxyyx.xbook;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
@@ -16,18 +16,14 @@ import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 
-/**
- * @author jsbxyyx
- * @since 1.0
- */
-public class RegistrationActivity extends AppCompatActivity {
+public class ForgetpwdActivity extends AppCompatActivity {
 
     private BookNetHelper bookNetHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registration);
+        setContentView(R.layout.activity_forgetpwd);
 
         bookNetHelper = new BookNetHelper();
 
@@ -35,14 +31,13 @@ public class RegistrationActivity extends AppCompatActivity {
         EditText et_login_password = findViewById(R.id.et_login_password);
         EditText et_login_code = findViewById(R.id.et_login_code);
         Button btn_send_code = findViewById(R.id.btn_send_code);
-        Button btn_registration = findViewById(R.id.btn_registration);
+        Button btn_resetpwd = findViewById(R.id.btn_resetpwd);
         TextView tv_login = findViewById(R.id.tv_login);
-        TextView tv_forgetpwd = findViewById(R.id.tv_forgetpwd);
 
         btn_send_code.setOnClickListener((v) -> {
             String user = et_login_user.getText().toString();
             String password = et_login_password.getText().toString();
-            bookNetHelper.sendCode(user, password, new DataCallback<JsonNode>() {
+            bookNetHelper.sendCodePasswordRecovery(user, new DataCallback<JsonNode>() {
                 @Override
                 public void call(JsonNode dataObject, Throwable err) {
                     runOnUiThread(() -> {
@@ -61,22 +56,23 @@ public class RegistrationActivity extends AppCompatActivity {
             });
         });
 
-        btn_registration.setOnClickListener((v) -> {
+        btn_resetpwd.setOnClickListener((v) -> {
             String user = et_login_user.getText().toString();
             String password = et_login_password.getText().toString();
             String code = et_login_code.getText().toString();
-            bookNetHelper.registration(user, password, code, new DataCallback<String>() {
+            bookNetHelper.resetpwd(user, password, code, new DataCallback<JsonNode>() {
                 @Override
-                public void call(String str, Throwable err) {
+                public void call(JsonNode respData, Throwable err) {
                     runOnUiThread(() -> {
                         if (err != null) {
                             Toast.makeText(getBaseContext(), err.getMessage(), Toast.LENGTH_LONG).show();
                             return;
                         }
-                        SessionManager.setSession(str);
-                        SPUtils.putData(getBaseContext(), Common.login_key, str);
-                        Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                        startActivity(intent);
+                        if (respData.get("success").asInt() == 1) {
+                            Toast.makeText(getBaseContext(), "重置成功", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getBaseContext(), respData.get("message").asText(""), Toast.LENGTH_LONG).show();
+                        }
                     });
                 }
             });
@@ -87,9 +83,5 @@ public class RegistrationActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        tv_forgetpwd.setOnClickListener((v) -> {
-            Intent intent = new Intent(getBaseContext(), ForgetpwdActivity.class);
-            startActivity(intent);
-        });
     }
 }

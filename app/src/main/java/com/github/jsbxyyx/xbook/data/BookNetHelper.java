@@ -456,6 +456,63 @@ public class BookNetHelper {
         });
     }
 
+    public void sendCodePasswordRecovery(String email, DataCallback dataCallback) {
+        Map<String, Object> object = new HashMap<>();
+        String reqUrl = zurl + "/papi/user/verification/send-code";
+        object.put("method", "POST");
+        object.put("url", reqUrl);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("User-Agent", userAgent);
+        headers.put(content_type_key, "multipart/form-data");
+        object.put("headers", headers);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("email", email);
+        data.put("action", "passwordrecovery");
+        object.put("data", data);
+
+        Map<String, Object> params = new HashMap<>();
+        object.put("params", params);
+
+        String s = JsonUtil.toJson(object);
+        LogUtil.d(TAG, "send-code password recovery request: %s", s);
+        Request request = new Request.Builder()
+                .url(xurl)
+                .post(RequestBody.create(s, MediaType.parse("application/json")))
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
+                dataCallback.call(null, e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    LogUtil.d(TAG, "onResponse: %s", response.code());
+                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    return;
+                }
+                String string = response.body().string();
+                LogUtil.d(TAG, "send-code password recovery response: %s", string);
+                JsonNode jsonObject = JsonUtil.readTree(string);
+                int status = jsonObject.get("status").asInt();
+                if (!Common.statusSuccessful(status)) {
+                    LogUtil.d(TAG, "onResponse: %s", status);
+                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    return;
+                }
+                String data = jsonObject.get("data").asText();
+                JsonNode dataObject = JsonUtil.readTree(data);
+                // "data": "{\"success\":1}}" 1success 0error
+                int success = dataObject.get("success").asInt();
+                dataCallback.call(dataObject, null);
+            }
+        });
+    }
+
     public void registration(String email, String password, String verifyCode, DataCallback dataCallback) {
         Map<String, Object> object = new HashMap<>();
         String reqUrl = zurl + "/rpc.php";
@@ -943,6 +1000,62 @@ public class BookNetHelper {
                     return;
                 }
                 dataCallback.call(jsonObject, null);
+            }
+        });
+    }
+
+    public void resetpwd(String email, String password, String code, DataCallback<JsonNode> dataCallback) {
+        Map<String, Object> object = new HashMap<>();
+        String reqUrl = "/zlib_resetpwd";
+        object.put("method", "POST");
+        object.put("url", reqUrl);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("User-Agent", userAgent);
+        headers.put(content_type_key, "application/json");
+        object.put("headers", headers);
+
+        Map<String, Object> params = new HashMap<>();
+        object.put("params", params);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("email", email);
+        data.put("password", password);
+        data.put("code", code);
+        object.put("data", data);
+
+        String s = JsonUtil.toJson(object);
+        LogUtil.d(TAG, "resetpwd request: %s", s);
+
+        Request request = new Request.Builder()
+                .url(xburl)
+                .post(RequestBody.create(s, MediaType.parse("application/json")))
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
+                dataCallback.call(null, e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    LogUtil.d(TAG, "onResponse: %s", response.code());
+                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    return;
+                }
+                String string = response.body().string();
+                LogUtil.d(TAG, "resetpwd response: %s", string);
+                JsonNode jsonObject = JsonUtil.readTree(string);
+                int status = jsonObject.get("status").asInt();
+                if (!Common.statusSuccessful(status)) {
+                    LogUtil.d(TAG, "onResponse: %s", status);
+                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    return;
+                }
+                JsonNode data = jsonObject.get("data");
+                dataCallback.call(data, null);
             }
         });
     }
