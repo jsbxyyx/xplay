@@ -1,7 +1,6 @@
 package com.github.jsbxyyx.xbook;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,9 +16,9 @@ import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SPUtils;
-import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -69,6 +68,12 @@ public class DetailActivity extends AppCompatActivity {
         bookNetHelper.detail(detailUrl, new DataCallback<Book>() {
             @Override
             public void call(Book book, Throwable err) {
+                if (err != null) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                    });
+                    return;
+                }
                 loading.dismiss();
                 LogUtil.d(TAG, "call: %s", book);
                 mBook = book;

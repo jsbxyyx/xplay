@@ -136,7 +136,7 @@ public class ProfileFragment extends Fragment {
                     public void call(Profile profile, Throwable err) {
                         mActivity.runOnUiThread(() -> {
                             if (err != null) {
-                                Toast.makeText(getActivity(), "获取个人资料失败", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
                                 return;
                             }
                             tv_profile_nickname.setText(profile.getNickname());
@@ -223,7 +223,7 @@ public class ProfileFragment extends Fragment {
                         public void call(JsonNode o, Throwable err) {
                             if (err != null) {
                                 mActivity.runOnUiThread(() -> {
-                                    Toast.makeText(mActivity, "同步阅读进度失败", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(mActivity, "同步阅读进度失败：" + err.getMessage(), Toast.LENGTH_LONG).show();
                                 });
                                 return;
                             }
@@ -382,6 +382,9 @@ public class ProfileFragment extends Fragment {
                             try {
                                 if (err != null) {
                                     LogUtil.e(TAG, "%s cloud download err. %s", name, LogUtil.getStackTraceString(err));
+                                    mActivity.runOnUiThread(() -> {
+                                        Toast.makeText(mActivity, "错误:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                                    });
                                     return;
                                 }
                                 if (name.endsWith(Common.book_metadata_suffix)) {

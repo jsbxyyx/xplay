@@ -70,7 +70,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 public void call(String str, Throwable err) {
                     runOnUiThread(() -> {
                         if (err != null) {
-                            Toast.makeText(getBaseContext(), err.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
                             return;
                         }
                         SessionManager.setSession(str);

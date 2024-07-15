@@ -117,7 +117,7 @@ public class BookNetHelper {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -173,7 +173,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -238,7 +238,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -301,7 +301,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 File dir = new File(destDir);
@@ -371,7 +371,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -435,7 +435,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -492,7 +492,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -557,7 +557,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -632,7 +632,7 @@ public class BookNetHelper {
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if (!response.isSuccessful()) {
                             LogUtil.d(TAG, "onResponse: %s", response.code());
-                            dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                            dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                             return;
                         }
                         String string = response.body().string();
@@ -688,7 +688,7 @@ public class BookNetHelper {
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if (!response.isSuccessful()) {
                         LogUtil.d(TAG, "onResponse: %s", response.code());
-                        dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                        dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                         return;
                     }
                     String string = response.body().string();
@@ -742,7 +742,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -793,7 +793,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(new byte[0], new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(new byte[0], new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 byte[] bytes = response.body().bytes();
@@ -838,7 +838,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -889,7 +889,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -938,7 +938,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -989,7 +989,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -1044,7 +1044,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();

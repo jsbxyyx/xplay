@@ -88,7 +88,7 @@ public class SettingsActivity extends AppCompatActivity {
                     public void call(File file, Throwable err) {
                         if (err != null) {
                             runOnUiThread(() -> {
-                                Toast.makeText(context, "下载失败", Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
                             });
                             return;
                         }
@@ -126,6 +126,9 @@ public class SettingsActivity extends AppCompatActivity {
             public void call(JsonNode jsonNode, Throwable err) {
                 if (err != null) {
                     LogUtil.d(getClass().getSimpleName(), "%s", LogUtil.getStackTraceString(err));
+                    runOnUiThread(() -> {
+                        Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                    });
                     return;
                 }
                 JsonNode data = jsonNode.get("data");

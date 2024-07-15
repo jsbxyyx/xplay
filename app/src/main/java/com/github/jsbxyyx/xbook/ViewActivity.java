@@ -149,6 +149,9 @@ public class ViewActivity extends AppCompatActivity {
                     public void call(JsonNode o, Throwable err) {
                         if (err != null) {
                             LogUtil.e(getClass().getSimpleName(), "view sync meta err. %s", LogUtil.getStackTraceString(err));
+                            runOnUiThread(() -> {
+                                Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            });
                             return;
                         }
                         LogUtil.d(getClass().getSimpleName(), "view sync meta: %s : %s", book.getId(), book.getTitle());

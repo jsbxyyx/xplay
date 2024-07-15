@@ -45,18 +45,15 @@ public class IssuesActivity extends AppCompatActivity {
                 body += ("\n\n来源：[" + android.os.Build.MODEL + "] " + android.os.Build.VERSION.RELEASE + "\n");
                 LoadingDialog loading = new LoadingDialog(mActivity, "疯狂提交中...");
                 loading.show();
-                bookNetHelper.cloudIssues(title, body, new DataCallback() {
-                    @Override
-                    public void call(Object o, Throwable err) {
-                        runOnUiThread(() -> {
-                            loading.dismiss();
-                            if (err != null) {
-                                Toast.makeText(getBaseContext(), "提交失败", Toast.LENGTH_LONG).show();
-                                return;
-                            }
-                            Toast.makeText(getBaseContext(), "提交成功", Toast.LENGTH_LONG).show();
-                        });
-                    }
+                bookNetHelper.cloudIssues(title, body, (o, err) -> {
+                    runOnUiThread(() -> {
+                        loading.dismiss();
+                        if (err != null) {
+                            Toast.makeText(getBaseContext(), "err：" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        Toast.makeText(getBaseContext(), "提交成功", Toast.LENGTH_LONG).show();
+                    });
                 });
             }
         });
