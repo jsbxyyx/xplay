@@ -914,6 +914,7 @@ public class BookNetHelper {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("User-Agent", userAgent);
+        headers.put(cookie_key, SessionManager.getSession());
         object.put("headers", headers);
 
         Map<String, Object> data = new HashMap<>();
@@ -962,6 +963,7 @@ public class BookNetHelper {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("User-Agent", userAgent);
+        headers.put(cookie_key, SessionManager.getSession());
         object.put("headers", headers);
 
         Map<String, Object> data = new HashMap<>();
