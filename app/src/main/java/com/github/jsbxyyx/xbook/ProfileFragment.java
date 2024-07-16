@@ -136,7 +136,7 @@ public class ProfileFragment extends Fragment {
                     public void call(Profile profile, Throwable err) {
                         mActivity.runOnUiThread(() -> {
                             if (err != null) {
-                                Toast.makeText(getActivity(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity(), "获取个人资料失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
                                 return;
                             }
                             tv_profile_nickname.setText(profile.getNickname());
@@ -202,7 +202,7 @@ public class ProfileFragment extends Fragment {
                         @Override
                         public void call(JsonNode o, Throwable err) {
                             if (err != null) {
-                                LogUtil.d(TAG, "upload error 1: %s", book.getTitle());
+                                LogUtil.d(TAG, "书籍同步失败: %s", book.getTitle());
                                 return;
                             }
                             String name = o.get("data").get("name").asText();
@@ -302,7 +302,7 @@ public class ProfileFragment extends Fragment {
                 public void call(JsonNode o, Throwable err) {
                     latch.countDown();
                     if (err != null) {
-                        LogUtil.d(TAG, "upAllBook err: %s", LogUtil.getStackTraceString(err));
+                        LogUtil.d(TAG, "书籍同步失败: %s", LogUtil.getStackTraceString(err));
                         return;
                     }
                     LogUtil.d(TAG, "upAllBook: %s", book.getTitle());
@@ -337,7 +337,7 @@ public class ProfileFragment extends Fragment {
                 if (err != null) {
                     mActivity.runOnUiThread(() -> {
                         loading.dismiss();
-                        Toast.makeText(mActivity, "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(mActivity, "云同步失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
                     });
                     return;
                 }
@@ -381,7 +381,7 @@ public class ProfileFragment extends Fragment {
                         public void call(byte[] bytes, Throwable err) {
                             try {
                                 if (err != null) {
-                                    LogUtil.e(TAG, "%s cloud download err. %s", name, LogUtil.getStackTraceString(err));
+                                    LogUtil.e(TAG, "%s 云下载失败. %s", name, LogUtil.getStackTraceString(err));
                                     mActivity.runOnUiThread(() -> {
                                         Toast.makeText(mActivity, "错误:" + err.getMessage(), Toast.LENGTH_LONG).show();
                                     });

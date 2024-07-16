@@ -42,7 +42,7 @@ public class ForgetpwdActivity extends AppCompatActivity {
                 public void call(JsonNode dataObject, Throwable err) {
                     runOnUiThread(() -> {
                         if (err != null) {
-                            Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "发送重置验证码:" + err.getMessage(), Toast.LENGTH_LONG).show();
                             return;
                         }
                         int success = dataObject.get("success").asInt();
@@ -65,7 +65,7 @@ public class ForgetpwdActivity extends AppCompatActivity {
                 public void call(JsonNode respData, Throwable err) {
                     runOnUiThread(() -> {
                         if (err != null) {
-                            Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "重置密码失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
                             return;
                         }
                         if (respData.get("success").asInt() == 1) {

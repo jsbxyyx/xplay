@@ -58,7 +58,7 @@ public class LifecycleApplication extends Application {
                     public void call(Object o, Throwable err) {
                         try {
                             if (err != null) {
-                                LogUtil.e(getClass().getSimpleName(), "cloud log err. %s", LogUtil.getStackTraceString(err));
+                                LogUtil.e(getClass().getSimpleName(), "异常上报失败. %s", LogUtil.getStackTraceString(err));
                             } else {
                                 new Thread(() -> {
                                     Looper.prepare();

@@ -49,7 +49,7 @@ public class IssuesActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         loading.dismiss();
                         if (err != null) {
-                            Toast.makeText(getBaseContext(), "err：" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "提交反馈失败：" + err.getMessage(), Toast.LENGTH_LONG).show();
                             return;
                         }
                         Toast.makeText(getBaseContext(), "提交成功", Toast.LENGTH_LONG).show();

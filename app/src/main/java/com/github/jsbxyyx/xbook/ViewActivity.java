@@ -150,7 +150,7 @@ public class ViewActivity extends AppCompatActivity {
                         if (err != null) {
                             LogUtil.e(getClass().getSimpleName(), "view sync meta err. %s", LogUtil.getStackTraceString(err));
                             runOnUiThread(() -> {
-                                Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getBaseContext(), "同步书籍失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
                             });
                             return;
                         }

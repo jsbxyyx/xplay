@@ -47,7 +47,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 public void call(JsonNode dataObject, Throwable err) {
                     runOnUiThread(() -> {
                         if (err != null) {
-                            Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "发送验证码:" + err.getMessage(), Toast.LENGTH_LONG).show();
                             return;
                         }
                         int success = dataObject.get("success").asInt();
@@ -70,7 +70,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 public void call(String str, Throwable err) {
                     runOnUiThread(() -> {
                         if (err != null) {
-                            Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "注册失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
                             return;
                         }
                         SessionManager.setSession(str);

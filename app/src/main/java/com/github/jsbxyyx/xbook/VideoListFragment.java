@@ -109,7 +109,7 @@ public class VideoListFragment extends Fragment {
                 mActivity.runOnUiThread(() -> {
                     loading.dismiss();
                     if (err != null) {
-                        Toast.makeText(mActivity, "err: " + err.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(mActivity, "搜索视频失败: " + err.getMessage(), Toast.LENGTH_LONG).show();
                         return;
                     }
                     if (clear) {

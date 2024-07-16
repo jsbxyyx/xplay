@@ -71,7 +71,7 @@ public class DetailActivity extends AppCompatActivity {
             public void call(Book book, Throwable err) {
                 if (err != null) {
                     runOnUiThread(() -> {
-                        Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), "获取书籍详情失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
                     });
                     return;
                 }
@@ -102,7 +102,7 @@ public class DetailActivity extends AppCompatActivity {
                 public void call(File file, Throwable err) {
                     if (err != null) {
                         runOnUiThread(() -> {
-                            Toast.makeText(getBaseContext(), "err:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "书籍下载失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
                         });
                         return;
                     }
@@ -120,16 +120,22 @@ public class DetailActivity extends AppCompatActivity {
                             bookNetHelper.cloudSync(bookDbHelper.findBookByBid(mBook.getBid()), new DataCallback<JsonNode>() {
                                 @Override
                                 public void call(JsonNode o, Throwable err) {
+                                    if (err != null) {
+                                        runOnUiThread(() -> {
+                                            Toast.makeText(getBaseContext(), "同步失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                                        });
+                                        return;
+                                    }
+
+                                    String sha = o.get("data").get("sha").asText();
+                                    Book book_db = bookDbHelper.findBookById(mBook.getId() + "");
+                                    if (book_db != null) {
+                                        book_db.putRemarkProperty("sha", sha);
+                                        bookDbHelper.updateBook(book_db);
+                                    }
+
                                     runOnUiThread(() -> {
-                                        if (err != null) {
-                                            Toast.makeText(getBaseContext(), "同步失败", Toast.LENGTH_LONG).show();
-                                            return;
-                                        }
-                                        String sha = o.get("data").get("sha").asText();
-                                        Book book_db = bookDbHelper.findBookById(mBook.getId() + "");
                                         if (book_db != null) {
-                                            book_db.putRemarkProperty("sha", sha);
-                                            bookDbHelper.updateBook(book_db);
                                             Toast.makeText(getBaseContext(), "同步成功", Toast.LENGTH_LONG).show();
                                         }
                                     });
