@@ -35,6 +35,7 @@ public class DetailActivity extends AppCompatActivity {
     private BookNetHelper bookNetHelper;
     private BookDbHelper bookDbHelper;
 
+    private String detailUrl;
     private Book mBook;
 
     public DetailActivity() {
@@ -48,7 +49,7 @@ public class DetailActivity extends AppCompatActivity {
 
         bookDbHelper = new BookDbHelper(this);
 
-        String detailUrl = getIntent().getStringExtra("detailUrl");
+        detailUrl = getIntent().getStringExtra("detailUrl");
         if (Common.isEmpty(detailUrl)) {
             Toast.makeText(getBaseContext(), "书籍地址为空", Toast.LENGTH_LONG).show();
             return;
@@ -92,7 +93,7 @@ public class DetailActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_detail_download).setOnClickListener(v -> {
             String downloadUrl = mBook.getDownloadUrl();
-            if (Common.isEmpty(downloadUrl)) {
+            if (mBook == null || Common.isEmpty(downloadUrl)) {
                 Toast.makeText(getBaseContext(), "下载地址为空，请登录", Toast.LENGTH_LONG).show();
                 return;
             }
