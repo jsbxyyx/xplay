@@ -92,12 +92,11 @@ public class DetailActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btn_detail_download).setOnClickListener(v -> {
-            String downloadUrl = mBook.getDownloadUrl();
-            if (mBook == null || Common.isEmpty(downloadUrl)) {
+            if (mBook == null || Common.isEmpty(mBook.getDownloadUrl())) {
                 Toast.makeText(getBaseContext(), "下载地址为空，请登录", Toast.LENGTH_LONG).show();
                 return;
             }
-            bookNetHelper.download(downloadUrl, Common.xbook_dir, mBook.getBid(), new DataCallback<File>() {
+            bookNetHelper.download(mBook.getDownloadUrl(), Common.xbook_dir, mBook.getBid(), new DataCallback<File>() {
                 @Override
                 public void call(File file, Throwable err) {
                     if (err != null) {
