@@ -11,6 +11,7 @@ import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.SessionManager;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 
 /**
@@ -42,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void call(String str, Throwable err) {
                     runOnUiThread(() -> {
                         if (err != null) {
-                            Toast.makeText(getBaseContext(), "登录失败 : " + err.getMessage(), Toast.LENGTH_LONG).show();
+                            UiUtils.showToast("登录失败 : " + err.getMessage());
                             return;
                         }
                         SessionManager.setSession(str);

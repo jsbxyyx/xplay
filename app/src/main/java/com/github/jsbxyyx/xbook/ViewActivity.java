@@ -64,7 +64,7 @@ public class ViewActivity extends AppCompatActivity {
         }
 
         if (!new File(file_path).exists()) {
-            Toast.makeText(getBaseContext(), "书籍不存在，请重新下载", Toast.LENGTH_LONG).show();
+            UiUtils.showToast("书籍不存在，请重新下载");
             return;
         }
 
@@ -114,7 +114,7 @@ public class ViewActivity extends AppCompatActivity {
                 html = "pdf.html";
             }
             if (Common.isEmpty(html)) {
-                Toast.makeText(getBaseContext(), "不支持的文件格式:" + extension, Toast.LENGTH_LONG).show();
+                UiUtils.showToast("不支持的文件格式:" + extension);
                 return;
             }
             String url = String.format(
@@ -150,7 +150,7 @@ public class ViewActivity extends AppCompatActivity {
                         if (err != null) {
                             LogUtil.e(getClass().getSimpleName(), "view sync meta err. %s", LogUtil.getStackTraceString(err));
                             runOnUiThread(() -> {
-                                Toast.makeText(getBaseContext(), "同步书籍失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                                UiUtils.showToast("同步书籍失败:" + err.getMessage());
                             });
                             return;
                         }

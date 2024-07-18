@@ -14,6 +14,7 @@ import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.SessionManager;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 
 public class ForgetpwdActivity extends AppCompatActivity {
@@ -42,14 +43,14 @@ public class ForgetpwdActivity extends AppCompatActivity {
                 public void call(JsonNode dataObject, Throwable err) {
                     runOnUiThread(() -> {
                         if (err != null) {
-                            Toast.makeText(getBaseContext(), "发送重置验证码:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            UiUtils.showToast("发送重置验证码:" + err.getMessage());
                             return;
                         }
                         int success = dataObject.get("success").asInt();
                         if (success == 1) {
-                            Toast.makeText(getBaseContext(), "发送成功", Toast.LENGTH_LONG).show();
+                            UiUtils.showToast("发送成功");
                         } else {
-                            Toast.makeText(getBaseContext(), dataObject.get("err").asText(), Toast.LENGTH_LONG).show();
+                            UiUtils.showToast(dataObject.get("err").asText());
                         }
                     });
                 }
@@ -65,13 +66,13 @@ public class ForgetpwdActivity extends AppCompatActivity {
                 public void call(JsonNode respData, Throwable err) {
                     runOnUiThread(() -> {
                         if (err != null) {
-                            Toast.makeText(getBaseContext(), "重置密码失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            UiUtils.showToast("重置密码失败:" + err.getMessage());
                             return;
                         }
                         if (respData.get("success").asInt() == 1) {
-                            Toast.makeText(getBaseContext(), "重置成功", Toast.LENGTH_LONG).show();
+                            UiUtils.showToast("重置成功");
                         } else {
-                            Toast.makeText(getBaseContext(), respData.get("message").asText(""), Toast.LENGTH_LONG).show();
+                            UiUtils.showToast(respData.get("message").asText(""));
                         }
                     });
                 }

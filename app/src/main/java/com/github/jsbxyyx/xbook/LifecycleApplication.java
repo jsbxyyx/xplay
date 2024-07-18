@@ -1,6 +1,8 @@
 package com.github.jsbxyyx.xbook;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Looper;
 import android.widget.Toast;
 
@@ -10,6 +12,7 @@ import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.MLog;
 
@@ -28,6 +31,8 @@ public class LifecycleApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        UiUtils.initContext(getApplicationContext());
 
         bookNetHelper = new BookNetHelper();
 
@@ -49,9 +54,12 @@ public class LifecycleApplication extends Application {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
+
                 MLog mLog = new MLog();
                 mLog.setTitle(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + Common.log_suffix);
-                mLog.setRaw(("[" + android.os.Build.MODEL + " " + android.os.Build.VERSION.RELEASE + "]\n\n") + LogUtil.getStackTraceString(e));
+                mLog.setRaw(("[OS : " + android.os.Build.MODEL + " | " + android.os.Build.VERSION.RELEASE + "]"
+                        + "[APP : " + UiUtils.getVersionName() + "]\n\n")
+                        + LogUtil.getStackTraceString(e));
                 CountDownLatch latch = new CountDownLatch(1);
                 bookNetHelper.cloudLog(mLog, new DataCallback() {
                     @Override
@@ -62,7 +70,7 @@ public class LifecycleApplication extends Application {
                             } else {
                                 new Thread(() -> {
                                     Looper.prepare();
-                                    Toast.makeText(getBaseContext(), "闪退异常上报成功", Toast.LENGTH_LONG).show();
+                                    UiUtils.showToast("闪退异常上报成功");
                                     Looper.loop();
                                 }).start();
                                 Thread.sleep(2000);

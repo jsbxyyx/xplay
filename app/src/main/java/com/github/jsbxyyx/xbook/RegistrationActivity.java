@@ -14,6 +14,7 @@ import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.SessionManager;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 
 /**
@@ -47,14 +48,14 @@ public class RegistrationActivity extends AppCompatActivity {
                 public void call(JsonNode dataObject, Throwable err) {
                     runOnUiThread(() -> {
                         if (err != null) {
-                            Toast.makeText(getBaseContext(), "发送验证码:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            UiUtils.showToast("发送验证码:" + err.getMessage());
                             return;
                         }
                         int success = dataObject.get("success").asInt();
                         if (success == 1) {
-                            Toast.makeText(getBaseContext(), "发送成功", Toast.LENGTH_LONG).show();
+                            UiUtils.showToast("发送成功");
                         } else {
-                            Toast.makeText(getBaseContext(), dataObject.get("err").asText(), Toast.LENGTH_LONG).show();
+                            UiUtils.showToast(dataObject.get("err").asText(""));
                         }
                     });
                 }
@@ -70,7 +71,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 public void call(String str, Throwable err) {
                     runOnUiThread(() -> {
                         if (err != null) {
-                            Toast.makeText(getBaseContext(), "注册失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            UiUtils.showToast("注册失败:" + err.getMessage());
                             return;
                         }
                         SessionManager.setSession(str);

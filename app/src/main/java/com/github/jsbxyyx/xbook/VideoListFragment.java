@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.VideoNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.QqVideo;
 import com.github.jsbxyyx.xbook.data.bean.QqVideoHotRank;
@@ -109,7 +110,7 @@ public class VideoListFragment extends Fragment {
                 mActivity.runOnUiThread(() -> {
                     loading.dismiss();
                     if (err != null) {
-                        Toast.makeText(mActivity, "搜索视频失败: " + err.getMessage(), Toast.LENGTH_LONG).show();
+                        UiUtils.showToast("搜索视频失败: " + err.getMessage());
                         return;
                     }
                     if (clear) {
@@ -128,7 +129,7 @@ public class VideoListFragment extends Fragment {
             public void call(List<QqVideoHotWord> list, Throwable err) {
                 mActivity.runOnUiThread(() -> {
                     if (err != null) {
-                        Toast.makeText(mActivity, "获取热搜失败", Toast.LENGTH_LONG).show();
+                        UiUtils.showToast("获取热搜失败");
                     }
                     ll_hot_rank.removeAllViews();
                     if (list != null && !list.isEmpty()) {

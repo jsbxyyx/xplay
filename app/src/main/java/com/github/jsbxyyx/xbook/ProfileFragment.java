@@ -33,6 +33,7 @@ import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.SessionManager;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
@@ -136,7 +137,7 @@ public class ProfileFragment extends Fragment {
                     public void call(Profile profile, Throwable err) {
                         mActivity.runOnUiThread(() -> {
                             if (err != null) {
-                                Toast.makeText(getActivity(), "获取个人资料失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                                UiUtils.showToast("获取个人资料失败:" + err.getMessage());
                                 return;
                             }
                             tv_profile_nickname.setText(profile.getNickname());
@@ -212,7 +213,7 @@ public class ProfileFragment extends Fragment {
                             bookDbHelper.updateBook(book_db);
                             LogUtil.d(TAG, "upload 2: %s", name);
                             mActivity.runOnUiThread(() -> {
-                                Toast.makeText(mActivity, "同步成功《" + book.getTitle() + "》", Toast.LENGTH_LONG).show();
+                                UiUtils.showToast("同步成功《" + book.getTitle() + "》");
                             });
                         }
                     });
@@ -223,7 +224,7 @@ public class ProfileFragment extends Fragment {
                         public void call(JsonNode o, Throwable err) {
                             if (err != null) {
                                 mActivity.runOnUiThread(() -> {
-                                    Toast.makeText(mActivity, "同步阅读进度失败：" + err.getMessage(), Toast.LENGTH_LONG).show();
+                                    UiUtils.showToast("同步阅读进度失败：" + err.getMessage());
                                 });
                                 return;
                             }
@@ -249,7 +250,7 @@ public class ProfileFragment extends Fragment {
                                     LogUtil.d(TAG, "call: insert book: %s", book.getTitle());
                                 }
                                 mActivity.runOnUiThread(() -> {
-                                    Toast.makeText(mActivity, "同步阅读进度成功", Toast.LENGTH_LONG).show();
+                                    UiUtils.showToast("同步阅读进度成功");
                                 });
                             }
                         }
@@ -311,7 +312,7 @@ public class ProfileFragment extends Fragment {
                     book_db.putRemarkProperty("sha", sha);
                     bookDbHelper.updateBook(book_db);
                     mActivity.runOnUiThread(() -> {
-                        Toast.makeText(mActivity, "同步成功《" + book.getTitle() + "》", Toast.LENGTH_LONG).show();
+                        UiUtils.showToast("同步成功《" + book.getTitle() + "》");
                     });
                 }
             });
@@ -322,7 +323,7 @@ public class ProfileFragment extends Fragment {
             }
         }
         mActivity.runOnUiThread(() -> {
-            Toast.makeText(mActivity, "本地同步到云成功", Toast.LENGTH_LONG).show();
+            UiUtils.showToast("本地同步到云成功");
         });
     }
 
@@ -337,7 +338,7 @@ public class ProfileFragment extends Fragment {
                 if (err != null) {
                     mActivity.runOnUiThread(() -> {
                         loading.dismiss();
-                        Toast.makeText(mActivity, "云同步失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                        UiUtils.showToast("云同步失败:" + err.getMessage());
                     });
                     return;
                 }
@@ -383,7 +384,7 @@ public class ProfileFragment extends Fragment {
                                 if (err != null) {
                                     LogUtil.e(TAG, "%s 云下载失败. %s", name, LogUtil.getStackTraceString(err));
                                     mActivity.runOnUiThread(() -> {
-                                        Toast.makeText(mActivity, "错误:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                                        UiUtils.showToast("错误:" + err.getMessage());
                                     });
                                     return;
                                 }
@@ -414,7 +415,7 @@ public class ProfileFragment extends Fragment {
                                     Files.write(new File(file_path).toPath(), bytes);
                                     LogUtil.d(TAG, "downloaded: %s", name);
                                     mActivity.runOnUiThread(() -> {
-                                        Toast.makeText(mActivity, "云同步《" + name + "》成功", Toast.LENGTH_LONG).show();
+                                        UiUtils.showToast("云同步《" + name + "》成功");
                                     });
                                 }
                             } catch (Exception e) {
@@ -432,7 +433,7 @@ public class ProfileFragment extends Fragment {
                 }
                 mActivity.runOnUiThread(() -> {
                     loading.dismiss();
-                    Toast.makeText(mActivity, "云同步到本地完成", Toast.LENGTH_LONG).show();
+                    UiUtils.showToast("云同步到本地完成");
                 });
             }
         });

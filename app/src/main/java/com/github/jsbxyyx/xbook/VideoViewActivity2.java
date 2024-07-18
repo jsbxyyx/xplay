@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
@@ -29,7 +30,7 @@ public class VideoViewActivity2 extends AppCompatActivity {
         playUrl = getIntent().getStringExtra("playUrl");
 
         if (Common.isBlank(playUrl)) {
-            Toast.makeText(this, "没有播放URL", Toast.LENGTH_LONG).show();
+            UiUtils.showToast("没有播放地址");
             return;
         }
 

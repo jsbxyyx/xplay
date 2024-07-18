@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 
@@ -100,7 +101,7 @@ public class ListFragment extends Fragment {
             mActivity.runOnUiThread(() -> {
                 loading.dismiss();
                 if (err != null) {
-                    Toast.makeText(mActivity, "书籍搜索失败: " + err.getMessage(), Toast.LENGTH_LONG).show();
+                    UiUtils.showToast("书籍搜索失败: " + err.getMessage());
                     return;
                 }
                 if (clear) {

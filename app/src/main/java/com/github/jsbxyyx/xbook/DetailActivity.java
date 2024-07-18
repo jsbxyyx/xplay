@@ -16,6 +16,7 @@ import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SPUtils;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
@@ -51,7 +52,7 @@ public class DetailActivity extends AppCompatActivity {
 
         detailUrl = getIntent().getStringExtra("detailUrl");
         if (Common.isEmpty(detailUrl)) {
-            Toast.makeText(getBaseContext(), "书籍地址为空", Toast.LENGTH_LONG).show();
+            UiUtils.showToast("书籍地址为空");
             return;
         }
 
@@ -71,7 +72,7 @@ public class DetailActivity extends AppCompatActivity {
             public void call(Book book, Throwable err) {
                 if (err != null) {
                     runOnUiThread(() -> {
-                        Toast.makeText(getBaseContext(), "获取书籍详情失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                        UiUtils.showToast("获取书籍详情失败:" + err.getMessage());
                     });
                     return;
                 }
@@ -93,7 +94,7 @@ public class DetailActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_detail_download).setOnClickListener(v -> {
             if (mBook == null || Common.isEmpty(mBook.getDownloadUrl())) {
-                Toast.makeText(getBaseContext(), "下载地址为空，请登录", Toast.LENGTH_LONG).show();
+                UiUtils.showToast("下载地址为空，请登录");
                 return;
             }
             bookNetHelper.download(mBook.getDownloadUrl(), Common.xbook_dir, mBook.getBid(), new DataCallback<File>() {
@@ -101,7 +102,7 @@ public class DetailActivity extends AppCompatActivity {
                 public void call(File file, Throwable err) {
                     if (err != null) {
                         runOnUiThread(() -> {
-                            Toast.makeText(getBaseContext(), "书籍下载失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                            UiUtils.showToast("书籍下载失败:" + err.getMessage());
                         });
                         return;
                     }
@@ -121,7 +122,7 @@ public class DetailActivity extends AppCompatActivity {
                                 public void call(JsonNode o, Throwable err) {
                                     if (err != null) {
                                         runOnUiThread(() -> {
-                                            Toast.makeText(getBaseContext(), "同步失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                                            UiUtils.showToast("同步失败:" + err.getMessage());
                                         });
                                         return;
                                     }
@@ -135,7 +136,7 @@ public class DetailActivity extends AppCompatActivity {
 
                                     runOnUiThread(() -> {
                                         if (book_db != null) {
-                                            Toast.makeText(getBaseContext(), "同步成功", Toast.LENGTH_LONG).show();
+                                            UiUtils.showToast("同步成功");
                                         }
                                     });
                                 }
@@ -143,7 +144,7 @@ public class DetailActivity extends AppCompatActivity {
                         }
                     }
                     runOnUiThread(() -> {
-                        Toast.makeText(getBaseContext(), "下载成功", Toast.LENGTH_LONG).show();
+                        UiUtils.showToast("下载成功");
                     });
                 }
             }, new ProgressListener() {

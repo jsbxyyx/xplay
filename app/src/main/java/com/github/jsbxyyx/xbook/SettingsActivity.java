@@ -26,6 +26,7 @@ import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SPUtils;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 
 import java.io.File;
@@ -72,30 +73,30 @@ public class SettingsActivity extends AppCompatActivity {
             tv_version.setText(packageInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             LogUtil.e(getClass().getSimpleName(), "获取版本失败", e);
-            Toast.makeText(this, "获取版本失败", Toast.LENGTH_LONG).show();
+            UiUtils.showToast("获取版本失败");
         }
 
         Button btn_update = findViewById(R.id.btn_update);
         btn_update.setOnClickListener((v) -> {
             runOnUiThread(() -> {
                 notificationManager.notify(0, builder.build());
-                Toast.makeText(context, "开始下载", Toast.LENGTH_LONG).show();
+                UiUtils.showToast("开始下载");
             });
             if (Common.isEmpty(downloadUrl)) {
-                Toast.makeText(context, "已经是最新版本", Toast.LENGTH_LONG).show();
+                UiUtils.showToast("已经是最新版本");
             } else {
                 bookNetHelper.downloadWithCookie(downloadUrl, Common.sdcard, "", "", new DataCallback<File>() {
                     @Override
                     public void call(File file, Throwable err) {
                         if (err != null) {
                             runOnUiThread(() -> {
-                                Toast.makeText(context, "下载失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                                UiUtils.showToast("下载失败:" + err.getMessage());
                             });
                             return;
                         }
                         LogUtil.d(getClass().getSimpleName(), "下载成功，开始安装");
                         runOnUiThread(() -> {
-                            Toast.makeText(context, "下载成功，开始安装", Toast.LENGTH_LONG).show();
+                            UiUtils.showToast("下载成功，开始安装");
                         });
                         Common.sleep(1000);
                         Intent install = new Intent(Intent.ACTION_VIEW);
@@ -132,7 +133,7 @@ public class SettingsActivity extends AppCompatActivity {
                 if (err != null) {
                     LogUtil.d(getClass().getSimpleName(), "%s", LogUtil.getStackTraceString(err));
                     runOnUiThread(() -> {
-                        Toast.makeText(getBaseContext(), "获取版本更新失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                        UiUtils.showToast("获取版本更新失败:" + err.getMessage());
                     });
                     return;
                 }

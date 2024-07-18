@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 
 /**
@@ -55,7 +56,7 @@ public class HomeFragment extends Fragment {
                 if (err != null) {
                     LogUtil.d(getClass().getSimpleName(), "%s", LogUtil.getStackTraceString(err));
                     mActivity.runOnUiThread(() -> {
-                        Toast.makeText(mActivity, "获取版本更新失败:" + err.getMessage(), Toast.LENGTH_LONG).show();
+                        UiUtils.showToast("获取版本更新失败:" + err.getMessage());
                     });
                     return;
                 }
@@ -64,33 +65,25 @@ public class HomeFragment extends Fragment {
                     LogUtil.d(getClass().getSimpleName(), "versions empty.");
                     return;
                 }
-                try {
-                    JsonNode update = data.get(0);
-                    PackageInfo packageInfo = mActivity.getPackageManager().getPackageInfo(mActivity.getPackageName(), 0);
-                    double localName = Double.parseDouble(packageInfo.versionName);
-                    double cloudName = Double.parseDouble(update.get("name").asText().trim());
-                    if (cloudName > localName) {
-                        mActivity.runOnUiThread(() -> {
-                            new AlertDialog.Builder(mActivity)
-                                    .setTitle("提示")
-                                    .setMessage("有新版本啦，前往 我的-设置 进行版本更新")
-                                    .setIcon(android.R.drawable.ic_dialog_alert)
-                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            Intent localIntent = new Intent(mActivity, SettingsActivity.class);
-                                            startActivity(localIntent);
-                                        }
-                                    }).setNegativeButton(android.R.string.no, null)
-                                    .setCancelable(false)
-                                    .show();
-                        });
-                    }
-                } catch (PackageManager.NameNotFoundException e) {
-                    LogUtil.e(TAG, "获取版本失败");
+                JsonNode update = data.get(0);
+                String versionName = UiUtils.getVersionName();
+                double localName = Double.parseDouble(versionName);
+                double cloudName = Double.parseDouble(update.get("name").asText().trim());
+                if (cloudName > localName) {
                     mActivity.runOnUiThread(() -> {
-                        Toast.makeText(mActivity, "获取版本失败", Toast.LENGTH_LONG).show();
+                        new AlertDialog.Builder(mActivity)
+                                .setTitle("提示")
+                                .setMessage("有新版本啦，前往 我的-设置 进行版本更新")
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        Intent localIntent = new Intent(mActivity, SettingsActivity.class);
+                                        startActivity(localIntent);
+                                    }
+                                }).setNegativeButton(android.R.string.no, null)
+                                .setCancelable(false)
+                                .show();
                     });
-                    return;
                 }
             }
         });
