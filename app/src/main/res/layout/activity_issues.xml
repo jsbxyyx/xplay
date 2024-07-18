@@ -14,6 +14,7 @@
         android:textSize="25sp"
         android:gravity="center"
         android:layout_gravity="center"
+        android:textStyle="bold"
         />
 
     <LinearLayout
@@ -26,6 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
             android:gravity="center"
+            android:textStyle="bold"
             android:text="标题" />
 
         <EditText
@@ -49,6 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
             android:gravity="center"
+            android:textStyle="bold"
             android:text="内容" />
 
         <EditText
@@ -57,6 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.8"
             android:lines="8"
+            android:hint="反馈内容中请带上邮箱，方便联系解决问题"
             />
 
     </LinearLayout>
