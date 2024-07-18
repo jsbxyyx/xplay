@@ -71,7 +71,8 @@ public class SettingsActivity extends AppCompatActivity {
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             tv_version.setText(packageInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
-            throw new RuntimeException(e);
+            LogUtil.e(getClass().getSimpleName(), "获取版本失败", e);
+            Toast.makeText(this, "获取版本失败", Toast.LENGTH_LONG).show();
         }
 
         Button btn_update = findViewById(R.id.btn_update);
@@ -93,6 +94,10 @@ public class SettingsActivity extends AppCompatActivity {
                             return;
                         }
                         LogUtil.d(getClass().getSimpleName(), "下载成功，开始安装");
+                        runOnUiThread(() -> {
+                            Toast.makeText(context, "下载成功，开始安装", Toast.LENGTH_LONG).show();
+                        });
+                        Common.sleep(1000);
                         Intent install = new Intent(Intent.ACTION_VIEW);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             install.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);

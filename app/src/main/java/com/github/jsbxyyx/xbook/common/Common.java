@@ -88,4 +88,10 @@ public class Common {
         return str == null || str.trim().isEmpty();
     }
 
+    public static void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException ignore) {
+        }
+    }
 }
