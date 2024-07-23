@@ -76,6 +76,7 @@ public class BookNetHelper {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("User-Agent", userAgent);
+        headers.put(cookie_key, SessionManager.getSession());
         object.put("headers", headers);
 
         List<Object> params = new ArrayList<>();
