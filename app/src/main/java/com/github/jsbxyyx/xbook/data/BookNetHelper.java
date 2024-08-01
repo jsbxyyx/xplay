@@ -102,7 +102,7 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "search request: %s", s);
+        LogUtil.d(TAG, "search request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
@@ -117,7 +117,7 @@ public class BookNetHelper {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -126,7 +126,7 @@ public class BookNetHelper {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
-                        dataCallback.call(new ArrayList<>(), new HttpStatusException(status + "", status, reqUrl));
+                        dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                         return;
                     }
                     JsonNode data = jsonObject.get("data");
@@ -156,7 +156,7 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "detail request: %s", s);
+        LogUtil.d(TAG, "detail request: %s : %s", reqUrl, s);
 
         Request request = new Request.Builder()
                 .url(xurl)
@@ -173,7 +173,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -182,7 +182,7 @@ public class BookNetHelper {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
-                        dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                        dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                         return;
                     }
                     JsonNode data = jsonObject.get("data");
@@ -221,7 +221,7 @@ public class BookNetHelper {
         object.put("data", data.toString());
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "login request: %s", s);
+        LogUtil.d(TAG, "login request: %s : %s", reqUrl, s);
 
         Request request = new Request.Builder()
                 .url(xurl)
@@ -238,7 +238,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -247,7 +247,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                     return;
                 }
                 JsonNode respData = JsonUtil.readTree(jsonObject.get("data").asText());
@@ -285,7 +285,7 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "download request: %s", s);
+        LogUtil.d(TAG, "download request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
@@ -301,7 +301,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 File dir = new File(destDir);
@@ -355,7 +355,7 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "profile request: %s", s);
+        LogUtil.d(TAG, "profile request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
@@ -371,7 +371,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -380,14 +380,14 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                     return;
                 }
                 JsonNode data = jsonObject.get("data");
                 Profile profile = JsonUtil.convertValue(data, new TypeReference<Profile>() {
                 });
                 if (Common.isEmpty(profile.getEmail())) {
-                    dataCallback.call(null, new HttpStatusException(401 + "", 401, reqUrl));
+                    dataCallback.call(null, new HttpStatusException("未登录", 401, reqUrl));
                     return;
                 }
                 dataCallback.call(profile, null);
@@ -419,7 +419,7 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "send-code request: %s", s);
+        LogUtil.d(TAG, "send-code request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
@@ -435,7 +435,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -444,7 +444,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                     return;
                 }
                 String data = jsonObject.get("data").asText();
@@ -476,7 +476,7 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "send-code password recovery request: %s", s);
+        LogUtil.d(TAG, "send-code password recovery request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
@@ -492,7 +492,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -501,7 +501,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                     return;
                 }
                 String data = jsonObject.get("data").asText();
@@ -540,7 +540,7 @@ public class BookNetHelper {
         object.put("data", data.toString());
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "registration request: %s", s);
+        LogUtil.d(TAG, "registration request: %s : %s", reqUrl, s);
 
         Request request = new Request.Builder()
                 .url(xurl)
@@ -557,7 +557,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -566,7 +566,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                     return;
                 }
                 String data = jsonObject.get("data").asText();
@@ -615,7 +615,7 @@ public class BookNetHelper {
                 object.put("data", data);
 
                 String s = JsonUtil.toJson(object);
-                LogUtil.d(TAG, "cloud sync meta request: %s", s);
+                LogUtil.d(TAG, "cloud sync meta request: %s : %s", reqUrl, s);
 
                 Request request = new Request.Builder()
                         .url(xburl)
@@ -632,7 +632,7 @@ public class BookNetHelper {
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if (!response.isSuccessful()) {
                             LogUtil.d(TAG, "onResponse: %s", response.code());
-                            dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                            dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                             return;
                         }
                         String string = response.body().string();
@@ -641,7 +641,7 @@ public class BookNetHelper {
                         int status = jsonObject.get("status").asInt();
                         if (!Common.statusSuccessful(status)) {
                             LogUtil.d(TAG, "onResponse: %s", status);
-                            dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                            dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                             return;
                         }
                         dataCallback.call(jsonObject, null);
@@ -672,7 +672,7 @@ public class BookNetHelper {
             object.put("data", data);
 
             String s = JsonUtil.toJson(object);
-            LogUtil.d(TAG, "cloud sync data request: %s", s);
+            LogUtil.d(TAG, "cloud sync data request: %s : %s", reqUrl, s);
             Request request = new Request.Builder()
                     .url(xburl)
                     .post(RequestBody.create(s, MediaType.parse("application/json")))
@@ -688,7 +688,7 @@ public class BookNetHelper {
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if (!response.isSuccessful()) {
                         LogUtil.d(TAG, "onResponse: %s", response.code());
-                        dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                        dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                         return;
                     }
                     String string = response.body().string();
@@ -697,7 +697,7 @@ public class BookNetHelper {
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
                         LogUtil.d(TAG, "onResponse: %s", status);
-                        dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                        dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                         return;
                     }
                     dataCallback.call(jsonObject, null);
@@ -725,7 +725,7 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud list request: %s", s);
+        LogUtil.d(TAG, "cloud list request: %s : %s", reqUrl, s);
 
         Request request = new Request.Builder()
                 .url(xburl)
@@ -742,7 +742,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -751,7 +751,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                     return;
                 }
                 dataCallback.call(jsonObject, null);
@@ -776,7 +776,7 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud download request: %s", s);
+        LogUtil.d(TAG, "cloud download request: %s : %s", reqUrl, s);
 
         Request request = new Request.Builder()
                 .url(xburl)
@@ -793,7 +793,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(new byte[0], new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(new byte[0], new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 byte[] bytes = response.body().bytes();
@@ -820,7 +820,7 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "log request: %s", s);
+        LogUtil.d(TAG, "log request: %s : %s", reqUrl, s);
 
         Request request = new Request.Builder()
                 .url(xburl)
@@ -838,7 +838,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -847,7 +847,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                     return;
                 }
                 dataCallback.call(jsonObject, null);
@@ -872,7 +872,7 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud get meta request: %s", s);
+        LogUtil.d(TAG, "cloud get meta request: %s : %s", reqUrl, s);
 
         Request request = new Request.Builder()
                 .url(xburl)
@@ -889,7 +889,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -898,7 +898,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                     return;
                 }
                 dataCallback.call(jsonObject, null);
@@ -921,7 +921,7 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud versions request: %s", s);
+        LogUtil.d(TAG, "cloud versions request: %s : %s", reqUrl, s);
 
         Request request = new Request.Builder()
                 .url(xburl)
@@ -938,7 +938,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -947,7 +947,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                     return;
                 }
                 dataCallback.call(jsonObject, null);
@@ -972,7 +972,7 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud issues request: %s", s);
+        LogUtil.d(TAG, "cloud issues request: %s : %s", reqUrl, s);
 
         Request request = new Request.Builder()
                 .url(xburl)
@@ -989,7 +989,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -998,7 +998,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                     return;
                 }
                 dataCallback.call(jsonObject, null);
@@ -1027,7 +1027,7 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "resetpwd request: %s", s);
+        LogUtil.d(TAG, "resetpwd request: %s : %s", reqUrl, s);
 
         Request request = new Request.Builder()
                 .url(xburl)
@@ -1044,7 +1044,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.message() + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -1053,7 +1053,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(status + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                     return;
                 }
                 JsonNode data = jsonObject.get("data");

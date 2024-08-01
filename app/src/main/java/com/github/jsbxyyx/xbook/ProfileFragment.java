@@ -128,6 +128,7 @@ public class ProfileFragment extends Fragment {
                 SPUtils.putData(mActivity, Common.login_key, "");
                 SPUtils.putData(mActivity, Common.profile_nickname_key, "");
                 SPUtils.putData(mActivity, Common.profile_email_key, "");
+                SessionManager.setSession(SPUtils.getData(mActivity, Common.login_key));
                 onResume();
             });
             String email = SPUtils.getData(mActivity, Common.profile_email_key);
@@ -369,6 +370,10 @@ public class ProfileFragment extends Fragment {
                     if (!name.endsWith(Common.book_metadata_suffix)) {
                         String id = name.split("\\-")[0];
                         Book book = bookDbHelper.findBookById(id);
+                        if (book == null) {
+                            LogUtil.d(TAG, "ignore name : %s", name);
+                            continue;
+                        }
                         File file = new File(book.getRemarkProperty("file_path"));
                         if (file.exists()) {
                             LogUtil.d(TAG, "download: %s exist.", book.getTitle());

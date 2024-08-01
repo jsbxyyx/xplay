@@ -64,7 +64,7 @@ public class VideoNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "search request: %s", s);
+        LogUtil.d(TAG, "search request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
@@ -79,7 +79,7 @@ public class VideoNetHelper {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -88,7 +88,7 @@ public class VideoNetHelper {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
-                        dataCallback.call(new ArrayList<>(), new HttpStatusException(status + "", status, reqUrl));
+                        dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                         return;
                     }
                     JsonNode data = jsonObject.get("data");
@@ -117,7 +117,7 @@ public class VideoNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "hotrank request: %s", s);
+        LogUtil.d(TAG, "hotrank request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
@@ -132,7 +132,7 @@ public class VideoNetHelper {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -141,7 +141,7 @@ public class VideoNetHelper {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
-                        dataCallback.call(new ArrayList<>(), new HttpStatusException(status + "", status, reqUrl));
+                        dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                         return;
                     }
                     JsonNode data = jsonObject.get("data");
@@ -170,7 +170,7 @@ public class VideoNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "hotrank request: %s", s);
+        LogUtil.d(TAG, "hotrank request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
@@ -185,7 +185,7 @@ public class VideoNetHelper {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.code() + "", response.code(), reqUrl));
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -194,7 +194,7 @@ public class VideoNetHelper {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
-                        dataCallback.call(new ArrayList<>(), new HttpStatusException(status + "", status, reqUrl));
+                        dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
                         return;
                     }
                     JsonNode data = jsonObject.get("data");
