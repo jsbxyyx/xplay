@@ -1,10 +1,11 @@
 package com.github.jsbxyyx.xbook;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +37,9 @@ public class DetailActivity extends AppCompatActivity {
     private static final String TAG = "xbook";
     private BookNetHelper bookNetHelper;
     private BookDbHelper bookDbHelper;
+
+    private ListView lv_detail_suggest;
+    private ListBookAdapter lvListAdapter;
 
     private String detailUrl;
     private Book mBook;
@@ -88,6 +93,33 @@ public class DetailActivity extends AppCompatActivity {
                     tv_detail_language.setText(mBook.getLanguage());
                     tv_detail_isbn.setText(mBook.getIsbn());
                     tv_detail_file.setText(mBook.getFile());
+                });
+            }
+        });
+
+        lv_detail_suggest = findViewById(R.id.lv_detail_suggest);
+        lvListAdapter = new ListBookAdapter(this, null);
+        lv_detail_suggest.setAdapter(lvListAdapter);
+        lv_detail_suggest.setOnItemClickListener((parent, view1, position, id) -> {
+            Book t = (Book) lv_detail_suggest.getAdapter().getItem(position);
+            LogUtil.d(TAG, "lv_detail_suggest: setOnItemClickListener: %s", t);
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.putExtra("detailUrl", t.getDetailUrl());
+            startActivity(intent);
+        });
+        bookNetHelper.detailSuggest(detailUrl, new DataCallback<List<Book>>() {
+            @Override
+            public void call(List<Book> list, Throwable err) {
+                runOnUiThread(() -> {
+                    if (err != null) {
+                        UiUtils.showToast("获取推荐书籍失败:" + err.getMessage());
+                        return;
+                    }
+                    LogUtil.d(TAG, "suggest size : %s", list.size());
+                    lvListAdapter.getDataList().clear();
+                    lvListAdapter.getDataList().addAll(list);
+                    lvListAdapter.notifyDataSetChanged();
+                    UiUtils.setListViewHeightBasedOnChildren(lv_detail_suggest);
                 });
             }
         });

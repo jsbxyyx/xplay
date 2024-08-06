@@ -1,10 +1,7 @@
 package com.github.jsbxyyx.xbook;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Looper;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -37,16 +34,19 @@ public class LifecycleApplication extends Application {
         bookNetHelper = new BookNetHelper();
 
         String languages = "chinese,japanese,traditional chinese,english,korean,";
-        SPUtils.putData(getBaseContext(), Common.search_language_key, languages);
+        String languagesData = SPUtils.getData(getBaseContext(), Common.search_language_key, null);
+        if (Common.isNull(languagesData)) {
+            SPUtils.putData(getBaseContext(), Common.search_language_key, languages);
+        }
 
-        String extData = SPUtils.getData(getBaseContext(), Common.search_ext_key);
-        if (Common.isEmpty(extData)) {
+        String extData = SPUtils.getData(getBaseContext(), Common.search_ext_key, null);
+        if (Common.isNull(extData)) {
             extData = "EPUB,";
             SPUtils.putData(getBaseContext(), Common.search_ext_key, extData);
         }
 
-        String syncData = SPUtils.getData(getBaseContext(), Common.sync_key);
-        if (Common.isEmpty(syncData)) {
+        String syncData = SPUtils.getData(getBaseContext(), Common.sync_key, null);
+        if (Common.isNull(syncData)) {
             syncData = Common.sync_key_checked;
             SPUtils.putData(getBaseContext(), Common.sync_key, syncData);
         }

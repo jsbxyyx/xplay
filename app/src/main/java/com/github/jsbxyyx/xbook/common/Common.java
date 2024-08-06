@@ -90,6 +90,14 @@ public class Common {
         return str == null || str.trim().isEmpty();
     }
 
+    public static boolean isNull(String str) {
+        return str == null;
+    }
+
+    public static String toString(Object obj) {
+        return obj == null ? "" : obj.toString();
+    }
+
     public static void sleep(int millis) {
         try {
             Thread.sleep(millis);

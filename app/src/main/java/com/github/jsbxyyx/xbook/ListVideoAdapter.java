@@ -65,8 +65,8 @@ public class ListVideoAdapter extends BaseAdapter {
 
         Picasso.get().load(video.getCoverImage()).into(holder.video_image);
         holder.video_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        holder.video_name.setText(video.getName());
-        holder.video_desc.setText(video.getDescText());
+        holder.video_name.setText(Common.toString(video.getName()));
+        holder.video_desc.setText(Common.toString(video.getDescText()));
 
         List<QqVideo.QqPlaylist> playlist = video.getPlaylist();
         int subPosition = 0;

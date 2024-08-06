@@ -28,7 +28,7 @@ android {
         targetSdk 33
         versionCode 20
         versionName "2.0"
-        archivesBaseName = "xplay-v${versionName}"
+        archivesBaseName = "xplay"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

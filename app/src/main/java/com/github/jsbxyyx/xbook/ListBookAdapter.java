@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.squareup.picasso.Picasso;
 
@@ -74,11 +75,11 @@ public class ListBookAdapter extends BaseAdapter {
 
         Picasso.get().load(book.getCoverImage()).into(holder.book_image);
         holder.book_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        holder.book_title.setText(book.getTitle());
-        holder.book_publish.setText(book.getPublisher());
-        holder.book_author.setText(book.getAuthors());
-        holder.book_file.setText(book.getFile());
-        holder.book_language_year.setText(book.getLanguage() + ", " + book.getYear());
+        holder.book_title.setText(Common.toString(book.getTitle()));
+        holder.book_publish.setText(Common.toString(book.getPublisher()));
+        holder.book_author.setText(Common.toString(book.getAuthors()));
+        holder.book_file.setText(Common.toString(book.getFile()));
+        holder.book_language_year.setText(Common.toString(book.getLanguage()) + " " + Common.toString(book.getYear()));
 
         return convertView;
     }

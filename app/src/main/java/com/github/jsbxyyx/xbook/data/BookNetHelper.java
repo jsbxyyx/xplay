@@ -1063,4 +1063,60 @@ public class BookNetHelper {
         });
     }
 
+    public void detailSuggest(String detailUrl, DataCallback<List<Book>> dataCallback) {
+        Map<String, Object> object = new HashMap<>();
+        String reqUrl = "/zlib_detail_suggest";
+        object.put("method", "POST");
+        object.put("url", reqUrl);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("User-Agent", userAgent);
+        headers.put(cookie_key, SessionManager.getSession());
+        object.put("headers", headers);
+
+        Map<String, Object> params = new HashMap<>();
+        object.put("params", params);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("detail_url", detailUrl);
+        object.put("data", data);
+
+        String s = JsonUtil.toJson(object);
+        LogUtil.d(TAG, "detail suggest request: %s", s);
+
+        Request request = new Request.Builder()
+                .url(xburl)
+                .post(RequestBody.create(s, MediaType.parse("application/json")))
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
+                dataCallback.call(null, e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    LogUtil.d(TAG, "onResponse: %s", response.code());
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    return;
+                }
+                String string = response.body().string();
+                LogUtil.d(TAG, "detail suggest response: %s", string);
+                JsonNode jsonObject = JsonUtil.readTree(string);
+                int status = jsonObject.get("status").asInt();
+                if (!Common.statusSuccessful(status)) {
+                    LogUtil.d(TAG, "onResponse: %s", status);
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    return;
+                }
+                JsonNode list = jsonObject.get("data").get("list");
+                List<Book> books = JsonUtil.convertValue(list, new TypeReference<List<Book>>() {
+                });
+                dataCallback.call(books, null);
+            }
+        });
+    }
+
 }

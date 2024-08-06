@@ -19,8 +19,13 @@ public class SPUtils {
     }
 
     public static String getData(Context context, String key) {
+        return getData(context, key, "");
+    }
+
+    public static String getData(Context context, String key, String defValue) {
         SharedPreferences sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-        String data = sp.getString(key, "");
+        String data = sp.getString(key, defValue);
         return data;
     }
+
 }

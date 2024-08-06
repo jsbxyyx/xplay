@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -30,6 +29,7 @@ import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * @author jsbxyyx
@@ -40,6 +40,14 @@ public class SettingsActivity extends AppCompatActivity {
     private NotificationManager notificationManager;
     private NotificationCompat.Builder builder;
     private String downloadUrl;
+
+    private static String[] clearKeys = new String[]{
+            Common.profile_nickname_key,
+            Common.profile_email_key,
+            Common.search_ext_key,
+            Common.search_language_key,
+            Common.sync_key,
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,6 +245,13 @@ public class SettingsActivity extends AppCompatActivity {
             LogUtil.d(getClass().getSimpleName(), "sync checked : %s", cb.isChecked());
         });
 
+        Button btn_clear_settings = findViewById(R.id.btn_clear_settings);
+        btn_clear_settings.setOnClickListener((v) -> {
+            for (String key : clearKeys) {
+                SPUtils.putData(this, key, "");
+            }
+            LogUtil.i(getClass().getSimpleName(), "clear settings : %s", Arrays.toString(clearKeys));
+        });
     }
 
     public void setDownloadUrl(String downloadUrl) {
