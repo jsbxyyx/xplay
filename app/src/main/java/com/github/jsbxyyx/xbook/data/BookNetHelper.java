@@ -33,12 +33,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -48,18 +46,6 @@ import okhttp3.Response;
  * @since 1.0
  */
 public class BookNetHelper {
-
-    private OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(5000, TimeUnit.MILLISECONDS)
-            .readTimeout(30000, TimeUnit.MILLISECONDS)
-            .writeTimeout(30000, TimeUnit.MILLISECONDS)
-            .build();
-
-    private OkHttpClient syncClient = new OkHttpClient.Builder()
-            .connectTimeout(60000, TimeUnit.MILLISECONDS)
-            .readTimeout(3600000, TimeUnit.MILLISECONDS)
-            .writeTimeout(3600000, TimeUnit.MILLISECONDS)
-            .build();
 
     private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
     private String content_type_key = "content-type";
@@ -108,7 +94,7 @@ public class BookNetHelper {
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -163,7 +149,7 @@ public class BookNetHelper {
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -228,7 +214,7 @@ public class BookNetHelper {
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: ", LogUtil.getStackTraceString(e));
@@ -291,7 +277,7 @@ public class BookNetHelper {
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        syncClient.newCall(request).enqueue(new Callback() {
+        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -361,7 +347,7 @@ public class BookNetHelper {
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -425,7 +411,7 @@ public class BookNetHelper {
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -482,7 +468,7 @@ public class BookNetHelper {
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -547,7 +533,7 @@ public class BookNetHelper {
                 .url(xurl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -622,7 +608,7 @@ public class BookNetHelper {
                         .url(xburl)
                         .post(RequestBody.create(s, MediaType.parse("application/json")))
                         .build();
-                syncClient.newCall(request).enqueue(new Callback() {
+                HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -678,7 +664,7 @@ public class BookNetHelper {
                     .url(xburl)
                     .post(RequestBody.create(s, MediaType.parse("application/json")))
                     .build();
-            syncClient.newCall(request).enqueue(new Callback() {
+            HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -732,7 +718,7 @@ public class BookNetHelper {
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        syncClient.newCall(request).enqueue(new Callback() {
+        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -783,7 +769,7 @@ public class BookNetHelper {
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        syncClient.newCall(request).enqueue(new Callback() {
+        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -828,7 +814,7 @@ public class BookNetHelper {
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
 
-        syncClient.newCall(request).enqueue(new Callback() {
+        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -879,7 +865,7 @@ public class BookNetHelper {
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        syncClient.newCall(request).enqueue(new Callback() {
+        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", e);
@@ -928,7 +914,7 @@ public class BookNetHelper {
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        syncClient.newCall(request).enqueue(new Callback() {
+        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", e);
@@ -979,7 +965,7 @@ public class BookNetHelper {
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        syncClient.newCall(request).enqueue(new Callback() {
+        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", e);
@@ -1034,7 +1020,7 @@ public class BookNetHelper {
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -1088,7 +1074,7 @@ public class BookNetHelper {
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));

@@ -440,6 +440,7 @@ public class ProfileFragment extends Fragment {
                     loading.dismiss();
                     UiUtils.showToast("云同步到本地完成");
                 });
+
             }
         });
     }

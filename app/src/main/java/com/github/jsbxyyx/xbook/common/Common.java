@@ -8,7 +8,9 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author jsbxyyx
@@ -42,6 +44,8 @@ public class Common {
     public static String action_file_download = "file_download";
 
     public static String x_message = "X-message";
+    public static String serv_userid = "remix_userid";
+    public static String serv_userkey = "remix_userkey";
 
     public static String urlEncode(String str) {
         try {
@@ -104,4 +108,24 @@ public class Common {
         } catch (InterruptedException ignore) {
         }
     }
+
+    public static String trim(String str) {
+        return str == null ? "" : str.trim();
+    }
+
+    public static Map<String, String> parseKv(String str) {
+        Map<String, String> kvMap = new HashMap<>();
+        if (isBlank(str)) {
+            return kvMap;
+        }
+        String[] cookies = str.split("\\;");
+        for (String cookie : cookies) {
+            String[] keyValue = cookie.split("\\=", 2);
+            if (keyValue.length == 2) {
+                kvMap.put(trim(keyValue[0]), trim(keyValue[1]));
+            }
+        }
+        return kvMap;
+    }
+
 }

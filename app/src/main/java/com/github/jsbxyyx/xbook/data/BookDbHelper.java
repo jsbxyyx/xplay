@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.BookReader;
+import com.github.jsbxyyx.xbook.data.bean.ViewTime;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,39 +56,58 @@ public class BookDbHelper extends SQLiteOpenHelper {
     private String f_book_reader_user = "user";
     private String f_book_reader_remark = "remark";
 
+    private String t_view_time = "view_time";
+    private String f_view_time_id = "id";
+    private String f_view_time_target_id = "target_id";
+    private String f_view_time_target_type = "target_type";
+    private String f_view_time_time = "time";
+    private String f_view_time_created = "created";
+    private String f_view_time_user = "user";
+    private String f_view_time_remark = "remark";
+
     public BookDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table if not exists " + t_book + " ( " +
-                f_book_id + " INTEGER primary key AUTOINCREMENT, " +
-                f_book_bid + " TEXT not null, " +
-                f_book_isbn + " TEXT not null, " +
-                f_book_img + " TEXT not null, " +
-                f_book_title + " TEXT not null, " +
-                f_book_publisher + " TEXT, " +
-                f_book_authors + " TEXT, " +
-                f_book_file + " TEXT, " +
-                f_book_language + " TEXT, " +
-                f_book_year + " TEXT, " +
-                f_book_detail_url + " TEXT not null, " +
-                f_book_download_url + " TEXT not null, " +
-                f_book_remark + " TEXT, " +
-                f_book_created + " DATETIME not null," +
-                f_book_user + " TEXT not null " +
-                ")");
+        db.execSQL("create table if not exists " + t_book + " ( "
+                + f_book_id + " INTEGER primary key AUTOINCREMENT"
+                + ", " + f_book_bid + " TEXT not null"
+                + ", " + f_book_isbn + " TEXT not null"
+                + ", " + f_book_img + " TEXT not null"
+                + ", " + f_book_title + " TEXT not null"
+                + ", " + f_book_publisher + " TEXT"
+                + ", " + f_book_authors + " TEXT"
+                + ", " + f_book_file + " TEXT"
+                + ", " + f_book_language + " TEXT"
+                + ", " + f_book_year + " TEXT"
+                + ", " + f_book_detail_url + " TEXT not null"
+                + ", " + f_book_download_url + " TEXT not null"
+                + ", " + f_book_remark + " TEXT"
+                + ", " + f_book_created + " DATETIME not null"
+                + ", " + f_book_user + " TEXT not null"
+                + ")");
 
-        db.execSQL("create table if not exists " + t_book_reader + " ( " +
-                f_book_reader_id + " INTEGER primary key AUTOINCREMENT, " +
-                f_book_reader_book_id + " INTEGER not null, " +
-                f_book_reader_cur + " INTEGER not null, " +
-                f_book_reader_pages + " INTEGER not null, " +
-                f_book_reader_created + " DATETIME not null, " +
-                f_book_reader_user + " TEXT not null, " +
-                f_book_reader_remark + " TEXT " +
-                ")");
+        db.execSQL("create table if not exists " + t_book_reader + " ( "
+                + f_book_reader_id + " INTEGER primary key AUTOINCREMENT"
+                + ", " + f_book_reader_book_id + " INTEGER not null"
+                + ", " + f_book_reader_cur + " INTEGER not null"
+                + ", " + f_book_reader_pages + " INTEGER not null"
+                + ", " + f_book_reader_created + " DATETIME not null"
+                + ", " + f_book_reader_user + " TEXT not null"
+                + ", " + f_book_reader_remark + " TEXT"
+                + ")");
+
+        db.execSQL("create table if not exists " + t_view_time + " ( "
+                + f_view_time_id + " INTEGER primary key AUTOINCREMENT"
+                + ", " + f_view_time_target_id + " TEXT NOT NULL"
+                + ", " + f_view_time_target_type + " TEXT NOT NULL"
+                + ", " + f_view_time_time + " INTEGER NOT NULL"
+                + ", " + f_view_time_created + " DATETIME NOT NULL"
+                + ", " + f_view_time_user + " TEXT NOT NULL"
+                + ", " + f_view_time_remark + " TEXT"
+                + ")");
     }
 
 
@@ -296,4 +316,23 @@ public class BookDbHelper extends SQLiteOpenHelper {
         e.setUser(cursor.getString(cursor.getColumnIndex(f_book_reader_user)));
         e.setRemark(cursor.getString(cursor.getColumnIndex(f_book_reader_remark)));
     }
+
+    public void insertViewTime(ViewTime e) {
+        try {
+            l.lock();
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(f_view_time_id, e.getId());
+            values.put(f_view_time_target_id, e.getTargetId());
+            values.put(f_view_time_target_type, e.getTargetType());
+            values.put(f_view_time_time, e.getTime());
+            values.put(f_view_time_created, new Date().getTime());
+            values.put(f_view_time_user, e.getUser());
+            values.put(f_view_time_remark, e.getRemark());
+            db.insert(t_view_time, null, values);
+        } finally {
+            l.unlock();
+        }
+    }
+
 }

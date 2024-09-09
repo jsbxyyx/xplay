@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -66,10 +65,13 @@ public class RegistrationActivity extends AppCompatActivity {
             String user = et_login_user.getText().toString();
             String password = et_login_password.getText().toString();
             String code = et_login_code.getText().toString();
+            LoadingDialog loading = new LoadingDialog(getBaseContext());
+            loading.show();
             bookNetHelper.registration(user, password, code, new DataCallback<String>() {
                 @Override
                 public void call(String str, Throwable err) {
                     runOnUiThread(() -> {
+                        loading.dismiss();
                         if (err != null) {
                             UiUtils.showToast("注册失败:" + err.getMessage());
                             return;

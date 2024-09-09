@@ -3,21 +3,24 @@ package com.github.jsbxyyx.xbook;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.webkit.WebView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
+import com.github.jsbxyyx.xbook.common.IdUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
+import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
+import com.github.jsbxyyx.xbook.data.bean.ViewTime;
 import com.github.jsbxyyx.xbook.httpserver.HttpServer;
 import com.github.jsbxyyx.xbook.httpserver.MediaTypeFactory;
 
@@ -25,6 +28,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 /**
  * @author jsbxyyx
@@ -38,6 +42,8 @@ public class ViewActivity extends AppCompatActivity {
 
     private BookDbHelper bookDbHelper;
     private BookNetHelper bookNetHelper;
+
+    private long startTime;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -127,6 +133,31 @@ public class ViewActivity extends AppCompatActivity {
         } catch (IOException e) {
             LogUtil.e(getClass().getSimpleName(), "onCreate: %s", LogUtil.getStackTraceString(e));
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startTime = SystemClock.elapsedRealtime();
+        LogUtil.d(getClass().getSimpleName(), "startTime:%s", startTime);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        long endTime = SystemClock.elapsedRealtime();
+        long stayTime = endTime - startTime;
+        LogUtil.d(getClass().getSimpleName(), "endTime:%s - startTime:%s = stayTime:%s", endTime, startTime, stayTime);
+
+        ViewTime viewTime = new ViewTime();
+        viewTime.setId(IdUtil.nextId());
+        viewTime.setTargetId(bookId);
+        viewTime.setTargetType("1");
+        viewTime.setTime(stayTime);
+        Map<String, String> kv = Common.parseKv(SessionManager.getSession());
+        viewTime.setUser(kv.getOrDefault(Common.serv_userid, ""));
+        viewTime.setRemark("");
+        bookDbHelper.insertViewTime(viewTime);
     }
 
     @Override

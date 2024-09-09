@@ -20,12 +20,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -34,12 +32,6 @@ import okhttp3.Response;
  * @author jsbxyyx
  */
 public class VideoNetHelper {
-
-    private OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(5000, TimeUnit.MILLISECONDS)
-            .readTimeout(30000, TimeUnit.MILLISECONDS)
-            .writeTimeout(30000, TimeUnit.MILLISECONDS)
-            .build();
 
     private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
 
@@ -69,7 +61,7 @@ public class VideoNetHelper {
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -122,7 +114,7 @@ public class VideoNetHelper {
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -175,7 +167,7 @@ public class VideoNetHelper {
                 .url(xburl)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
