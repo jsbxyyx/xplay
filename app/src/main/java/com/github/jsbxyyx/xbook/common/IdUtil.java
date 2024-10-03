@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author jsbxyyx
- * @since 1.0
  */
 public class IdUtil {
 

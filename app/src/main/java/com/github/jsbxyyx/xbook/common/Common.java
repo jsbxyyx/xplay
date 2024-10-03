@@ -14,7 +14,6 @@ import java.util.Map;
 
 /**
  * @author jsbxyyx
- * @since 1.0
  */
 public class Common {
 

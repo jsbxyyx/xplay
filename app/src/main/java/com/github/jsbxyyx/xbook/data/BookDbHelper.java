@@ -12,7 +12,9 @@ import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.BookReader;
 import com.github.jsbxyyx.xbook.data.bean.ViewTime;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -149,7 +151,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
             String sql = String.format("select * from %s where %s=?", t_book, f_book_bid);
-            try (Cursor cursor = db.rawQuery(sql, new String[]{bid})) {
+            String[] params = new String[]{bid};
+            LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
+            try (Cursor cursor = db.rawQuery(sql, params)) {
                 if (cursor.moveToFirst()) {
                     Book e = new Book();
                     buildBook(cursor, e);
@@ -167,7 +171,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
             String sql = String.format("select * from %s where %s=?", t_book, f_book_id);
-            try (Cursor cursor = db.rawQuery(sql, new String[]{id})) {
+            String[] params = new String[]{id};
+            LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
+            try (Cursor cursor = db.rawQuery(sql, params)) {
                 if (cursor.moveToFirst()) {
                     Book e = new Book();
                     buildBook(cursor, e);
@@ -186,7 +192,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
             List<Book> list = new ArrayList<>();
             SQLiteDatabase db = getWritableDatabase();
             String sql = String.format("select * from %s", t_book);
-            try (Cursor cursor = db.rawQuery(sql, null)) {
+            String[] params = new String[]{};
+            LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
+            try (Cursor cursor = db.rawQuery(sql, params)) {
                 if (cursor.moveToFirst()) {
                     do {
                         Book e = new Book();
@@ -206,7 +214,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
             String sql = String.format("select * from %s where %s=?", t_book_reader, f_book_reader_book_id);
-            try (Cursor cursor = db.rawQuery(sql, new String[]{bookId + ""})) {
+            String[] params = new String[]{bookId + ""};
+            LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
+            try (Cursor cursor = db.rawQuery(sql, params)) {
                 if (cursor.moveToFirst()) {
                     BookReader e = new BookReader();
                     buildBookReader(cursor, e);
@@ -224,9 +234,13 @@ public class BookDbHelper extends SQLiteOpenHelper {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
             String sql1 = String.format("delete from %s where %s=?", t_book, f_book_id);
-            db.execSQL(sql1, new Object[]{id});
+            Object[] params1 = new Object[]{id};
+            LogUtil.d(TAG, "sql:[%s] params:%s", sql1, Arrays.toString(params1));
+            db.execSQL(sql1, params1);
             String sql2 = String.format("delete from %s where %s=?", t_book_reader, f_book_reader_book_id);
-            db.execSQL(sql2, new Object[]{id});
+            Object[] params2 = new Object[]{id};
+            LogUtil.d(TAG, "sql:[%s] params:%s", sql2, Arrays.toString(params2));
+            db.execSQL(sql2, params2);
         } finally {
             l.unlock();
         }
@@ -242,13 +256,15 @@ public class BookDbHelper extends SQLiteOpenHelper {
                     f_book_authors, f_book_file, f_book_language, f_book_year, f_book_detail_url,
                     f_book_download_url, f_book_remark, f_book_created, f_book_user,
                     f_book_id);
-            db.execSQL(sql1, new Object[]{
+            Object[] params = new Object[]{
                     book.getBid(), book.getIsbn(), book.getCoverImage(), book.getTitle(),
                     book.getPublisher(), book.getAuthors(), book.getFile(), book.getLanguage(),
                     book.getYear(), book.getDetailUrl(), book.getDownloadUrl(), book.getRemark(),
                     book.getCreated(), book.getUser(),
                     book.getId()
-            });
+            };
+            LogUtil.d(TAG, "sql:[%s] params:%s", sql1, Arrays.toString(params));
+            db.execSQL(sql1, params);
         } finally {
             l.unlock();
         }
@@ -280,7 +296,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
                     t_book_reader,
                     f_book_reader_cur, f_book_reader_pages, f_book_reader_remark,
                     f_book_reader_book_id);
-            db.execSQL(sql, new Object[]{e.getCur(), e.getPages(), e.getRemark(), e.getBookId()});
+            Object[] params = new Object[]{e.getCur(), e.getPages(), e.getRemark(), e.getBookId()};
+            LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
+            db.execSQL(sql, params);
         } finally {
             l.unlock();
         }
@@ -335,4 +353,37 @@ public class BookDbHelper extends SQLiteOpenHelper {
         }
     }
 
+    public List<ViewTime> findViewTime(Date start, String user) {
+        try {
+            l.lock();
+            SQLiteDatabase db = getWritableDatabase();
+            String sql = String.format("select * from %s where %s >= ? and %s = ?", t_view_time, f_view_time_created, f_view_time_user);
+            String[] params = new String[]{start.getTime() + "", user};
+            LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
+            try (Cursor cursor = db.rawQuery(sql, params)) {
+                List<ViewTime> list = new ArrayList<>();
+                if (cursor.moveToFirst()) {
+                    do {
+                        ViewTime e = new ViewTime();
+                        buildViewTime(cursor, e);
+                        list.add(e);
+                    } while (cursor.moveToNext());
+                }
+                return list;
+            }
+        } finally {
+            l.unlock();
+        }
+    }
+
+    @SuppressLint("Range")
+    private void buildViewTime(Cursor cursor, ViewTime e) {
+        e.setId(cursor.getLong(cursor.getColumnIndex(f_view_time_id)));
+        e.setTargetId(cursor.getString(cursor.getColumnIndex(f_view_time_target_id)));
+        e.setTargetType(cursor.getString(cursor.getColumnIndex(f_view_time_target_type)));
+        e.setTime(cursor.getLong(cursor.getColumnIndex(f_view_time_time)));
+        e.setCreated(cursor.getString(cursor.getColumnIndex(f_view_time_created)));
+        e.setUser(cursor.getString(cursor.getColumnIndex(f_view_time_user)));
+        e.setRemark(cursor.getString(cursor.getColumnIndex(f_view_time_remark)));
+    }
 }

@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 
 /**
  * @author jsbxyyx
- * @since 1.0
  */
 public class SPUtils {
 

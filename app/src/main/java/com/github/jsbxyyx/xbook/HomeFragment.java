@@ -4,23 +4,38 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
+import com.github.jsbxyyx.xbook.common.DateUtils;
 import com.github.jsbxyyx.xbook.common.LogUtil;
+import com.github.jsbxyyx.xbook.common.SessionManager;
+import com.github.jsbxyyx.xbook.common.ThreadUtils;
 import com.github.jsbxyyx.xbook.common.UiUtils;
+import com.github.jsbxyyx.xbook.contribution.ContributionConfig;
+import com.github.jsbxyyx.xbook.contribution.ContributionItem;
+import com.github.jsbxyyx.xbook.contribution.ContributionView;
+import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.bean.ViewTime;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jsbxyyx
@@ -34,12 +49,12 @@ public class HomeFragment extends Fragment {
     private Activity mActivity;
 
     private BookNetHelper bookNetHelper;
+    private BookDbHelper bookDbHelper;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        bookNetHelper = new BookNetHelper();
         return view;
     }
 
@@ -49,6 +64,85 @@ public class HomeFragment extends Fragment {
 
         mView = view;
         mActivity = getActivity();
+
+        bookNetHelper = new BookNetHelper();
+        bookDbHelper = new BookDbHelper(mActivity);
+
+        TextView contribution_view_text = mActivity.findViewById(R.id.contribution_view_text);
+
+        int days = 182;
+        Date startDate = DateUtils.setHms(new Date(System.currentTimeMillis() - (1000L * 60 * 60 * 24 * days)), 0, 0, 0, 0);
+
+        ContributionView contributionView = mActivity.findViewById(R.id.contribution_view);
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.setTime(startDate);
+        List<ContributionItem> initData = new ArrayList<>(180);
+        for (int i = 0; i <= days; i++) {
+            initData.add(new ContributionItem(startCalendar.getTime(), 0));
+            startCalendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        contributionView.setData(startDate, initData, ContributionConfig.defaultConfig());
+        contributionView.setOnItemClick(new ContributionView.OnItemClickListener() {
+            @Override
+            public void onClick(int position, ContributionItem item) {
+                StringBuilder builder = new StringBuilder();
+                if (item.getData() != null) {
+                    builder.append(DateUtils.format(item.getTime(), "yyyy年MM月dd日"))
+                            .append(DateUtils.getWeekOfDate(item.getTime()))
+                            .append("打开书籍")
+                            .append(((List) item.getData()).size())
+                            .append("次");
+                    contribution_view_text.setTextColor(0xFF216E39);
+                } else {
+                    builder.append(DateUtils.format(item.getTime(), "yyyy年MM月dd日"))
+                            .append(DateUtils.getWeekOfDate(item.getTime()))
+                            .append("打开书籍")
+                            .append("0")
+                            .append("次");
+                    contribution_view_text.setTextColor(Color.GRAY);
+                }
+                contribution_view_text.setText(builder.toString());
+            }
+        });
+
+        ThreadUtils.submit(() -> {
+            Map<String, String> kv = Common.parseKv(SessionManager.getSession());
+            List<ViewTime> list = bookDbHelper.findViewTime(startDate, kv.getOrDefault(Common.serv_userid, ""));
+            List<ContributionItem> data = new ArrayList<>();
+            if (list != null && !list.isEmpty()) {
+                Map<String, List<ViewTime>> map = new LinkedHashMap<>();
+                for (ViewTime viewTime : list) {
+                    String created = viewTime.getCreated();
+                    String key = DateUtils.format(new Date(Long.parseLong(created)), "yyyy-MM-dd");
+                    if (map.get(key) != null) {
+                        map.get(key).add(viewTime);
+                    } else {
+                        List<ViewTime> viewTimeList = new ArrayList<>();
+                        viewTimeList.add(viewTime);
+                        map.put(key, viewTimeList);
+                    }
+                }
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(startDate);
+                for (int i = 0; i <= days; i++) {
+                    String format = DateUtils.format(calendar.getTime(), "yyyy-MM-dd");
+                    if (!map.containsKey(format)) {
+                        data.add(new ContributionItem(calendar.getTime(), 0));
+                    } else {
+                        LogUtil.d(TAG, "contains date : %s", format);
+                    }
+                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+                }
+                for (Map.Entry<String, List<ViewTime>> entry : map.entrySet()) {
+                    Date parse = DateUtils.parse(entry.getKey(), "yyyy-MM-dd");
+                    data.add(new ContributionItem(parse, entry.getValue().size(), entry.getValue()));
+                }
+            }
+            mActivity.runOnUiThread(() -> {
+                contributionView.setData(startDate, data);
+            });
+        });
 
         bookNetHelper.cloudVersions(new DataCallback<JsonNode>() {
             @Override

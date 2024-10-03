@@ -21,6 +21,7 @@
 #-renamesourcefileattribute SourceFile
 # bean
 -keep class com.github.jsbxyyx.xbook.data.bean.** {*;}
+-keep class com.github.jsbxyyx.xbook.contribution.** {*;}
 # jsoup
 -keeppackagenames org.jsoup.nodes
 # Jackson

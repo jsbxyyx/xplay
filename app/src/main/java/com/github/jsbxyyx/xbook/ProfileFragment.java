@@ -283,6 +283,7 @@ public class ProfileFragment extends Fragment {
             Intent intent = new Intent(mActivity, ViewActivity.class);
             intent.putExtra("file_path", file_path);
             intent.putExtra("book_id", book.getId() + "");
+            intent.putExtra("book_title", book.getTitle());
             BookReader bookReader = book.getBookReader();
             if (bookReader == null) {
                 intent.putExtra("cur", "");

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.IdUtil;
+import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.SessionManager;
@@ -28,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,6 +41,7 @@ public class ViewActivity extends AppCompatActivity {
     private HttpServer mHttpd;
     private WebView webView;
     private String bookId;
+    private String bookTitle;
 
     private BookDbHelper bookDbHelper;
     private BookNetHelper bookNetHelper;
@@ -61,6 +64,7 @@ public class ViewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String file_path = intent.getStringExtra("file_path");
         bookId = intent.getStringExtra("book_id");
+        bookTitle = intent.getStringExtra("book_title");
         String cur = intent.getStringExtra("cur");
         String pages = intent.getStringExtra("pages");
 
@@ -156,7 +160,9 @@ public class ViewActivity extends AppCompatActivity {
         viewTime.setTime(stayTime);
         Map<String, String> kv = Common.parseKv(SessionManager.getSession());
         viewTime.setUser(kv.getOrDefault(Common.serv_userid, ""));
-        viewTime.setRemark("");
+        Map<String, String> remark = new HashMap<>();
+        remark.put("bookTitle", bookTitle);
+        viewTime.setRemark(JsonUtil.toJson(remark));
         bookDbHelper.insertViewTime(viewTime);
     }
 

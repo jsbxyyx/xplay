@@ -6,7 +6,6 @@ import com.github.jsbxyyx.xbook.BuildConfig;
 
 /**
  * @author jsbxyyx
- * @since 1.0
  */
 public class LogUtil {
 
