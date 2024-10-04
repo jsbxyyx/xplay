@@ -22,6 +22,7 @@ import java.util.List;
 
 /**
  * 贡献图
+ * https://github.com/shaoweijie/contribution-view
  */
 public class ContributionView extends View {
 
