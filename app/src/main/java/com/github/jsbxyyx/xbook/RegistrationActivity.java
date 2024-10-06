@@ -65,7 +65,7 @@ public class RegistrationActivity extends AppCompatActivity {
             String user = et_login_user.getText().toString();
             String password = et_login_password.getText().toString();
             String code = et_login_code.getText().toString();
-            LoadingDialog loading = new LoadingDialog(getBaseContext());
+            LoadingDialog loading = new LoadingDialog(this);
             loading.show();
             bookNetHelper.registration(user, password, code, new DataCallback<String>() {
                 @Override
