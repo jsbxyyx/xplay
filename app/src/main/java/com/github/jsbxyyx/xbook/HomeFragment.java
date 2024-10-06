@@ -89,16 +89,16 @@ public class HomeFragment extends Fragment {
                 if (item.getData() != null) {
                     builder.append(DateUtils.format(item.getTime(), "yyyy年MM月dd日"))
                             .append(DateUtils.getWeekOfDate(item.getTime()))
-                            .append("打开书籍")
-                            .append(((List) item.getData()).size())
-                            .append("次");
+                            .append("阅读")
+                            .append(String.format("%.1f", item.getNumber() / 1000 / 60.0))
+                            .append("分钟");
                     contribution_view_text.setTextColor(0xFF216E39);
                 } else {
                     builder.append(DateUtils.format(item.getTime(), "yyyy年MM月dd日"))
                             .append(DateUtils.getWeekOfDate(item.getTime()))
-                            .append("打开书籍")
+                            .append("阅读")
                             .append("0")
-                            .append("次");
+                            .append("分钟");
                     contribution_view_text.setTextColor(Color.GRAY);
                 }
                 contribution_view_text.setText(builder.toString());
@@ -136,7 +136,11 @@ public class HomeFragment extends Fragment {
                 }
                 for (Map.Entry<String, List<ViewTime>> entry : map.entrySet()) {
                     Date parse = DateUtils.parse(entry.getKey(), "yyyy-MM-dd");
-                    data.add(new ContributionItem(parse, entry.getValue().size(), entry.getValue()));
+                    int millisecond = 0;
+                    for (ViewTime vt : entry.getValue()) {
+                        millisecond += vt.getTime();
+                    }
+                    data.add(new ContributionItem(parse, millisecond, entry.getValue()));
                 }
             }
             mActivity.runOnUiThread(() -> {
