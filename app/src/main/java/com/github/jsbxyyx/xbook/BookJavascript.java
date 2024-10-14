@@ -5,8 +5,9 @@ import android.webkit.JavascriptInterface;
 
 import com.github.jsbxyyx.xbook.common.IdUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
-import com.github.jsbxyyx.xbook.data.bean.Book;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
+import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.BookReader;
 
 /**
@@ -42,6 +43,11 @@ public class BookJavascript {
             bookReader.setPages(pages);
             bookDbHelper.updateBookReaderByBookId(bookReader);
         }
+    }
+
+    @JavascriptInterface
+    public void toast(String text) {
+        UiUtils.showToast(text);
     }
 
 }

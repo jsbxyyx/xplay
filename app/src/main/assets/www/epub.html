@@ -1,405 +1,563 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>epub</title>
-    <style>
-        /* normalize.css */
-        html { line-height: 1.15; -webkit-text-size-adjust: 100%; }
-        body { margin: 0; }
-        main { display: block; }
-        h1 { font-size: 2em; margin: 0.67em 0; }
-        hr { box-sizing: content-box; height: 0; overflow: visible; }
-        pre { font-family: monospace, monospace; font-size: 1em; }
-        a { background-color: transparent; }
-        abbr[title] { border-bottom: none; text-decoration: underline; text-decoration: underline dotted; }
-        b, strong { font-weight: bolder; }
-        code, kbd, samp { font-family: monospace, monospace; font-size: 1em; }
-        small { font-size: 80%; }
-        sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
-        sub { bottom: -0.25em; }
-        sup { top: -0.5em; }
-        img { border-style: none; }
-        button, input, optgroup, select, textarea { font-family: inherit; font-size: 100%; line-height: 1.15; margin: 0; }
-        button, input { overflow: visible; }
-        button, select { text-transform: none; }
-        button, [type="button"], [type="reset"], [type="submit"] { -webkit-appearance: button; }
-        button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner { border-style: none; padding: 0; }
-        button:-moz-focusring, [type="button"]:-moz-focusring, [type="reset"]:-moz-focusring, [type="submit"]:-moz-focusring { outline: 1px dotted ButtonText; }
-        fieldset { padding: 0.35em 0.75em 0.625em; }
-        legend { box-sizing: border-box; color: inherit; display: table; max-width: 100%; padding: 0; white-space: normal; }
-        progress { vertical-align: baseline; }
-        textarea { overflow: auto; }
-        [type="checkbox"], [type="radio"] { box-sizing: border-box; padding: 0; }
-        [type="number"]::-webkit-inner-spin-button, [type="number"]::-webkit-outer-spin-button { height: auto; }
-        [type="search"] { -webkit-appearance: textfield; outline-offset: -2px; }
-        [type="search"]::-webkit-search-decoration { -webkit-appearance: none; }
-        ::-webkit-file-upload-button { -webkit-appearance: button; font: inherit; }
-        details { display: block; }
-        summary { display: list-item; }
-        template { display: none; }
-        [hidden] { display: none; }
 
-        #area {
-            margin-bottom: 40px;
-        }
-        .page-tool {
-            position: fixed;
-            width: 100%;
-            height: 30px;
-            bottom: 0px;
-            left: 5px;
-            z-index: 1000;
-        }
-        .next {
-            width: 40%;
-        }
-        .prev {
-            width: 40%;
-        }
-        .focus {
-            width: 10%;
-            /* width: 50px; */
-        }
-        #epub-outline {
-            position: fixed;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-        #epub-dialog {
-            position: fixed;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-        .close {
-            position: fixed;
-            bottom: 2%;
-            cursor: pointer;
-            width: 92%;
-            height: 30px;
-            margin: 0 3%;
-            text-align: center;
-            border: 1px solid;
-            border-radius: 10px;
-            background-color: white;
-        }
-    </style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>epub</title>
+  <style>
+    /* normalize.css */
+    html {
+      line-height: 1.15;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    main {
+      display: block;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin: 0.67em 0;
+    }
+
+    hr {
+      box-sizing: content-box;
+      height: 0;
+      overflow: visible;
+    }
+
+    pre {
+      font-family: monospace, monospace;
+      font-size: 1em;
+    }
+
+    a {
+      background-color: transparent;
+    }
+
+    abbr[title] {
+      border-bottom: none;
+      text-decoration: underline;
+      text-decoration: underline dotted;
+    }
+
+    b,
+    strong {
+      font-weight: bolder;
+    }
+
+    code,
+    kbd,
+    samp {
+      font-family: monospace, monospace;
+      font-size: 1em;
+    }
+
+    small {
+      font-size: 80%;
+    }
+
+    sub,
+    sup {
+      font-size: 75%;
+      line-height: 0;
+      position: relative;
+      vertical-align: baseline;
+    }
+
+    sub {
+      bottom: -0.25em;
+    }
+
+    sup {
+      top: -0.5em;
+    }
+
+    img {
+      border-style: none;
+    }
+
+    button,
+    input,
+    optgroup,
+    select,
+    textarea {
+      font-family: inherit;
+      font-size: 100%;
+      line-height: 1.15;
+      margin: 0;
+    }
+
+    button,
+    input {
+      overflow: visible;
+    }
+
+    button,
+    select {
+      text-transform: none;
+    }
+
+    button,
+    [type="button"],
+    [type="reset"],
+    [type="submit"] {
+      -webkit-appearance: button;
+    }
+
+    button::-moz-focus-inner,
+    [type="button"]::-moz-focus-inner,
+    [type="reset"]::-moz-focus-inner,
+    [type="submit"]::-moz-focus-inner {
+      border-style: none;
+      padding: 0;
+    }
+
+    button:-moz-focusring,
+    [type="button"]:-moz-focusring,
+    [type="reset"]:-moz-focusring,
+    [type="submit"]:-moz-focusring {
+      outline: 1px dotted ButtonText;
+    }
+
+    fieldset {
+      padding: 0.35em 0.75em 0.625em;
+    }
+
+    legend {
+      box-sizing: border-box;
+      color: inherit;
+      display: table;
+      max-width: 100%;
+      padding: 0;
+      white-space: normal;
+    }
+
+    progress {
+      vertical-align: baseline;
+    }
+
+    textarea {
+      overflow: auto;
+    }
+
+    [type="checkbox"],
+    [type="radio"] {
+      box-sizing: border-box;
+      padding: 0;
+    }
+
+    [type="number"]::-webkit-inner-spin-button,
+    [type="number"]::-webkit-outer-spin-button {
+      height: auto;
+    }
+
+    [type="search"] {
+      -webkit-appearance: textfield;
+      outline-offset: -2px;
+    }
+
+    [type="search"]::-webkit-search-decoration {
+      -webkit-appearance: none;
+    }
+
+    ::-webkit-file-upload-button {
+      -webkit-appearance: button;
+      font: inherit;
+    }
+
+    details {
+      display: block;
+    }
+
+    summary {
+      display: list-item;
+    }
+
+    template {
+      display: none;
+    }
+
+    [hidden] {
+      display: none;
+    }
+
+    #area {
+      margin-bottom: 40px;
+    }
+
+    .page-tool {
+      position: fixed;
+      width: 100%;
+      height: 30px;
+      bottom: 0px;
+      left: 5px;
+      z-index: 1000;
+    }
+
+    .next {
+      width: 40%;
+    }
+
+    .prev {
+      width: 40%;
+    }
+
+    .focus {
+      width: 10%;
+      /* width: 50px; */
+    }
+
+    #epub-outline {
+      position: fixed;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    #epub-dialog {
+      position: fixed;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .close {
+      position: fixed;
+      bottom: 2%;
+      cursor: pointer;
+      width: 92%;
+      height: 30px;
+      margin: 0 3%;
+      text-align: center;
+      border: 1px solid;
+      border-radius: 10px;
+      background-color: white;
+    }
+  </style>
 </head>
+
 <body>
-<div id="epub-tool" style="display: block; height: 1.5rem; margin: 0.5rem 0.2rem 0rem 0.2rem;">
+  <div id="epub-tool" style="display: block; height: 1.5rem; margin: 0.5rem 0.2rem 0rem 0.2rem;">
     <div onclick="outlineClick(this)" style="width: 1rem; cursor: pointer; float: left;">三</div>
-    <div onclick="fontClick(this)" style="width: 1rem; cursor: pointer; float: left; margin-left: 5px;">Aa</div>
-    <div style="float: right; margin-left: 35%;">
-        <input id="curPage" type="number" value="" style="max-width: 3rem" onkeydown="goPage(event)">
-        &nbsp;/&nbsp;
-        <span id="totalPages"></span>
+    <div onclick="fontClick(this)" style="width: 1rem; cursor: pointer; float: left; margin-left: 5px;">Aa
     </div>
-</div>
-<div style="display: none;" id="epub-outline"></div>
-<div style="display: none;" id="epub-dialog"></div>
-<div id="epub-container"></div>
-<div class="page-tool" id="page-tool">
+    <div style="float: right; margin-left: 35%;">
+      <input id="curPage" type="number" value="" style="max-width: 3rem" onkeydown="goPage(event)">
+      &nbsp;/&nbsp;
+      <span id="totalPages"></span>
+    </div>
+  </div>
+  <div style="display: none;" id="epub-outline"></div>
+  <div style="display: none;" id="epub-dialog"></div>
+  <div id="epub-container"></div>
+  <div class="page-tool" id="page-tool">
     <button onclick="next()" class="next">下一页</button>
     <button onclick="prev()" class="prev">上一页</button>
     <button onclick="focusMode()" class="focus">〇</button>
-</div>
+  </div>
 
-<script src="jszip.min.js"></script>
-<script src="epub.min.js"></script>
-<script type="text/javascript">
-function loadScript(url, fn) {
-  try {
-    console.log('loadScript: ' + url);
-    var script = document.createElement("script");
-    script.src = url;
-    script.type = 'text/javascript';
-    document.body.appendChild(script);
-    script.onload = function(e) {
-      if (e.readystate == 'complete') {
-        if (typeof fn == 'function') {
-          fn();
+  <script src="jszip.min.js"></script>
+  <script src="epub.min.js"></script>
+  <script type="text/javascript">
+    function loadScript(url, fn) {
+      try {
+        console.log('loadScript: ' + url);
+        var script = document.createElement("script");
+        script.src = url;
+        script.type = 'text/javascript';
+        document.body.appendChild(script);
+        script.onload = function (e) {
+          if (e.readystate == 'complete') {
+            if (typeof fn == 'function') {
+              fn();
+            }
+          }
         }
+      } catch (err) {
+        console.error(err);
       }
     }
-  } catch(err) {
-    console.error(err);
-  }
-}
-window.onerror = function (message, source, lineno, colno, error) {
-  console.log("Error: " + message + "\n" + "Source: " + source + "\n" + "Line: " + lineno + "\n" + "Column: " + colno + "\n" + "Stack: " + error.stack);
-}
-function getUrlParam(name) {
-    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-    var r = window.location.search.substring(1).match(reg);
-    if (r != null) return unescape(r[2]); return null;
-}
-var body_ele = document.getElementsByTagName('body')[0];
-var base = window.location.protocol + "//" + window.location.host;
+    window.onerror = function (message, source, lineno, colno, error) {
+      console.log("Error: " + message + "\n" + "Source: " + source + "\n" + "Line: " + lineno + "\n" + "Column: " + colno + "\n" + "Stack: " + error.stack);
+    }
+    function getUrlParam(name) {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+      var r = window.location.search.substring(1).match(reg);
+      if (r != null) return unescape(r[2]); return null;
+    }
+    var body_ele = document.getElementsByTagName('body')[0];
+    var base = window.location.protocol + "//" + window.location.host;
 
-var gold_theme = {
-  'body': {
-    'color': '#000000',
-    'background': '#f0edd8',
-    'font-size': '16px !important',
-  },
-  'pre': {
-    'overflow': 'visible',
-    'white-space': 'pre-wrap',
-    'word-break': 'break-word',
-    'max-height': '60%',
-  },
-  'code': {
-    'overflow': 'visible',
-    'white-space': 'pre-wrap',
-    'word-break': 'break-word',
-    'max-height': '60%',
-  }
-}
+    var gold_theme = {
+      'body': {
+        'color': '#000000',
+        'background': '#f0edd8',
+        'font-size': '16px !important',
+      },
+      'pre': {
+        'overflow': 'visible',
+        'white-space': 'pre-wrap',
+        'word-break': 'break-word',
+        'max-height': '60%',
+      },
+      'code': {
+        'overflow': 'visible',
+        'white-space': 'pre-wrap',
+        'word-break': 'break-word',
+        'max-height': '60%',
+      }
+    }
 
-var file = base + "/" + getUrlParam("name") + "?_=" + new Date().getTime();
-var book_id = getUrlParam("book_id");
-var cur = getUrlParam("cur");
-var pages = getUrlParam("pages");
-console.log('book_id:' + book_id + ', cur:' + cur + ', pages:' + pages);
+    var file = base + "/" + getUrlParam("name") + "?_=" + new Date().getTime();
+    var book_id = getUrlParam("book_id");
+    var cur = getUrlParam("cur");
+    var pages = getUrlParam("pages");
+    console.log('book_id:' + book_id + ', cur:' + cur + ', pages:' + pages);
 
-var page_tool_ele = document.getElementById('page-tool');
-var pageToolHeight = page_tool_ele.offsetHeight;
+    var page_tool_ele = document.getElementById('page-tool');
+    var pageToolHeight = page_tool_ele.offsetHeight;
 
-let offsetX, offsetY, isDragging = false;
+    let offsetX, offsetY, isDragging = false;
 
-// Touch events
-page_tool_ele.addEventListener('touchstart', (e) => {
-    const touch = e.touches[0];
-    startDragging(touch.clientX, touch.clientY);
-    document.addEventListener('touchmove', onTouchMove);
-    document.addEventListener('touchend', stopDragging);
-});
+    // Touch events
+    page_tool_ele.addEventListener('touchstart', (e) => {
+      const touch = e.touches[0];
+      startDragging(touch.clientX, touch.clientY);
+      document.addEventListener('touchmove', onTouchMove);
+      document.addEventListener('touchend', stopDragging);
+    });
 
-function startDragging(clientX, clientY) {
-    offsetX = clientX - page_tool_ele.offsetLeft;
-    offsetY = clientY - page_tool_ele.offsetTop;
-    isDragging = true;
-}
+    function startDragging(clientX, clientY) {
+      offsetX = clientX - page_tool_ele.offsetLeft;
+      offsetY = clientY - page_tool_ele.offsetTop;
+      isDragging = true;
+    }
 
-function onTouchMove(e) {
-    if (isDragging) {
+    function onTouchMove(e) {
+      if (isDragging) {
         const touch = e.touches[0];
         moveButtonGroup(touch.clientX, touch.clientY);
+      }
     }
-}
 
-function moveButtonGroup(clientX, clientY) {
-    const minX = 0;
-    const minY = 0;
-    const maxX = window.innerWidth - page_tool_ele.clientWidth;
-    const maxY = window.innerHeight - page_tool_ele.clientHeight;
+    function moveButtonGroup(clientX, clientY) {
+      const minX = 0;
+      const minY = 0;
+      const maxX = window.innerWidth - page_tool_ele.clientWidth;
+      const maxY = window.innerHeight - page_tool_ele.clientHeight;
 
-    let newLeft = clientX - offsetX;
-    let newTop = clientY - offsetY;
+      let newLeft = clientX - offsetX;
+      let newTop = clientY - offsetY;
 
-    if (newLeft < minX) newLeft = minX;
-    if (newLeft > maxX) newLeft = maxX;
-    if (newTop < minY) newTop = minY;
-    if (newTop > maxY) newTop = maxY;
+      if (newLeft < minX) newLeft = minX;
+      if (newLeft > maxX) newLeft = maxX;
+      if (newTop < minY) newTop = minY;
+      if (newTop > maxY) newTop = maxY;
 
-    page_tool_ele.style.left = `${newLeft}px`;
-    page_tool_ele.style.top = `${newTop}px`;
-}
+      page_tool_ele.style.left = `${newLeft}px`;
+      page_tool_ele.style.top = `${newTop}px`;
+    }
 
-function stopDragging() {
-    isDragging = false;
-    document.removeEventListener('touchmove', onTouchMove);
-    document.removeEventListener('touchend', stopDragging);
-}
+    function stopDragging() {
+      isDragging = false;
+      document.removeEventListener('touchmove', onTouchMove);
+      document.removeEventListener('touchend', stopDragging);
+    }
 
-var epub_tool_ele = document.getElementById('epub-tool');
-var epubToolHeight = epub_tool_ele.offsetHeight;
+    var epub_tool_ele = document.getElementById('epub-tool');
+    var epubToolHeight = epub_tool_ele.offsetHeight;
 
-// page_tool_ele.style.color = gold_theme['body']['color'];
-// page_tool_ele.style.background = gold_theme['body']['background'];
+    // page_tool_ele.style.color = gold_theme['body']['color'];
+    // page_tool_ele.style.background = gold_theme['body']['background'];
 
-var book = ePub(file, {});
-var rendition = book.renderTo("epub-container", {
-    manager: "continuous",
-    width: (window.innerWidth) + 'px',
-    height: (window.innerHeight - pageToolHeight - epubToolHeight) + "px"
-});
-var displayed = rendition.display();
+    var book = ePub(file, {});
+    var rendition = book.renderTo("epub-container", {
+      manager: "continuous",
+      width: (window.innerWidth) + 'px',
+      height: (window.innerHeight - pageToolHeight - epubToolHeight) + "px"
+    });
+    var displayed = rendition.display();
 
-body_ele.style.color = gold_theme['body']['color'];
-body_ele.style.background = gold_theme['body']['background'];
-rendition.themes.default(gold_theme);
+    body_ele.style.color = gold_theme['body']['color'];
+    body_ele.style.background = gold_theme['body']['background'];
+    rendition.themes.default(gold_theme);
 
-book.ready.then(function () {
-    console.log('epub ready 1');
-    // 目录
-    var navigation = book.navigation;
-    // console.log('navigation:', navigation);
-    createToc(navigation);
+    book.ready.then(function () {
+      console.log('epub ready 1');
+      // 目录
+      var navigation = book.navigation;
+      // console.log('navigation:', navigation);
+      createToc(navigation);
 
-    return book.locations.generate();
-}).then(() => {
-    console.log('epub ready 2');
+      return book.locations.generate();
+    }).then(() => {
+      console.log('epub ready 2');
 
-    var totalPage = book.locations.total;
-    document.getElementById('totalPages').innerText = totalPage;
+      var totalPage = book.locations.total;
+      document.getElementById('totalPages').innerText = totalPage;
 
-    rendition.on("relocated", function(location) {
+      rendition.on("relocated", function (location) {
         // var currentPosition = rendition.currentLocation().start.cfi;
         // var progress = book.locations.percentageFromCfi(location.start.cfi);
         var currentPage = book.locations.locationFromCfi(location.start.cfi);
         console.log('currentPage:' + currentPage + ', totalPage:' + totalPage);
         document.getElementById('curPage').value = currentPage;
         if (currentPage > 0 && totalPage > 0) {
-            if (window.xbook) {
-                window.xbook.report(book_id, currentPage, totalPage);
-            }
+          if (window.xbook) {
+            window.xbook.report(book_id, currentPage, totalPage);
+          }
         }
-    });
+      });
 
-    if ((cur != null && cur != '') && (pages != null && pages != '')) {
+      if ((cur != null && cur != '') && (pages != null && pages != '')) {
         var percent = parseInt(cur) / parseInt(pages);
         console.log('goto: ' + cur + ' / ' + pages + ' / ' + percent);
         var cfi = book.locations.cfiFromPercentage(percent);
         rendition.display(cfi);
-    }
+      }
 
-});
+    });
 
-function goPage(e) {
-    var evt = window.event || e;
-    if (evt.keyCode == 13) {
+    function goPage(e) {
+      var evt = window.event || e;
+      if (evt.keyCode == 13) {
         evt.preventDefault();
         var curPage = document.getElementById('curPage');
         var totalPages = document.getElementById('totalPages');
         var _cur = parseInt(curPage.value);
         var _totalPages = parseInt(totalPages.innerText);
         if (_cur > _totalPages) {
-            return;
+          return;
         }
         document.activeElement.blur();
         var percent = parseInt(_cur) / parseInt(_totalPages);
-        console.log('goto: ' + cur + ' / ' + pages + ' / ' + percent);
+        console.log('goto: ' + _cur + ' / ' + _totalPages + ' / ' + percent);
         var cfi = book.locations.cfiFromPercentage(percent);
         rendition.display(cfi);
+      }
     }
-}
 
-function focusMode() {
-    var epub_tool_ele = document.getElementById('epub-tool');
-    if (epub_tool_ele.style.display == 'none') {
+    function focusMode() {
+      var epub_tool_ele = document.getElementById('epub-tool');
+      if (epub_tool_ele.style.display == 'none') {
         epub_tool_ele.style.display = 'block';
-    } else {
+      } else {
         epub_tool_ele.style.display = 'none';
+      }
     }
-}
-function prev() {
-    if (rendition) {
+    function prev() {
+      if (rendition) {
         rendition.prev();
+      }
     }
-}
-function next() {
-    if (rendition) {
+    function next() {
+      if (rendition) {
         rendition.next();
+      }
     }
-}
 
-function createToc(navigation) {
-    var epub_outline_ele = document.getElementById('epub-outline');
-    var html = outlineGenerate(navigation.toc);
-    html += '<div class="close" onclick="outlineClose(\'epub-outline\')">关闭</div>';
-    epub_outline_ele.innerHTML = html;
-    var outline_ul_ele = document.getElementById('outline-ul');
-    outline_ul_ele.style.marginBottom = '100px';
-    outline_ul_ele.style.marginLeft = '5px';
-    outline_ul_ele.style.marginRight = '5px';
-    outline_ul_ele.style.marginTop = '5px';
-    outline_ul_ele.style.color = gold_theme['body']['color'];
-    outline_ul_ele.style.background = gold_theme['body']['background'];
-}
-function outlineGenerate(tocArray) {
-    var html = '';
-    html += '<ul id="outline-ul">';
-    for (var idx in tocArray) {
+    function createToc(navigation) {
+      var epub_outline_ele = document.getElementById('epub-outline');
+      var html = outlineGenerate(navigation.toc);
+      html += '<div class="close" onclick="outlineClose(\'epub-outline\')">关闭</div>';
+      epub_outline_ele.innerHTML = html;
+      var outline_ul_ele = document.getElementById('outline-ul');
+      outline_ul_ele.style.marginBottom = '100px';
+      outline_ul_ele.style.marginLeft = '5px';
+      outline_ul_ele.style.marginRight = '5px';
+      outline_ul_ele.style.marginTop = '5px';
+      outline_ul_ele.style.color = gold_theme['body']['color'];
+      outline_ul_ele.style.background = gold_theme['body']['background'];
+    }
+    function outlineGenerate(tocArray) {
+      var html = '';
+      html += '<ul id="outline-ul">';
+      for (var idx in tocArray) {
         var toc = tocArray[idx];
         html += ('<li style="cursor: pointer;" onclick="outlineGo(this)" data-href="' + toc.href + '">' + toc.label + '</li>');
         if (toc.subitems && toc.subitems.length > 0) {
-            html += outlineGenerate(toc.subitems);
+          html += outlineGenerate(toc.subitems);
         }
+      }
+      html += '</ul>';
+      return html;
     }
-    html += '</ul>';
-    return html;
-}
-function outlineGo(obj) {
-    var href = obj.getAttribute('data-href');
-    rendition.display(href);
-    outlineClose('epub-outline')
-}
-function outlineClick(obj) {
-    var outline = document.getElementById('epub-outline');
-    if (outline.style.display == 'block') {
+    function outlineGo(obj) {
+      var href = obj.getAttribute('data-href');
+      rendition.display(href);
+      outlineClose('epub-outline')
+    }
+    function outlineClick(obj) {
+      var outline = document.getElementById('epub-outline');
+      if (outline.style.display == 'block') {
         outline.style.display = 'none';
-    } else {
+      } else {
         outline.style.display = 'block';
+      }
+      outline.style.width = window.innerWidth + "px";
+      outline.style.height = (window.innerHeight - obj.offsetTop - obj.offsetHeight) + "px";
+      outline.style.top = (obj.offsetTop + obj.offsetHeight) + "px";
+      outline.style.left = 0 + "px";
+      outline.style.zIndex = 1001;
+      outline.style.color = gold_theme['body']['color'];
+      outline.style.background = gold_theme['body']['background'];
     }
-    outline.style.width = window.innerWidth + "px";
-    outline.style.height = (window.innerHeight - obj.offsetTop - obj.offsetHeight) + "px";
-    outline.style.top = (obj.offsetTop + obj.offsetHeight) + "px";
-    outline.style.left = 0 + "px";
-    outline.style.zIndex = 1001;
-    outline.style.color = gold_theme['body']['color'];
-    outline.style.background = gold_theme['body']['background'];
-}
-function outlineClose(element_id) {
-    var outline = document.getElementById(element_id);
-    outline.style.display = 'none';
-}
-function fontClick(obj) {
-    var dialog = document.getElementById('epub-dialog');
+    function outlineClose(element_id) {
+      var outline = document.getElementById(element_id);
+      outline.style.display = 'none';
+    }
+    function fontClick(obj) {
+      var dialog = document.getElementById('epub-dialog');
 
-    var html = '<div>字体大小:'
-    + '<button onclick="fontSet(this, \'small\')" style="margin-left: 5px;">S</button>'
-    + '<button onclick="fontSet(this, \'medium\')" style="margin-left: 5px;">M</button>'
-    + '<button onclick="fontSet(this, \'large\')" style="margin-left: 5px;">L</button>'
-    + '<button onclick="fontSet(this, \'x-large\')" style="margin-left: 5px;">XL</button>'
-    + '</div>';
-    html += '<div class="close" onclick="outlineClose(\'epub-dialog\')">关闭</div>';
+      var html = '<div>字体大小:'
+        + '<button onclick="fontSet(this, \'small\')" style="margin-left: 5px;">S</button>'
+        + '<button onclick="fontSet(this, \'medium\')" style="margin-left: 5px;">M</button>'
+        + '<button onclick="fontSet(this, \'large\')" style="margin-left: 5px;">L</button>'
+        + '<button onclick="fontSet(this, \'x-large\')" style="margin-left: 5px;">XL</button>'
+        + '</div>';
+      html += '<div class="close" onclick="outlineClose(\'epub-dialog\')">关闭</div>';
 
-    dialog.innerHTML = html;
+      dialog.innerHTML = html;
 
-    if (dialog.style.display == 'block') {
+      if (dialog.style.display == 'block') {
         dialog.style.display = 'none';
-    } else {
+      } else {
         dialog.style.display = 'block';
+      }
+      dialog.style.width = window.innerWidth + "px";
+      dialog.style.height = (window.innerHeight - obj.offsetTop - obj.offsetHeight) + "px";
+      dialog.style.top = (obj.offsetTop + obj.offsetHeight) + "px";
+      dialog.style.left = 0 + "px";
+      dialog.style.zIndex = 1002;
+      dialog.style.color = gold_theme['body']['color'];
+      dialog.style.background = gold_theme['body']['background'];
     }
-    dialog.style.width = window.innerWidth + "px";
-    dialog.style.height = (window.innerHeight - obj.offsetTop - obj.offsetHeight) + "px";
-    dialog.style.top = (obj.offsetTop + obj.offsetHeight) + "px";
-    dialog.style.left = 0 + "px";
-    dialog.style.zIndex = 1002;
-    dialog.style.color = gold_theme['body']['color'];
-    dialog.style.background = gold_theme['body']['background'];
-}
-function fontSet(obj, fontsize) {
-    if (rendition != null) {
-        rendition.themes.default({ "p": { "font-size": fontsize + " !important"}});
+    function fontSet(obj, fontsize) {
+      if (rendition != null) {
+        rendition.themes.default({ "p": { "font-size": fontsize + " !important" } });
+      }
+      outlineClose('epub-dialog');
     }
-    outlineClose('epub-dialog');
-}
-function handleVolumeKey(key) {
-    console.log('key:' + key);
-    if (key == 'up') {
+    function handleVolumeKey(key) {
+      console.log('key:' + key);
+      if (key == 'up') {
         prev();
-    } else if (key == 'down') {
+      } else if (key == 'down') {
         next();
+      }
     }
-}
-</script>
-<script>
-loadScript('https://http2.idingdang.org/e.js?_=' + (+new Date()));
-</script>
+
+  </script>
+  <script>
+    loadScript('https://http2.idingdang.org/e.js?_=' + (+new Date()));
+
+  </script>
 </body>
+
 </html>

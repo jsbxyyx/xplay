@@ -106,7 +106,7 @@ public class SettingsActivity extends AppCompatActivity {
                         runOnUiThread(() -> {
                             UiUtils.showToast("下载成功，开始安装");
                         });
-                        Common.sleep(1000);
+                        Common.sleep(3000);
                         Intent install = new Intent(Intent.ACTION_VIEW);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             install.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);

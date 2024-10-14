@@ -312,6 +312,7 @@ public class BookNetHelper {
                     while (-1 != (n = input.read(buffer))) {
                         output.write(buffer, 0, n);
                         count += n;
+                        output.flush();
                         if (listener != null) {
                             listener.onProgress(count, total);
                         }
