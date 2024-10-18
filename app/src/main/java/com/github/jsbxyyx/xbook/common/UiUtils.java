@@ -45,6 +45,15 @@ public class UiUtils {
         return versionName;
     }
 
+    public static int getVersionCode() {
+        int versionCode = 0;
+        try {
+            versionCode = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException ex) {
+        }
+        return versionCode;
+    }
+
     public static void showToast(CharSequence text) {
         Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
     }

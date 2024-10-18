@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import com.github.jsbxyyx.xbook.data.BookNetHelper;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author jsbxyyx
@@ -108,14 +110,25 @@ public class SettingsActivity extends AppCompatActivity {
                         });
                         Common.sleep(3000);
                         Intent install = new Intent(Intent.ACTION_VIEW);
+                        Uri uri;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            uri = FileProvider.getUriForFile(context,
+                                    context.getPackageName() + ".fileProvider", file);
                             install.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            Uri contentUri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileProvider", file);
-                            install.setDataAndType(contentUri, "application/vnd.android.package-archive");
+                            install.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                         } else {
-                            install.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+                            uri = Uri.fromFile(file);
                         }
                         install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        install.setDataAndType(uri, "application/vnd.android.package-archive");
+                        List<ResolveInfo> resInfoList = context.getPackageManager()
+                                .queryIntentActivities(install, PackageManager.MATCH_DEFAULT_ONLY);
+                        for (ResolveInfo resolveInfo : resInfoList) {
+                            String packageName = resolveInfo.activityInfo.packageName;
+                            getApplicationContext().grantUriPermission(packageName, uri,
+                                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION |
+                                            Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        }
                         getApplicationContext().startActivity(install);
                     }
                 }, new ProgressListener() {
