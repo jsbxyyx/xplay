@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="10dp"
     tools:context=".SettingsActivity">
 
     <LinearLayout
@@ -133,13 +134,35 @@
                 android:text="同步"
                 />
 
-            <Button
-                android:id="@+id/btn_clear_settings"
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center_vertical"
+                android:text="下载列表设置"
+                android:textStyle="bold"
+                />
+
+            <CheckBox
+                android:id="@+id/cb_show_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="清除设置" />
+                android:text="显示图片"
+                />
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_clear_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清除设置" />
 
         <LinearLayout
             android:layout_marginTop="100dp"

@@ -18,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,6 +38,7 @@ import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.BookReader;
 import com.github.jsbxyyx.xbook.data.bean.Profile;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -176,9 +176,12 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        String readerImageShow = SPUtils.getData(mActivity, Common.reader_image_show_key, "1");
+
         List<Book> dataList = bookDbHelper.findAllBook();
         lv_download_book = mView.findViewById(R.id.lv_download_book);
-        mBookDownloadAdapter = new ListBookDownloadAdapter(mActivity, dataList, new ListItemClickListener() {
+        mBookDownloadAdapter = new ListBookDownloadAdapter(mActivity, dataList,
+                Common.checked.equals(readerImageShow), new ListItemClickListener() {
             @Override
             public void onClick(View view, String type, int position) {
                 if (Common.action_delete.equals(type)) {
@@ -272,6 +275,16 @@ public class ProfileFragment extends Fragment {
                                 });
                             }
                         });
+                    }
+                } else if (Common.action_image_hide.equals(type)) {
+                    Book book = mBookDownloadAdapter.getDataList().get(position);
+                    View parent = (View) view.getParent();
+                    ImageView iv = parent.findViewById(R.id.book_reader_image);
+                    if (iv.getVisibility() == View.GONE) {
+                        Picasso.get().load(book.getCoverImage()).into(iv);
+                        iv.setVisibility(View.VISIBLE);
+                    } else {
+                        iv.setVisibility(View.GONE);
                     }
                 }
             }

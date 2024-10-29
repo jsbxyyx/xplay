@@ -47,7 +47,7 @@ public class LifecycleApplication extends Application {
 
         String syncData = SPUtils.getData(getBaseContext(), Common.sync_key, null);
         if (Common.isNull(syncData)) {
-            syncData = Common.sync_key_checked;
+            syncData = Common.checked;
             SPUtils.putData(getBaseContext(), Common.sync_key, syncData);
         }
 

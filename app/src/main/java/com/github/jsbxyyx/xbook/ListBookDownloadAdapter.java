@@ -29,13 +29,15 @@ public class ListBookDownloadAdapter extends BaseAdapter {
     private Context context;
     private ListItemClickListener listItemClickListener;
     private List<Book> dataList;
+    private boolean imageShow;
 
     private String TAG = "xbook";
 
-    public ListBookDownloadAdapter(Context context, List<Book> dataList,
+    public ListBookDownloadAdapter(Context context, List<Book> dataList, boolean imageShow,
                                    ListItemClickListener listItemClickListener) {
         this.context = context;
         this.dataList = (dataList == null) ? new ArrayList<>() : dataList;
+        this.imageShow = imageShow;
         this.listItemClickListener = listItemClickListener;
     }
 
@@ -48,6 +50,7 @@ public class ListBookDownloadAdapter extends BaseAdapter {
         public Button book_reader_btn_upload;
         public Button book_reader_btn_download_meta;
         public Button book_reader_btn_file_download;
+        public ImageView book_reader_image_hide;
     }
 
     @Override
@@ -79,6 +82,7 @@ public class ListBookDownloadAdapter extends BaseAdapter {
             holder.book_reader_btn_upload = convertView.findViewById(R.id.book_reader_btn_upload);
             holder.book_reader_btn_download_meta = convertView.findViewById(R.id.book_reader_btn_download_meta);
             holder.book_reader_btn_file_download = convertView.findViewById(R.id.book_reader_btn_file_download);
+            holder.book_reader_image_hide = convertView.findViewById(R.id.book_reader_image_hide);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -88,6 +92,9 @@ public class ListBookDownloadAdapter extends BaseAdapter {
 
         Picasso.get().load(book.getCoverImage()).into(holder.book_image);
         holder.book_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        if (!imageShow) {
+            holder.book_image.setVisibility(View.GONE);
+        }
         holder.book_title.setText(book.getTitle());
         holder.book_file.setText(book.getFile());
         if (bookReader != null) {
@@ -149,6 +156,19 @@ public class ListBookDownloadAdapter extends BaseAdapter {
                 }
             }
         });
+
+        holder.book_reader_image_hide.setTag(position);
+        holder.book_reader_image_hide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listItemClickListener != null) {
+                    int position = (int) v.getTag();
+                    LogUtil.d(TAG, "onClick image view hide : %d", position);
+                    listItemClickListener.onClick(v, Common.action_image_hide, position);
+                }
+            }
+        });
+
         return convertView;
     }
 

@@ -49,6 +49,7 @@ public class SettingsActivity extends AppCompatActivity {
             Common.search_ext_key,
             Common.search_language_key,
             Common.sync_key,
+            Common.reader_image_show_key,
     };
 
     @Override
@@ -243,7 +244,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         String sync_data = SPUtils.getData(getBaseContext(), Common.sync_key);
         CheckBox cb_sync = findViewById(R.id.cb_sync);
-        if (Common.sync_key_checked.equals(sync_data)) {
+        if (Common.checked.equals(sync_data)) {
             cb_sync.setChecked(true);
         } else {
             cb_sync.setChecked(false);
@@ -251,11 +252,28 @@ public class SettingsActivity extends AppCompatActivity {
         cb_sync.setOnClickListener((v) -> {
             CheckBox cb = (CheckBox) v;
             if (cb.isChecked()) {
-                SPUtils.putData(getBaseContext(), Common.sync_key, Common.sync_key_checked);
+                SPUtils.putData(getBaseContext(), Common.sync_key, Common.checked);
             } else {
-                SPUtils.putData(getBaseContext(), Common.sync_key, Common.sync_key_unchecked);
+                SPUtils.putData(getBaseContext(), Common.sync_key, Common.unchecked);
             }
             LogUtil.d(getClass().getSimpleName(), "sync checked : %s", cb.isChecked());
+        });
+
+        String reader_image_show_data = SPUtils.getData(getBaseContext(), Common.reader_image_show_key, Common.checked);
+        CheckBox cb_show_image = findViewById(R.id.cb_show_image);
+        if (Common.checked.equals(reader_image_show_data)) {
+            cb_show_image.setChecked(true);
+        } else {
+            cb_show_image.setChecked(false);
+        }
+        cb_show_image.setOnClickListener((v) -> {
+            CheckBox cb = (CheckBox) v;
+            if (cb.isChecked()) {
+                SPUtils.putData(getBaseContext(), Common.reader_image_show_key, Common.checked);
+            } else {
+                SPUtils.putData(getBaseContext(), Common.reader_image_show_key, Common.unchecked);
+            }
+            LogUtil.d(getClass().getSimpleName(), "reader image show checked : %s", cb.isChecked());
         });
 
         Button btn_clear_settings = findViewById(R.id.btn_clear_settings);

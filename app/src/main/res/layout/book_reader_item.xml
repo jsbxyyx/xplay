@@ -5,13 +5,27 @@
     android:descendantFocusability="blocksDescendants"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/book_reader_image"
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_height="100dp"
-        android:layout_weight="0.3"
-        android:src="@drawable/ic_launcher_background"
-        android:scaleType="fitCenter"/>
+        android:layout_weight="0.3">
+
+        <ImageView
+            android:id="@+id/book_reader_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_launcher_background"
+            android:scaleType="fitCenter"/>
+
+        <ImageView
+            android:id="@+id/book_reader_image_hide"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="right"
+            android:background="@drawable/eye_foreground" />
+
+    </FrameLayout>
+
 
     <LinearLayout
         android:layout_width="0dp"

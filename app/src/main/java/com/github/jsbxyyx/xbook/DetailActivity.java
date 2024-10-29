@@ -148,7 +148,7 @@ public class DetailActivity extends AppCompatActivity {
                         mBook.setId(IdUtil.nextId());
                         bookDbHelper.insertBook(mBook);
                         String sync_data = SPUtils.getData(getBaseContext(), Common.sync_key);
-                        if (Common.sync_key_checked.equals(sync_data)) {
+                        if (Common.checked.equals(sync_data)) {
                             bookNetHelper.cloudSync(bookDbHelper.findBookByBid(mBook.getBid()), new DataCallback<JsonNode>() {
                                 @Override
                                 public void call(JsonNode o, Throwable err) {

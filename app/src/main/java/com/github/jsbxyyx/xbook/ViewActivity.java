@@ -178,7 +178,7 @@ public class ViewActivity extends AppCompatActivity {
         }
 
         String syncData = SPUtils.getData(getBaseContext(), Common.sync_key);
-        if (Common.sync_key_checked.equals(syncData)) {
+        if (Common.checked.equals(syncData)) {
             Book book = bookDbHelper.findBookById(bookId);
             if (book != null) {
                 bookNetHelper.cloudSyncMeta(book, new DataCallback<JsonNode>() {
