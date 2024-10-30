@@ -20,9 +20,9 @@ public class HttpHelper {
         synchronized (HttpHelper.class) {
             if (client == null) {
                 client = new OkHttpClient.Builder()
-                        .connectTimeout(60000, TimeUnit.MILLISECONDS)
-                        .readTimeout(300000, TimeUnit.MILLISECONDS)
-                        .writeTimeout(300000, TimeUnit.MILLISECONDS)
+                        .connectTimeout(45000, TimeUnit.MILLISECONDS)
+                        .readTimeout(120000, TimeUnit.MILLISECONDS)
+                        .writeTimeout(120000, TimeUnit.MILLISECONDS)
                         .build();
             }
             return client;

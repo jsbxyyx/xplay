@@ -145,7 +145,7 @@ public class SettingsActivity extends AppCompatActivity {
                             }
                         });
                     }
-                });
+                }, 0);
             }
         });
 

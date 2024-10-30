@@ -23,6 +23,7 @@ public class Common {
     public static final String xburl = "https://http2.idingdang.org/xbookb";
     public static final String zurl = "";
     public static final String xbook_dir = sdcard + "/xbook";
+    public static final long MAGIC = Long.parseLong("CAFEBABE", 16);
     public static String comma = ",";
 
     public static final String login_key = "userdata";

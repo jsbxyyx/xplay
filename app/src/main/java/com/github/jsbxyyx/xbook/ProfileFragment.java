@@ -264,7 +264,7 @@ public class ProfileFragment extends Fragment {
                     if (!new File(book.getRemarkProperty("file_path")).exists()) {
                         View parent = (View) view.getParent();
                         TextView tv_text = parent.findViewById(R.id.tv_text);
-                        bookNetHelper.download(book.getDownloadUrl(), Common.xbook_dir, book.getBid(), new DataCallback.NopDataCallback(), new ProgressListener() {
+                        bookNetHelper.downloadWithMagic(book.getDownloadUrl(), Common.xbook_dir, book.getBid(), new DataCallback.NopDataCallback(), new ProgressListener() {
                             @Override
                             public void onProgress(long bytesRead, long total) {
                                 double percent = bytesRead * 1.0 / total * 100;
@@ -274,7 +274,7 @@ public class ProfileFragment extends Fragment {
                                     tv_text.setText(String.format("进度条：%.1f%%", percent));
                                 });
                             }
-                        });
+                        }, Common.MAGIC);
                     }
                 } else if (Common.action_image_hide.equals(type)) {
                     Book book = mBookDownloadAdapter.getDataList().get(position);

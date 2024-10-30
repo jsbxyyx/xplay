@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -258,11 +259,18 @@ public class BookNetHelper {
         });
     }
 
-    public void download(String downloadUrl, String destDir, String uid, DataCallback dataCallback, ProgressListener listener) {
-        downloadWithCookie(downloadUrl, destDir, uid, SessionManager.getSession(), dataCallback, listener);
+    public void download(String downloadUrl, String destDir, String uid,
+                         DataCallback dataCallback, ProgressListener listener) {
+        downloadWithMagic(downloadUrl, destDir, uid, dataCallback, listener, 0);
     }
 
-    public void downloadWithCookie(String downloadUrl, String destDir, String uid, String cookie, DataCallback dataCallback, ProgressListener listener) {
+    public void downloadWithMagic(String downloadUrl, String destDir, String uid,
+                                  DataCallback dataCallback, ProgressListener listener, long magic) {
+        downloadWithCookie(downloadUrl, destDir, uid, SessionManager.getSession(), dataCallback, listener, magic);
+    }
+
+    public void downloadWithCookie(String downloadUrl, String destDir, String uid, String cookie,
+                                   DataCallback dataCallback, ProgressListener listener, long magic) {
         Map<String, Object> object = new HashMap<>();
         String reqUrl = downloadUrl;
         object.put("method", "GET");
@@ -312,7 +320,13 @@ public class BookNetHelper {
                 long total = response.body().contentLength();
                 try (InputStream input = response.body().byteStream();
                      FileOutputStream output = new FileOutputStream(f)) {
-
+                    if (magic > 0) {
+                        ByteBuffer buf = ByteBuffer.allocate(8);
+                        buf.putLong(magic);
+                        buf.flip();
+                        byte[] bytes = buf.array();
+                        output.write(bytes);
+                    }
                     byte[] buffer = new byte[1024 * 8];
                     long count = 0;
                     int n;

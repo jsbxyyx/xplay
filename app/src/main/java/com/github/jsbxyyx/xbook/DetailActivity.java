@@ -129,7 +129,8 @@ public class DetailActivity extends AppCompatActivity {
                 UiUtils.showToast("下载地址为空，请登录");
                 return;
             }
-            bookNetHelper.download(mBook.getDownloadUrl(), Common.xbook_dir, mBook.getBid(), new DataCallback<File>() {
+            UiUtils.showToast("开始下载...");
+            bookNetHelper.downloadWithMagic(mBook.getDownloadUrl(), Common.xbook_dir, mBook.getBid(), new DataCallback<File>() {
                 @Override
                 public void call(File file, Throwable err) {
                     if (err != null) {
@@ -187,7 +188,7 @@ public class DetailActivity extends AppCompatActivity {
                         tv_download_progress.setText(String.format("下载进度：%.1f%%", bytesRead * 1.0 / contentLength * 100));
                     });
                 }
-            });
+            }, Common.MAGIC);
         });
     }
 }

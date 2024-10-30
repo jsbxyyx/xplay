@@ -5,8 +5,11 @@ import com.github.jsbxyyx.xbook.common.LogUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Map;
 
@@ -64,18 +67,30 @@ public class HttpServer extends NanoHTTPD {
                 }
                 answer += "</head></html>";
             } else {
+                long totalBytes = rootFile.length();
                 String name = rootFile.getName();
-                InputStream inputStream = null;
+                FileInputStream inputStream = null;
                 try {
                     inputStream = new FileInputStream(rootFile);
-                } catch (FileNotFoundException e) {
+
+                    FileChannel channel = inputStream.getChannel();
+                    ByteBuffer buf = ByteBuffer.allocate(8);
+                    channel.read(buf);
+                    buf.flip();
+                    long magic = buf.getLong();
+                    if (magic == Common.MAGIC) {
+                        totalBytes -= 8;
+                    } else {
+                        channel.position(channel.position() - 8);
+                    }
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 if (inputStream == null) {
                     return newFixedLengthResponse(name + " not found");
                 }
                 return new ResourceResponse(mediaTypeFactory.getMediaTypes(name, "application/octet-stream"),
-                        inputStream, rootFile.length());
+                        inputStream, totalBytes);
             }
         }
         return newFixedLengthResponse(answer);
