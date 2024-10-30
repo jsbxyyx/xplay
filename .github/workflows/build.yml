@@ -48,3 +48,4 @@ jobs:
           # github auto generate temporary token
           token: ${{ github.token }}
           generateReleaseNotes: true
+          makeLatest: latest
