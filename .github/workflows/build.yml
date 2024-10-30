@@ -49,3 +49,4 @@ jobs:
           token: ${{ github.token }}
           generateReleaseNotes: true
           makeLatest: latest
+          allowUpdates: true
