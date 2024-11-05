@@ -53,8 +53,6 @@ public class BookNetHelper {
     private String content_type_key = "content-type";
     private String cookie_key = "cookie";
 
-    private String vc = "vc";
-
     private String TAG = getClass().getSimpleName();
 
     public void search(String keyword, int page, List<String> languages, List<String> extensions, DataCallback<List<Book>> dataCallback) {
@@ -96,7 +94,8 @@ public class BookNetHelper {
         LogUtil.d(TAG, "search request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xurl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -152,7 +151,8 @@ public class BookNetHelper {
 
         Request request = new Request.Builder()
                 .url(xurl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -218,7 +218,8 @@ public class BookNetHelper {
 
         Request request = new Request.Builder()
                 .url(xurl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -289,7 +290,8 @@ public class BookNetHelper {
         LogUtil.d(TAG, "download request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xurl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
@@ -321,8 +323,9 @@ public class BookNetHelper {
                 try (InputStream input = response.body().byteStream();
                      FileOutputStream output = new FileOutputStream(f)) {
                     if (magic > 0) {
+                        long m = magic ^ Common.MG_XOR;
                         ByteBuffer buf = ByteBuffer.allocate(8);
-                        buf.putLong(magic);
+                        buf.putLong(m);
                         buf.flip();
                         byte[] bytes = buf.array();
                         output.write(bytes);
@@ -331,7 +334,8 @@ public class BookNetHelper {
                     long count = 0;
                     int n;
                     while (-1 != (n = input.read(buffer))) {
-                        output.write(buffer, 0, n);
+                        byte[] bytes = Common.xor(buffer, n, Common.MG_XOR);
+                        output.write(bytes, 0, n);
                         count += n;
                         output.flush();
                         if (listener != null) {
@@ -367,7 +371,8 @@ public class BookNetHelper {
         LogUtil.d(TAG, "profile request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xurl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -432,7 +437,8 @@ public class BookNetHelper {
         LogUtil.d(TAG, "send-code request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xurl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -490,7 +496,8 @@ public class BookNetHelper {
         LogUtil.d(TAG, "send-code password recovery request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xurl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -556,7 +563,8 @@ public class BookNetHelper {
 
         Request request = new Request.Builder()
                 .url(xurl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -632,7 +640,8 @@ public class BookNetHelper {
 
                 Request request = new Request.Builder()
                         .url(xburl)
-                        .header(vc, UiUtils.getVersionCode() + "")
+                        .header(Common.vc, UiUtils.getVersionCode() + "")
+                        .header(Common.vn, UiUtils.getVersionName())
                         .post(RequestBody.create(s, MediaType.parse("application/json")))
                         .build();
                 HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
@@ -689,7 +698,8 @@ public class BookNetHelper {
             LogUtil.d(TAG, "cloud sync data request: %s : %s", reqUrl, s);
             Request request = new Request.Builder()
                     .url(xburl)
-                    .header(vc, UiUtils.getVersionCode() + "")
+                    .header(Common.vc, UiUtils.getVersionCode() + "")
+                    .header(Common.vn, UiUtils.getVersionName())
                     .post(RequestBody.create(s, MediaType.parse("application/json")))
                     .build();
             HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
@@ -744,7 +754,8 @@ public class BookNetHelper {
 
         Request request = new Request.Builder()
                 .url(xburl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
@@ -796,7 +807,7 @@ public class BookNetHelper {
 
         Request request = new Request.Builder()
                 .url(xburl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
@@ -841,7 +852,7 @@ public class BookNetHelper {
 
         Request request = new Request.Builder()
                 .url(xburl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
 
@@ -894,7 +905,7 @@ public class BookNetHelper {
 
         Request request = new Request.Builder()
                 .url(xburl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
@@ -944,7 +955,7 @@ public class BookNetHelper {
 
         Request request = new Request.Builder()
                 .url(xburl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
@@ -996,7 +1007,7 @@ public class BookNetHelper {
 
         Request request = new Request.Builder()
                 .url(xburl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
@@ -1052,7 +1063,7 @@ public class BookNetHelper {
 
         Request request = new Request.Builder()
                 .url(xburl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -1107,7 +1118,7 @@ public class BookNetHelper {
 
         Request request = new Request.Builder()
                 .url(xburl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {

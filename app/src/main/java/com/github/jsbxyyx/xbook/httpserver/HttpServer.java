@@ -3,13 +3,12 @@ package com.github.jsbxyyx.xbook.httpserver;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -67,30 +66,44 @@ public class HttpServer extends NanoHTTPD {
                 }
                 answer += "</head></html>";
             } else {
-                long totalBytes = rootFile.length();
                 String name = rootFile.getName();
-                FileInputStream inputStream = null;
+                byte[] bytes = null;
                 try {
-                    inputStream = new FileInputStream(rootFile);
-
-                    FileChannel channel = inputStream.getChannel();
-                    ByteBuffer buf = ByteBuffer.allocate(8);
-                    channel.read(buf);
-                    buf.flip();
-                    long magic = buf.getLong();
-                    if (magic == Common.MAGIC) {
-                        totalBytes -= 8;
-                    } else {
-                        channel.position(channel.position() - 8);
-                    }
+                    bytes = Files.readAllBytes(rootFile.toPath());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if (inputStream == null) {
-                    return newFixedLengthResponse(name + " not found");
+                ByteArrayInputStream in;
+                if (name.endsWith(".js")
+                        || name.endsWith(".css")
+                        || name.endsWith(".htm")
+                        || name.endsWith(".html")) {
+                    in = new ByteArrayInputStream(bytes);
+                } else {
+                    ByteBuffer head = ByteBuffer.allocate(8);
+                    head.put(bytes, 0, 8);
+                    head.flip();
+                    long magic = head.getLong();
+                    long m = magic ^ Common.MG_XOR;
+                    if (m == Common.MAGIC) {
+                        byte[] newBytes = new byte[bytes.length - 8];
+                        System.arraycopy(bytes, 8, newBytes, 0, bytes.length - 8);
+                        in = new ByteArrayInputStream(Common.xor(newBytes, newBytes.length, Common.MG_XOR));
+                        LogUtil.d(TAG, "mg x");
+                    } else if (m == (Common.MAGIC ^ Common.MG_XOR)) {
+                        byte[] newBytes = new byte[bytes.length - 8];
+                        System.arraycopy(bytes, 8, newBytes, 0, bytes.length - 8);
+                        in = new ByteArrayInputStream(newBytes, newBytes.length, Common.MG_XOR);
+                        LogUtil.d(TAG, "mg nx");
+                    } else {
+                        in = new ByteArrayInputStream(bytes);
+                        LogUtil.d(TAG, "mg n");
+                    }
                 }
+                long totalBytes = in.available();
+                LogUtil.d(TAG, "%s bytes : %s", name, totalBytes);
                 return new ResourceResponse(mediaTypeFactory.getMediaTypes(name, "application/octet-stream"),
-                        inputStream, totalBytes);
+                        in, totalBytes);
             }
         }
         return newFixedLengthResponse(answer);

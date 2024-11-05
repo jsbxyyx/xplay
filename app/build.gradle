@@ -26,8 +26,8 @@ android {
         applicationId "com.github.jsbxyyx.xbook"
         minSdk 27
         targetSdk 33
-        versionCode 28
-        versionName "2.8"
+        versionCode 29
+        versionName "2.9"
         archivesBaseName = "xplay"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

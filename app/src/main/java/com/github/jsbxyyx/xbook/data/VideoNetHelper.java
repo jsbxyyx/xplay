@@ -36,8 +36,6 @@ public class VideoNetHelper {
 
     private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
 
-    private String vc = "vc";
-
     private String TAG = getClass().getSimpleName();
 
     public void search(String q, DataCallback dataCallback) {
@@ -62,7 +60,8 @@ public class VideoNetHelper {
         LogUtil.d(TAG, "search request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xburl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -116,7 +115,8 @@ public class VideoNetHelper {
         LogUtil.d(TAG, "hotrank request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xburl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -170,7 +170,8 @@ public class VideoNetHelper {
         LogUtil.d(TAG, "hotrank request: %s : %s", reqUrl, s);
         Request request = new Request.Builder()
                 .url(xburl)
-                .header(vc, UiUtils.getVersionCode() + "")
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {

@@ -24,7 +24,10 @@ public class Common {
     public static final String zurl = "";
     public static final String xbook_dir = sdcard + "/xbook";
     public static final long MAGIC = Long.parseLong("CAFEBABE", 16);
-    public static String comma = ",";
+    public static final byte MG_XOR = 7;
+    public static final String comma = ",";
+    public static final String vc = "vc";
+    public static final String vn = "vn";
 
     public static final String login_key = "userdata";
     public static String profile_nickname_key = "profile_nickname";
@@ -128,6 +131,14 @@ public class Common {
             }
         }
         return kvMap;
+    }
+
+    public static byte[] xor(byte[] rawData, int len, byte number) {
+        byte[] encodeData = new byte[len];
+        for (int i = 0; i < len; i++) {
+            encodeData[i] = (byte) (rawData[i] ^ number);
+        }
+        return encodeData;
     }
 
 }
