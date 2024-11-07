@@ -96,6 +96,8 @@ public class BookNetHelper {
                 .url(xurl)
                 .header(Common.vc, UiUtils.getVersionCode() + "")
                 .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -153,6 +155,8 @@ public class BookNetHelper {
                 .url(xurl)
                 .header(Common.vc, UiUtils.getVersionCode() + "")
                 .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -220,6 +224,8 @@ public class BookNetHelper {
                 .url(xurl)
                 .header(Common.vc, UiUtils.getVersionCode() + "")
                 .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -292,6 +298,8 @@ public class BookNetHelper {
                 .url(xurl)
                 .header(Common.vc, UiUtils.getVersionCode() + "")
                 .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
@@ -373,6 +381,8 @@ public class BookNetHelper {
                 .url(xurl)
                 .header(Common.vc, UiUtils.getVersionCode() + "")
                 .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -439,6 +449,8 @@ public class BookNetHelper {
                 .url(xurl)
                 .header(Common.vc, UiUtils.getVersionCode() + "")
                 .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -498,6 +510,8 @@ public class BookNetHelper {
                 .url(xurl)
                 .header(Common.vc, UiUtils.getVersionCode() + "")
                 .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -565,6 +579,8 @@ public class BookNetHelper {
                 .url(xurl)
                 .header(Common.vc, UiUtils.getVersionCode() + "")
                 .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -642,6 +658,8 @@ public class BookNetHelper {
                         .url(xburl)
                         .header(Common.vc, UiUtils.getVersionCode() + "")
                         .header(Common.vn, UiUtils.getVersionName())
+                        .header(Common.platform, Common.platform_android)
+                        .header(Common.sv, android.os.Build.VERSION.RELEASE)
                         .post(RequestBody.create(s, MediaType.parse("application/json")))
                         .build();
                 HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
@@ -700,6 +718,8 @@ public class BookNetHelper {
                     .url(xburl)
                     .header(Common.vc, UiUtils.getVersionCode() + "")
                     .header(Common.vn, UiUtils.getVersionName())
+                    .header(Common.platform, Common.platform_android)
+                    .header(Common.sv, android.os.Build.VERSION.RELEASE)
                     .post(RequestBody.create(s, MediaType.parse("application/json")))
                     .build();
             HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
@@ -756,6 +776,8 @@ public class BookNetHelper {
                 .url(xburl)
                 .header(Common.vc, UiUtils.getVersionCode() + "")
                 .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {

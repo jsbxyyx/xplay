@@ -28,29 +28,32 @@ public class Common {
     public static final String comma = ",";
     public static final String vc = "vc";
     public static final String vn = "vn";
+    public static final String sv = "sv";
+    public static final String platform = "platform";
+    public static final String platform_android = "android";
 
     public static final String login_key = "userdata";
-    public static String profile_nickname_key = "profile_nickname";
-    public static String profile_email_key = "profile_email";
-    public static String search_ext_key = "search_ext";
-    public static String search_language_key = "search_language";
-    public static String sync_key = "sync";
-    public static String reader_image_show_key = "reader_image_show";
-    public static String checked = "1";
-    public static String unchecked = "0";
+    public static final String profile_nickname_key = "profile_nickname";
+    public static final String profile_email_key = "profile_email";
+    public static final String search_ext_key = "search_ext";
+    public static final String search_language_key = "search_language";
+    public static final String sync_key = "sync";
+    public static final String reader_image_show_key = "reader_image_show";
+    public static final String checked = "1";
+    public static final String unchecked = "0";
 
-    public static String log_suffix = ".exception";
-    public static String book_metadata_suffix = ".meta";
+    public static final String log_suffix = ".exception";
+    public static final String book_metadata_suffix = ".meta";
 
-    public static String action_delete = "delete";
-    public static String action_upload = "upload";
+    public static final String action_delete = "delete";
+    public static final String action_upload = "upload";
     public static String action_download_meta = "download_meta";
-    public static String action_file_download = "file_download";
-    public static String action_image_hide = "image_hide";
+    public static final String action_file_download = "file_download";
+    public static final String action_image_hide = "image_hide";
 
-    public static String x_message = "X-message";
-    public static String serv_userid = "remix_userid";
-    public static String serv_userkey = "remix_userkey";
+    public static final String x_message = "X-message";
+    public static final String serv_userid = "remix_userid";
+    public static final String serv_userkey = "remix_userkey";
 
     public static String urlEncode(String str) {
         try {

@@ -2,6 +2,8 @@ package com.github.jsbxyyx.xbook.data;
 
 import static com.github.jsbxyyx.xbook.common.Common.xburl;
 
+import android.os.Build;
+
 import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -62,6 +64,8 @@ public class VideoNetHelper {
                 .url(xburl)
                 .header(Common.vc, UiUtils.getVersionCode() + "")
                 .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -117,6 +121,8 @@ public class VideoNetHelper {
                 .url(xburl)
                 .header(Common.vc, UiUtils.getVersionCode() + "")
                 .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
@@ -172,6 +178,8 @@ public class VideoNetHelper {
                 .url(xburl)
                 .header(Common.vc, UiUtils.getVersionCode() + "")
                 .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
                 .post(RequestBody.create(s, MediaType.parse("application/json")))
                 .build();
         HttpHelper.getClient().newCall(request).enqueue(new Callback() {
