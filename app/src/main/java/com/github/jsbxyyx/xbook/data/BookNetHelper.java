@@ -323,7 +323,16 @@ public class BookNetHelper {
                 }
                 String contentDisposition = response.headers().get("Content-Disposition");
                 LogUtil.d(TAG, "contentDisposition: %s", contentDisposition);
-                String filename = ContentDispositionParser.parse(contentDisposition);
+
+                String filename = "";
+                if (Common.isBlank(contentDisposition)) {
+                    int idx = reqUrl.lastIndexOf("/");
+                    if (idx > -1) {
+                        filename = reqUrl.substring(idx + 1);
+                    }
+                } else {
+                    filename = ContentDispositionParser.parse(contentDisposition);
+                }
                 filename = Common.isBlank(filename) ? "tmp-" + UUID.randomUUID().toString() : filename;
 
                 File f = new File(destDir, Common.isEmpty(uid) ? filename : uid + "-" + filename);

@@ -23,7 +23,7 @@ public class ContentDispositionParser {
      */
     public static String parse(String contentDisposition) {
         if (contentDisposition == null || "".equals(contentDisposition.trim())) {
-            return "";
+            return null;
         }
         List<String> parts = tokenize(contentDisposition);
         String filename = null;
@@ -53,7 +53,7 @@ public class ContentDispositionParser {
                     filename = value;
                 }
             } else {
-                throw new IllegalArgumentException("Invalid content disposition format");
+                System.out.println("Invalid content disposition format");
             }
             if (filename != null && !"".equals(filename)) {
                 return filename;
