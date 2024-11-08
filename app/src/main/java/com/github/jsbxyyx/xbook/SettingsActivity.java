@@ -96,7 +96,7 @@ public class SettingsActivity extends AppCompatActivity {
             if (Common.isEmpty(downloadUrl)) {
                 UiUtils.showToast("已经是最新版本");
             } else {
-                bookNetHelper.downloadWithCookie(downloadUrl, Common.sdcard, "", "", new DataCallback<File>() {
+                bookNetHelper.download(downloadUrl, Common.sdcard, "", new DataCallback<File>() {
                     @Override
                     public void call(File file, Throwable err) {
                         if (err != null) {
@@ -154,7 +154,7 @@ public class SettingsActivity extends AppCompatActivity {
                             }
                         });
                     }
-                }, 0);
+                });
             }
         });
 

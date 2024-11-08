@@ -22,6 +22,9 @@ public class ContentDispositionParser {
      * {@literal filename*} one decoded as defined in the RFC 5987), or {@code null} if not defined.
      */
     public static String parse(String contentDisposition) {
+        if (contentDisposition == null || "".equals(contentDisposition.trim())) {
+            return "";
+        }
         List<String> parts = tokenize(contentDisposition);
         String filename = null;
         Charset charset;

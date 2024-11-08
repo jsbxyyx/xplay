@@ -324,7 +324,7 @@ public class BookNetHelper {
                 String contentDisposition = response.headers().get("Content-Disposition");
                 LogUtil.d(TAG, "contentDisposition: %s", contentDisposition);
                 String filename = ContentDispositionParser.parse(contentDisposition);
-                filename = Common.isEmpty(filename) ? "tmp-" + UUID.randomUUID().toString() : filename;
+                filename = Common.isBlank(filename) ? "tmp-" + UUID.randomUUID().toString() : filename;
 
                 File f = new File(destDir, Common.isEmpty(uid) ? filename : uid + "-" + filename);
                 long total = response.body().contentLength();
@@ -361,7 +361,6 @@ public class BookNetHelper {
                 dataCallback.call(f, null);
             }
         });
-
     }
 
     public void profile(DataCallback dataCallback) {
