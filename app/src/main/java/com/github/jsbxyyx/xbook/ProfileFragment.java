@@ -175,7 +175,7 @@ public class ProfileFragment extends Fragment {
             } else if (position == 2) {
                 issues();
             } else if (position == 3) {
-                donate();
+                help();
             }
         });
 
@@ -472,9 +472,9 @@ public class ProfileFragment extends Fragment {
         startActivity(intent);
     }
 
-    private void donate() {
-        Intent intent = new Intent(getContext(), VideoViewActivity2.class);
-        intent.putExtra("playUrl", "https://http2.idingdang.org/donate");
+    private void help() {
+        Intent intent = new Intent(getContext(), WebviewActivity.class);
+        intent.putExtra("url", "https://http2.idingdang.org/donate");
         intent.putExtra("orientation", "v");
         startActivity(intent);
     }
