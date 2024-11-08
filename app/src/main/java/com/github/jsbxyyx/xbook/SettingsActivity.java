@@ -111,24 +111,33 @@ public class SettingsActivity extends AppCompatActivity {
                         });
                         Common.sleep(3000);
                         Intent install = new Intent(Intent.ACTION_VIEW);
+                        install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         Uri uri;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            uri = FileProvider.getUriForFile(context,
-                                    context.getPackageName() + ".fileProvider", file);
-                            install.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            uri = FileProvider.getUriForFile(
+                                    context,
+                                    context.getPackageName() + ".fileProvider",
+                                    file
+                            );
+                            install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             install.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                         } else {
                             uri = Uri.fromFile(file);
                         }
-                        install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         install.setDataAndType(uri, "application/vnd.android.package-archive");
                         List<ResolveInfo> resInfoList = context.getPackageManager()
-                                .queryIntentActivities(install, PackageManager.MATCH_DEFAULT_ONLY);
+                                .queryIntentActivities(
+                                        install,
+                                        PackageManager.MATCH_DEFAULT_ONLY
+                                );
                         for (ResolveInfo resolveInfo : resInfoList) {
                             String packageName = resolveInfo.activityInfo.packageName;
-                            getApplicationContext().grantUriPermission(packageName, uri,
-                                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION |
-                                            Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            int modeFlags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                            getApplicationContext().grantUriPermission(
+                                    packageName,
+                                    uri,
+                                    modeFlags
+                            );
                         }
                         getApplicationContext().startActivity(install);
                     }

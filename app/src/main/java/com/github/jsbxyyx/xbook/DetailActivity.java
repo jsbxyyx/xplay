@@ -129,7 +129,8 @@ public class DetailActivity extends AppCompatActivity {
                 UiUtils.showToast("下载地址为空，请登录");
                 return;
             }
-            UiUtils.showToast("开始下载...");
+            tv_download_progress.setVisibility(View.VISIBLE);
+            tv_download_progress.setText("开始下载...");
             bookNetHelper.downloadWithMagic(mBook.getDownloadUrl(), Common.xbook_dir, mBook.getBid(), new DataCallback<File>() {
                 @Override
                 public void call(File file, Throwable err) {
