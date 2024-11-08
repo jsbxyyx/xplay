@@ -3,12 +3,16 @@ package com.github.jsbxyyx.xbook;
 import android.content.Context;
 import android.webkit.JavascriptInterface;
 
+import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.IdUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
+import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.BookReader;
+
+import java.util.Map;
 
 /**
  * @author jsbxyyx
@@ -48,6 +52,23 @@ public class BookJavascript {
     @JavascriptInterface
     public void toast(String text) {
         UiUtils.showToast(text);
+    }
+
+    @JavascriptInterface
+    public String suid() {
+        String s = SessionManager.getSession();
+        Map<String, String> kvMap = Common.parseKv(s);
+        return kvMap.getOrDefault(Common.serv_userid, "");
+    }
+
+    @JavascriptInterface
+    public String vc() {
+        return UiUtils.getVersionCode() + "";
+    }
+
+    @JavascriptInterface
+    public String vn() {
+        return UiUtils.getVersionName();
     }
 
 }

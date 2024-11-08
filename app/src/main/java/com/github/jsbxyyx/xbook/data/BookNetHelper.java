@@ -342,8 +342,11 @@ public class BookNetHelper {
                     long count = 0;
                     int n;
                     while (-1 != (n = input.read(buffer))) {
-                        byte[] bytes = Common.xor(buffer, n, Common.MG_XOR);
-                        output.write(bytes, 0, n);
+                        if (magic > 0) {
+                            output.write(Common.xor(buffer, n, Common.MG_XOR), 0, n);
+                        } else {
+                            output.write(buffer, 0, n);
+                        }
                         count += n;
                         output.flush();
                         if (listener != null) {

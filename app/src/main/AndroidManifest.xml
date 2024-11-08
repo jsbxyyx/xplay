@@ -35,8 +35,7 @@
         <activity
             android:name=".VideoViewActivity2"
             android:configChanges="orientation|screenSize"
-            android:exported="false"
-            android:screenOrientation="landscape" />
+            android:exported="false" />
         <!--
         <activity
             android:name=".VideoViewActivity"

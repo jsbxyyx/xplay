@@ -1,7 +1,7 @@
 package com.github.jsbxyyx.xbook;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,12 +26,20 @@ public class VideoViewActivity2 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_view);
-
         playUrl = getIntent().getStringExtra("playUrl");
 
         if (Common.isBlank(playUrl)) {
             UiUtils.showToast("没有播放地址");
             return;
+        }
+
+        String orientation = getIntent().getStringExtra("orientation");
+        if ("v".equals(orientation) &&
+                getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else if ("h".equals(orientation) &&
+                getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 
         webView = findViewById(R.id.wv_video_view);

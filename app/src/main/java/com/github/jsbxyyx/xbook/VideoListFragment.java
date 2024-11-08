@@ -76,6 +76,7 @@ public class VideoListFragment extends Fragment {
                 LogUtil.d(TAG, "%s", playUrl);
                 Intent intent = new Intent(mActivity, VideoViewActivity2.class);
                 intent.putExtra("playUrl", playUrl);
+                intent.putExtra("orientation", "h");
                 startActivity(intent);
             }
         });

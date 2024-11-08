@@ -161,6 +161,7 @@ public class ProfileFragment extends Fragment {
         data.add("云同步本地");
         data.add("设置");
         data.add("意见反馈");
+        data.add("捐赠");
         data.add("测试");
         lv_profile.setAdapter(new ArrayAdapter(mActivity, R.layout.profile_item, R.id.tv_profile_item, data));
         lv_profile.setOnItemClickListener((parent, view1, position, id) -> {
@@ -173,6 +174,8 @@ public class ProfileFragment extends Fragment {
                 settings();
             } else if (position == 2) {
                 issues();
+            } else if (position == 3) {
+                donate();
             }
         });
 
@@ -466,6 +469,13 @@ public class ProfileFragment extends Fragment {
 
     private void issues() {
         Intent intent = new Intent(getContext(), IssuesActivity.class);
+        startActivity(intent);
+    }
+
+    private void donate() {
+        Intent intent = new Intent(getContext(), VideoViewActivity2.class);
+        intent.putExtra("playUrl", "https://http2.idingdang.org/donate");
+        intent.putExtra("orientation", "v");
         startActivity(intent);
     }
 
