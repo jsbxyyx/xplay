@@ -107,6 +107,10 @@ public class ListFragment extends Fragment {
                 if (clear) {
                     lvListAdapter.getDataList().clear();
                 }
+                if (page == 1 && list.isEmpty()) {
+                    UiUtils.showToast("未搜索到书籍");
+                    return;
+                }
                 lvListAdapter.getDataList().addAll(list);
                 lvListAdapter.notifyDataSetChanged();
                 if (!list.isEmpty()) {
