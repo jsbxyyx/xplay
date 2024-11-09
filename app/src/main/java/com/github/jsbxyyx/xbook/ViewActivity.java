@@ -22,7 +22,7 @@ import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.ViewTime;
-import com.github.jsbxyyx.xbook.httpserver.HttpServer;
+import com.github.jsbxyyx.xbook.httpserver.FileHttpServer;
 import com.github.jsbxyyx.xbook.httpserver.MediaTypeFactory;
 
 import java.io.File;
@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public class ViewActivity extends AppCompatActivity {
 
-    private HttpServer mHttpd;
+    private FileHttpServer mHttpd;
     private WebView webView;
     private String bookId;
     private String bookTitle;
@@ -79,7 +79,7 @@ public class ViewActivity extends AppCompatActivity {
         }
 
         int port = 5200;
-        mHttpd = new HttpServer(port, new MediaTypeFactory(getBaseContext()));
+        mHttpd = new FileHttpServer(port, new MediaTypeFactory(getBaseContext()));
         try {
             mHttpd.start();
         } catch (IOException e) {

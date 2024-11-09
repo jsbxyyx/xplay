@@ -96,7 +96,7 @@ public class SettingsActivity extends AppCompatActivity {
             if (Common.isEmpty(downloadUrl)) {
                 UiUtils.showToast("已经是最新版本");
             } else {
-                bookNetHelper.download(downloadUrl, Common.sdcard, "", new DataCallback<File>() {
+                bookNetHelper.downloadApk(downloadUrl, new DataCallback<File>() {
                     @Override
                     public void call(File file, Throwable err) {
                         if (err != null) {

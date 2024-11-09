@@ -372,6 +372,89 @@ public class BookNetHelper {
         });
     }
 
+    public void downloadApk(String downloadUrl, DataCallback dataCallback, ProgressListener listener) {
+        Map<String, Object> object = new HashMap<>();
+        String reqUrl = downloadUrl;
+        object.put("method", "GET");
+        object.put("url", reqUrl);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("User-Agent", userAgent);
+        headers.put(cookie_key, SessionManager.getSession());
+        headers.put("b", "1");
+        object.put("headers", headers);
+
+        Map<String, Object> params = new HashMap<>();
+        object.put("params", params);
+
+        String s = JsonUtil.toJson(object);
+        LogUtil.d(TAG, "download request: %s : %s", reqUrl, s);
+        Request request = new Request.Builder()
+                .url(xurl)
+                .header(Common.vc, UiUtils.getVersionCode() + "")
+                .header(Common.vn, UiUtils.getVersionName())
+                .header(Common.platform, Common.platform_android)
+                .header(Common.sv, android.os.Build.VERSION.RELEASE)
+                .post(RequestBody.create(s, MediaType.parse("application/json")))
+                .build();
+        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
+                dataCallback.call(null, e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    LogUtil.d(TAG, "onResponse: %s", response.code());
+                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    return;
+                }
+                File dir = new File(Common.sdcard);
+                if (!dir.exists()) {
+                    boolean mkdirs = dir.mkdirs();
+                    LogUtil.d(TAG, "mkdirs: %s", mkdirs);
+                }
+                String contentDisposition = response.headers().get("Content-Disposition");
+                LogUtil.d(TAG, "contentDisposition: %s", contentDisposition);
+
+                String filename = "";
+                if (Common.isBlank(contentDisposition)) {
+                    int idx = reqUrl.lastIndexOf("/");
+                    if (idx > -1) {
+                        filename = reqUrl.substring(idx + 1);
+                    }
+                } else {
+                    filename = ContentDispositionParser.parse(contentDisposition);
+                }
+                filename = Common.isBlank(filename) ? "tmp-" + UUID.randomUUID().toString() : filename;
+
+                File f = new File(Common.sdcard, filename);
+                long total = response.body().contentLength();
+                try (InputStream input = response.body().byteStream();
+                     FileOutputStream output = new FileOutputStream(f)) {
+                    byte[] buffer = new byte[1024 * 8];
+                    long count = 0;
+                    int n;
+                    while (-1 != (n = input.read(buffer))) {
+                        output.write(buffer, 0, n);
+                        count += n;
+                        output.flush();
+                        if (listener != null) {
+                            listener.onProgress(count, total);
+                        }
+                    }
+                    output.flush();
+                    if (listener != null) {
+                        listener.onProgress(count, total);
+                    }
+                }
+                dataCallback.call(f, null);
+            }
+        });
+    }
+
     public void profile(DataCallback dataCallback) {
         Map<String, Object> object = new HashMap<>();
         String reqUrl = zurl + "/profileEdit";

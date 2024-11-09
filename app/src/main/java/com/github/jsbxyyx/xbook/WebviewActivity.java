@@ -8,16 +8,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.UiUtils;
+import com.github.jsbxyyx.xbook.httpserver.BizHttpServer;
 
 import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.geckoview.GeckoView;
+
+import java.io.IOException;
+
+import fi.iki.elonen.NanoHTTPD;
 
 public class WebviewActivity extends AppCompatActivity {
 
     private GeckoView webView;
     private String url;
     private static GeckoRuntime runtime;
+
+    private NanoHTTPD mHttpd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +38,13 @@ public class WebviewActivity extends AppCompatActivity {
         if (Common.isBlank(url)) {
             UiUtils.showToast("没有地址");
             return;
+        }
+
+        mHttpd = new BizHttpServer(5201, this);
+        try {
+            mHttpd.start();
+        } catch (IOException e) {
+            LogUtil.e(getClass().getSimpleName(), "onCreate: %s", LogUtil.getStackTraceString(e));
         }
 
         String orientation = getIntent().getStringExtra("orientation");
@@ -44,8 +60,24 @@ public class WebviewActivity extends AppCompatActivity {
             webView = findViewById(R.id.wv_html_view);
             GeckoSession session = new GeckoSession();
             if (runtime == null) {
-                runtime = GeckoRuntime.create(this);
+                GeckoRuntimeSettings.Builder builder = new GeckoRuntimeSettings.Builder()
+                        .allowInsecureConnections(GeckoRuntimeSettings.ALLOW_ALL)
+                        .javaScriptEnabled(true)
+                        .doubleTapZoomingEnabled(true)
+                        .inputAutoZoomEnabled(true)
+                        .forceUserScalableEnabled(true)
+                        .aboutConfigEnabled(true)
+                        .loginAutofillEnabled(true)
+                        .webManifest(true)
+                        .consoleOutput(true)
+                        .remoteDebuggingEnabled(BuildConfig.DEBUG)
+                        .debugLogging(BuildConfig.DEBUG);
+                runtime = GeckoRuntime.create(this, builder.build());
             }
+            GeckoSessionSettings settings = session.getSettings();
+            settings.setAllowJavascript(true);
+            settings.setUserAgentMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+
             session.open(runtime);
             webView.setSession(session);
 
@@ -63,5 +95,8 @@ public class WebviewActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         LogUtil.d(getClass().getSimpleName(), "onDestroy");
+        if (mHttpd != null) {
+            mHttpd.stop();
+        }
     }
 }

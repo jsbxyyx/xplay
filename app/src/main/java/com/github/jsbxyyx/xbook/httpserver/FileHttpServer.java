@@ -18,8 +18,8 @@ import fi.iki.elonen.NanoHTTPD;
  * @author jsbxyyx
  */
 
-public class HttpServer extends NanoHTTPD {
-    private static final String TAG = "HttpServer";
+public class FileHttpServer extends NanoHTTPD {
+    private static final String TAG = "FileHttpServer";
     private MediaTypeFactory mediaTypeFactory;
 
     class ResourceResponse extends Response {
@@ -28,7 +28,7 @@ public class HttpServer extends NanoHTTPD {
         }
     }
 
-    public HttpServer(int port, MediaTypeFactory mediaTypeFactory) {
+    public FileHttpServer(int port, MediaTypeFactory mediaTypeFactory) {
         super(port);
         this.mediaTypeFactory = mediaTypeFactory;
     }
