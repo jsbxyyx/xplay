@@ -26,9 +26,7 @@ import com.github.jsbxyyx.xbook.httpserver.FileHttpServer;
 import com.github.jsbxyyx.xbook.httpserver.MediaTypeFactory;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,18 +85,12 @@ public class ViewActivity extends AppCompatActivity {
         }
 
         try {
+
             String www = "www";
-            String[] wwws = getResources().getAssets().list(www);
-            File wwwDir = new File(Common.xbook_dir + "/" + www);
-            if (!wwwDir.exists()) {
-                wwwDir.mkdirs();
-            }
-            for (String file : wwws) {
-                try (InputStream in = getResources().getAssets().open(www + "/" + file);
-                     FileOutputStream out = new FileOutputStream(wwwDir + "/" + file)) {
-                    Common.copy(in, out);
-                }
-            }
+            Common.copyAssets(this, www, Common.xbook_dir + "/" + www);
+
+            String cmaps = "www/cmaps";
+            Common.copyAssets(this, www, Common.xbook_dir + "/" + cmaps);
 
             webView = findViewById(R.id.wv_view);
             webView.getSettings().setJavaScriptEnabled(true);

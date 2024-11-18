@@ -1,7 +1,10 @@
 package com.github.jsbxyyx.xbook.common;
 
+import android.app.Activity;
 import android.os.Environment;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -142,6 +145,20 @@ public class Common {
             encodeData[i] = (byte) (rawData[i] ^ number);
         }
         return encodeData;
+    }
+
+    public static void copyAssets(Activity activity, String asset, String dest) throws IOException {
+        String[] assets = activity.getResources().getAssets().list(asset);
+        File destDir = new File(dest);
+        if (!destDir.exists()) {
+            destDir.mkdirs();
+        }
+        for (String file : assets) {
+            try (InputStream in = activity.getResources().getAssets().open(asset + "/" + file);
+                 FileOutputStream out = new FileOutputStream(new File(destDir, file))) {
+                copy(in, out);
+            }
+        }
     }
 
 }
