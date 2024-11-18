@@ -1,6 +1,7 @@
 package com.github.jsbxyyx.xbook.common;
 
-import android.app.Activity;
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Environment;
 
 import java.io.File;
@@ -147,17 +148,38 @@ public class Common {
         return encodeData;
     }
 
-    public static void copyAssets(Activity activity, String asset, String dest) throws IOException {
-        String[] assets = activity.getResources().getAssets().list(asset);
+    public static void copyAssets(Context context, String asset, String dest) throws IOException {
+        AssetManager assetManager = context.getAssets();
+        String[] assets = assetManager.list(asset);
         File destDir = new File(dest);
         if (!destDir.exists()) {
             destDir.mkdirs();
         }
-        for (String file : assets) {
-            try (InputStream in = activity.getResources().getAssets().open(asset + "/" + file);
-                 FileOutputStream out = new FileOutputStream(new File(destDir, file))) {
-                copy(in, out);
+        if (assets != null) {
+            for (String file : assets) {
+                String assetPath = asset + "/" + file;
+                File targetFile = new File(destDir, file);
+                if (isDirectory(assetManager, assetPath)) {
+                    if (!targetFile.exists()) {
+                        targetFile.mkdirs();
+                    }
+                    copyAssets(context, assetPath, targetFile.getAbsolutePath());
+                } else {
+                    try (InputStream in = assetManager.open(assetPath);
+                         FileOutputStream out = new FileOutputStream(targetFile)) {
+                        copy(in, out);
+                    }
+                }
             }
+        }
+    }
+
+    public static boolean isDirectory(AssetManager assetManager, String assetPath) {
+        try {
+            String[] files = assetManager.list(assetPath);
+            return files != null && files.length > 0;
+        } catch (IOException e) {
+            return false;
         }
     }
 

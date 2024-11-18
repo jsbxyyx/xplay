@@ -89,9 +89,6 @@ public class ViewActivity extends AppCompatActivity {
             String www = "www";
             Common.copyAssets(this, www, Common.xbook_dir + "/" + www);
 
-            String cmaps = "www/cmaps";
-            Common.copyAssets(this, www, Common.xbook_dir + "/" + cmaps);
-
             webView = findViewById(R.id.wv_view);
             webView.getSettings().setJavaScriptEnabled(true);
             // webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);

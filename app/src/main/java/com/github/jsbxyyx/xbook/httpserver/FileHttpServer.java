@@ -73,7 +73,7 @@ public class FileHttpServer extends NanoHTTPD {
                     if (name.endsWith(".js")
                             || name.endsWith(".css")
                             || name.endsWith(".htm")
-                            || name.endsWith(".html")
+                            || name.endsWith(".html") || name.endsWith(".htm")
                             || name.endsWith(".bcmap")) {
                         LogUtil.d(TAG, "ignore : %s", name);
                         in = new FileInputStream(rootFile);
@@ -87,7 +87,7 @@ public class FileHttpServer extends NanoHTTPD {
                             head.flip();
                             c.close();
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            LogUtil.e(TAG, "%s", LogUtil.getStackTraceString(e));
                         }
 
                         long magic = head.getLong();
