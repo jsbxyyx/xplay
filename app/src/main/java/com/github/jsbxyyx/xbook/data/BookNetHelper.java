@@ -640,7 +640,7 @@ public class BookNetHelper {
         });
     }
 
-    public void registration(String email, String password, String verifyCode, DataCallback dataCallback) {
+    public void registrationWithNickname(String email, String password, String verifyCode, String nickname, DataCallback dataCallback) {
         Map<String, Object> object = new HashMap<>();
         String reqUrl = zurl + "/rpc.php";
         object.put("method", "POST");
@@ -658,7 +658,7 @@ public class BookNetHelper {
         data.append("isModal=true").append("&");
         data.append("email=").append(Common.urlEncode(email)).append("&");
         data.append("password=").append(Common.urlEncode(password)).append("&");
-        data.append("name=").append(email.split("\\@")[0]).append("&");
+        data.append("name=").append(Common.isBlank(nickname) ? Common.urlEncode(email.split("\\@")[0]) : Common.urlEncode(nickname)).append("&");
         data.append("rx=215").append("&");
         data.append("action=registration").append("&");
         data.append("redirectUrl=").append("&");
@@ -712,6 +712,10 @@ public class BookNetHelper {
                 }
             }
         });
+    }
+
+    public void registration(String email, String password, String verifyCode, DataCallback dataCallback) {
+        registrationWithNickname(email, password, verifyCode, email.split("\\@")[0], dataCallback);
     }
 
     public void cloudSync(Book book, DataCallback dataCallback) {

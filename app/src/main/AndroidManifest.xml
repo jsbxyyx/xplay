@@ -27,17 +27,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".WebviewActivity"
+            android:name=".GeckoWebViewActivity"
             android:exported="false" />
         <activity
             android:name=".ForgetpwdActivity"
             android:exported="false" />
         <activity
             android:name=".IssuesActivity"
-            android:exported="false" />
-        <activity
-            android:name=".VideoViewActivity2"
-            android:configChanges="orientation|screenSize"
             android:exported="false" />
         <!--
         <activity

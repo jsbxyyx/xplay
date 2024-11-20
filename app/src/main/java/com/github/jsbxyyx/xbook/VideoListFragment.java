@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +21,6 @@ import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.VideoNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.QqVideo;
-import com.github.jsbxyyx.xbook.data.bean.QqVideoHotRank;
 import com.github.jsbxyyx.xbook.data.bean.QqVideoHotWord;
 
 import java.util.List;
@@ -74,8 +72,8 @@ public class VideoListFragment extends Fragment {
                 QqVideo.QqPlaylist playlist = video.getPlaylist().get(position);
                 String playUrl = video.getPlayer() + playlist.getUrl();
                 LogUtil.d(TAG, "%s", playUrl);
-                Intent intent = new Intent(mActivity, VideoViewActivity2.class);
-                intent.putExtra("playUrl", playUrl);
+                Intent intent = new Intent(mActivity, GeckoWebViewActivity.class);
+                intent.putExtra("url", playUrl);
                 intent.putExtra("orientation", "h");
                 startActivity(intent);
             }

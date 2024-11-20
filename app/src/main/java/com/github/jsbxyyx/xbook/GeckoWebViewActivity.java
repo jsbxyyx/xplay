@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import fi.iki.elonen.NanoHTTPD;
 
-public class WebviewActivity extends AppCompatActivity {
+public class GeckoWebViewActivity extends AppCompatActivity {
 
     private GeckoView webView;
     private String url;
@@ -48,11 +48,9 @@ public class WebviewActivity extends AppCompatActivity {
         }
 
         String orientation = getIntent().getStringExtra("orientation");
-        if ("v".equals(orientation) &&
-                getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+        if ("v".equals(orientation)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else if ("h".equals(orientation) &&
-                getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+        } else if ("h".equals(orientation)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 

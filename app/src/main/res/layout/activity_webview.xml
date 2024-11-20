@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".WebviewActivity">
+    tools:context=".GeckoWebViewActivity">
 
     <org.mozilla.geckoview.GeckoView
         android:id="@+id/wv_html_view"

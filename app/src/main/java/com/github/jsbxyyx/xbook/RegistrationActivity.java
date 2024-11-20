@@ -35,6 +35,7 @@ public class RegistrationActivity extends AppCompatActivity {
         EditText et_login_password = findViewById(R.id.et_login_password);
         EditText et_login_code = findViewById(R.id.et_login_code);
         Button btn_send_code = findViewById(R.id.btn_send_code);
+        EditText et_nickname = findViewById(R.id.et_nickname);
         Button btn_registration = findViewById(R.id.btn_registration);
         TextView tv_login = findViewById(R.id.tv_login);
         TextView tv_forgetpwd = findViewById(R.id.tv_forgetpwd);
@@ -65,9 +66,10 @@ public class RegistrationActivity extends AppCompatActivity {
             String user = et_login_user.getText().toString();
             String password = et_login_password.getText().toString();
             String code = et_login_code.getText().toString();
+            String nickname = et_nickname.getText().toString();
             LoadingDialog loading = new LoadingDialog(this);
             loading.show();
-            bookNetHelper.registration(user, password, code, new DataCallback<String>() {
+            bookNetHelper.registrationWithNickname(user, password, code, nickname, new DataCallback<String>() {
                 @Override
                 public void call(String str, Throwable err) {
                     runOnUiThread(() -> {

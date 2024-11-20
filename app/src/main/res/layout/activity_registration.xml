@@ -23,7 +23,7 @@
         android:inputType="textPassword"
         android:maxLines="1"
         android:singleLine="true"
-        android:hint="清输入密码" />
+        android:hint="请输入密码" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
             android:inputType="text"
             android:maxLines="1"
             android:singleLine="true"
-            android:hint="清输入验证码" />
+            android:hint="请输入验证码" />
 
         <Button
             android:id="@+id/btn_send_code"
@@ -47,6 +47,14 @@
             android:text="发送" />
 
     </LinearLayout>
+
+    <EditText
+        android:id="@+id/et_nickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:hint="请输入昵称" />
 
     <Button
         android:id="@+id/btn_registration"
