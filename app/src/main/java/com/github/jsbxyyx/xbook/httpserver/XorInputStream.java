@@ -16,7 +16,7 @@ public class XorInputStream extends InputStream {
         this.number = number;
         this.xor = xor;
         try {
-            input.skip(offset);
+            skip(offset);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -24,7 +24,7 @@ public class XorInputStream extends InputStream {
 
     @Override
     public long skip(long n) throws IOException {
-        return input.skip(offset + n);
+        return input.skip(n);
     }
 
     @Override
