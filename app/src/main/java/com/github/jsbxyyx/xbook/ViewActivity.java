@@ -116,12 +116,23 @@ public class ViewActivity extends AppCompatActivity {
                 UiUtils.showToast("不支持的文件格式:" + extension);
                 return;
             }
-            String url = String.format(
-                    "http://127.0.0.1:%s/%s/%s?%s",
-                    port, www, html,
-                    String.format("cur=%s&pages=%s&book_id=%s&name=%s&t=%s&navh=%s",
-                            cur, pages, bookId, name, System.currentTimeMillis(), navH)
+            String onlineReadData = SPUtils.getData(getBaseContext(), Common.online_read_key, Common.unchecked);
+            String htmlUrl = "";
+            if (Common.checked.equals(onlineReadData)) {
+                htmlUrl = "https://xxzkid.github.io/public/" + html;
+            } else {
+                htmlUrl = "http://127.0.0.1:" + port + "/" + www + "/" + html;
+            }
+            LogUtil.d(getClass().getSimpleName(), "html : %s", htmlUrl);
+            String fileUrl = "http://127.0.0.1:" + port;
+            String param = String.format(
+                    "cur=%s&pages=%s&book_id=%s&name=%s&t=%s&navh=%s&file_url=%s&online=%s",
+                    cur, pages, bookId, name, System.currentTimeMillis(), navH,
+                    Common.urlEncode(fileUrl), onlineReadData
             );
+            String url = "${htmlUrl}?${param}"
+                    .replace("${htmlUrl}", htmlUrl)
+                    .replace("${param}", param);
             webView.loadUrl(url);
         } catch (IOException e) {
             LogUtil.e(getClass().getSimpleName(), "onCreate: %s", LogUtil.getStackTraceString(e));

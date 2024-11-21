@@ -20,8 +20,6 @@ public class BizHttpServer extends NanoHTTPD {
     private static final String TAG = "BizHttpServer";
     private Context mContext;
 
-    private static final String MIME_APPLICATION_JSON = "application/json";
-
     public BizHttpServer(int port, Context context) {
         super(port);
         mContext = context;
@@ -40,8 +38,8 @@ public class BizHttpServer extends NanoHTTPD {
         LogUtil.d(TAG, "params=%s", params);
 
         if (method.equals(Method.OPTIONS)) {
-            Response response = newFixedLengthResponse(Response.Status.OK, MIME_APPLICATION_JSON, "{}");
-            cors(session, response);
+            Response response = newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "{}");
+            HttpServerUtils.cors(session, response);
             return response;
         }
 
@@ -55,8 +53,8 @@ public class BizHttpServer extends NanoHTTPD {
                 map.put("uid", uid);
                 String json = JsonUtil.toJson(map);
 
-                Response response = newFixedLengthResponse(Response.Status.OK, MIME_APPLICATION_JSON, json);
-                cors(session, response);
+                Response response = newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, json);
+                HttpServerUtils.cors(session, response);
                 return response;
             }
 
@@ -68,26 +66,15 @@ public class BizHttpServer extends NanoHTTPD {
                 map.put("vn", vn);
                 String json = JsonUtil.toJson(map);
 
-                Response response = newFixedLengthResponse(Response.Status.OK, MIME_APPLICATION_JSON, json);
-                cors(session, response);
+                Response response = newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, json);
+                HttpServerUtils.cors(session, response);
                 return response;
             }
 
         }
-        Response response = newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_APPLICATION_JSON, "{}");
-        cors(session, response);
+        Response response = newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "{}");
+        HttpServerUtils.cors(session, response);
         return response;
-    }
-
-    private void cors(IHTTPSession session, Response response) {
-        String origin = session.getHeaders().get("origin");
-        response.addHeader("Access-Control-Allow-Origin", Common.isBlank(origin) ? "*" : origin);
-        response.addHeader("Access-Control-Allow-Credentials", "true");
-        response.addHeader("Access-Control-Max-Age", "86400");
-        response.addHeader("Access-Control-Expose-Headers", "tk");
-        response.addHeader("Access-Control-Allow-Headers", "tk, Content-Type, X-Requested-With");
-        response.addHeader("Access-Control-Allow-Methods", "HEAD, POST, GET, PUT, DELETE, OPTIONS");
-        response.addHeader("Vary", "Origin, Access-Control-Request-Method, Access-Control-Request-Headers");
     }
 
 }

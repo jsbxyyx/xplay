@@ -259,7 +259,7 @@
       var r = window.location.search.substring(1).match(reg);
       if (r != null) return unescape(r[2]); return null;
     }
-    var base = window.location.protocol + "//" + window.location.host;
+    var base = getUrlParam("file_url");
     var file = base + "/" + getUrlParam("name");
     var book_id = getUrlParam("book_id");
     var cur = getUrlParam("cur");
@@ -300,10 +300,10 @@
     }
 
     //pdfjsLib.GlobalWorkerOptions.workerSrc = "pdf.worker.js"
+    var online = getUrlParam("online");
     pdfjsLib.getDocument({
       url: file,
-      //cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.489/cmaps/',
-      cMapUrl: 'cmaps/',
+      cMapUrl: online == "0" ? 'cmaps/' : 'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.489/cmaps/',
       cMapPacked: true,
     }).then((pdf) => {
       console.log('pdf ready');

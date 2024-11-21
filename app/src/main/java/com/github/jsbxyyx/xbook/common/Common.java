@@ -43,6 +43,7 @@ public class Common {
     public static final String search_language_key = "search_language";
     public static final String sync_key = "sync";
     public static final String reader_image_show_key = "reader_image_show";
+    public static final String online_read_key = "online_read";
     public static final String checked = "1";
     public static final String unchecked = "0";
 

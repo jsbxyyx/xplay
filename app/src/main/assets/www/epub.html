@@ -292,7 +292,7 @@
       if (r != null) return unescape(r[2]); return null;
     }
     var body_ele = document.getElementsByTagName('body')[0];
-    var base = window.location.protocol + "//" + window.location.host;
+    var base = getUrlParam("file_url");
 
     var gold_theme = {
       'body': {

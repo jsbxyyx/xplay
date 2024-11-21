@@ -45,6 +45,12 @@ public class FileHttpServer extends NanoHTTPD {
         LogUtil.d(TAG, "header=%s", header);
         LogUtil.d(TAG, "params=%s", params);
 
+        if (method.equals(Method.OPTIONS)) {
+            Response response = newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "");
+            HttpServerUtils.cors(session, response);
+            return response;
+        }
+
         if (method.equals(Method.GET)) {
             File rootFile = new File(Common.xbook_dir);
             rootFile = new File(rootFile + uri);
@@ -106,17 +112,23 @@ public class FileHttpServer extends NanoHTTPD {
                         }
                     }
                     LogUtil.d(TAG, "%s bytes : %s", name, totalBytes);
-                    return new ResourceResponse(
+                    ResourceResponse response = new ResourceResponse(
                             mediaTypeFactory.getMediaTypes(name, "application/octet-stream"),
                             in,
                             totalBytes);
+                    HttpServerUtils.cors(session, response);
+                    return response;
                 } catch (Exception e) {
                     LogUtil.e(TAG, "%s", LogUtil.getStackTraceString(e));
                 }
-                return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_HTML, "Not Found");
+                Response response = newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_HTML, "Not Found");
+                HttpServerUtils.cors(session, response);
+                return response;
             }
         }
-        return newFixedLengthResponse(answer);
+        Response response = newFixedLengthResponse(answer);
+        HttpServerUtils.cors(session, response);
+        return response;
     }
 
 }

@@ -50,6 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
             Common.search_language_key,
             Common.sync_key,
             Common.reader_image_show_key,
+            Common.online_read_key,
     };
 
     @Override
@@ -283,6 +284,23 @@ public class SettingsActivity extends AppCompatActivity {
                 SPUtils.putData(getBaseContext(), Common.reader_image_show_key, Common.unchecked);
             }
             LogUtil.d(getClass().getSimpleName(), "reader image show checked : %s", cb.isChecked());
+        });
+
+        String online_read_data = SPUtils.getData(getBaseContext(), Common.online_read_key, Common.unchecked);
+        CheckBox cb_online_read = findViewById(R.id.cb_online_read);
+        if (Common.checked.equals(online_read_data)) {
+            cb_online_read.setChecked(true);
+        } else {
+            cb_online_read.setChecked(false);
+        }
+        cb_online_read.setOnClickListener((v) -> {
+            CheckBox cb = (CheckBox) v;
+            if (cb.isChecked()) {
+                SPUtils.putData(getBaseContext(), Common.online_read_key, Common.checked);
+            } else {
+                SPUtils.putData(getBaseContext(), Common.online_read_key, Common.unchecked);
+            }
+            LogUtil.d(getClass().getSimpleName(), "online read checked : %s", cb.isChecked());
         });
 
         Button btn_clear_settings = findViewById(R.id.btn_clear_settings);

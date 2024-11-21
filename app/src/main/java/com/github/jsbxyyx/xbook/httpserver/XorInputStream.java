@@ -1,6 +1,5 @@
 package com.github.jsbxyyx.xbook.httpserver;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -30,13 +29,18 @@ public class XorInputStream extends InputStream {
 
     @Override
     public int read() throws IOException {
-        int read = input.read();
-        if (read != -1) {
-            int fRead = xor == 1 ? read ^ number : read;
-            return fRead;
-        } else {
-            return read;
+        return input.read();
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        int read = input.read(b, off, len);
+        if (b != null && b.length > 0 && xor == 1) {
+            for (int i = 0; i < len; i++) {
+                b[i] = (byte) (b[i] ^ number);
+            }
         }
+        return read;
     }
 
 }
