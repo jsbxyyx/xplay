@@ -161,7 +161,7 @@ public class ProfileFragment extends Fragment {
         data.add("云同步本地");
         data.add("设置");
         data.add("意见反馈");
-        data.add("帮助");
+        data.add("支持一下");
         data.add("测试");
         lv_profile.setAdapter(new ArrayAdapter(mActivity, R.layout.profile_item, R.id.tv_profile_item, data));
         lv_profile.setOnItemClickListener((parent, view1, position, id) -> {
