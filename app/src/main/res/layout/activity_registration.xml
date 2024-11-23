@@ -17,6 +17,14 @@
         android:hint="请输入邮箱" />
 
     <EditText
+        android:id="@+id/et_nickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:hint="请输入昵称" />
+
+    <EditText
         android:id="@+id/et_login_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,14 +55,6 @@
             android:text="发送" />
 
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/et_nickname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:hint="请输入昵称" />
 
     <Button
         android:id="@+id/btn_registration"

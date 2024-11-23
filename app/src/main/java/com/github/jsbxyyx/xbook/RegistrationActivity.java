@@ -43,7 +43,8 @@ public class RegistrationActivity extends AppCompatActivity {
         btn_send_code.setOnClickListener((v) -> {
             String user = et_login_user.getText().toString();
             String password = et_login_password.getText().toString();
-            bookNetHelper.sendCode(user, password, new DataCallback<JsonNode>() {
+            String nickname = et_nickname.getText().toString();
+            bookNetHelper.sendCode(user, password, nickname, new DataCallback<JsonNode>() {
                 @Override
                 public void call(JsonNode dataObject, Throwable err) {
                     runOnUiThread(() -> {
@@ -69,7 +70,7 @@ public class RegistrationActivity extends AppCompatActivity {
             String nickname = et_nickname.getText().toString();
             LoadingDialog loading = new LoadingDialog(this);
             loading.show();
-            bookNetHelper.registrationWithNickname(user, password, code, nickname, new DataCallback<String>() {
+            bookNetHelper.registration(user, password, code, nickname, new DataCallback<String>() {
                 @Override
                 public void call(String str, Throwable err) {
                     runOnUiThread(() -> {

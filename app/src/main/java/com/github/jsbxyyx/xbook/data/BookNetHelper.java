@@ -514,7 +514,7 @@ public class BookNetHelper {
         });
     }
 
-    public void sendCode(String email, String password, DataCallback dataCallback) {
+    public void sendCode(String email, String password, String nickname, DataCallback dataCallback) {
         Map<String, Object> object = new HashMap<>();
         String reqUrl = zurl + "/papi/user/verification/send-code";
         object.put("method", "POST");
@@ -528,7 +528,7 @@ public class BookNetHelper {
         Map<String, Object> data = new HashMap<>();
         data.put("email", email);
         data.put("password", password);
-        data.put("name", email.split("\\@")[0]);
+        data.put("name", Common.isBlank(nickname) ? Common.urlEncode(email.split("\\@")[0]) : Common.urlEncode(nickname));
         data.put("rx", "215");
         data.put("action", "registration");
         data.put("redirectUrl", "");
@@ -640,7 +640,7 @@ public class BookNetHelper {
         });
     }
 
-    public void registrationWithNickname(String email, String password, String verifyCode, String nickname, DataCallback dataCallback) {
+    public void registration(String email, String password, String verifyCode, String nickname, DataCallback dataCallback) {
         Map<String, Object> object = new HashMap<>();
         String reqUrl = zurl + "/rpc.php";
         object.put("method", "POST");
@@ -712,10 +712,6 @@ public class BookNetHelper {
                 }
             }
         });
-    }
-
-    public void registration(String email, String password, String verifyCode, DataCallback dataCallback) {
-        registrationWithNickname(email, password, verifyCode, email.split("\\@")[0], dataCallback);
     }
 
     public void cloudSync(Book book, DataCallback dataCallback) {
