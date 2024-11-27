@@ -168,10 +168,11 @@ public class HomeFragment extends Fragment {
                 double localName = Double.parseDouble(versionName);
                 double cloudName = Double.parseDouble(update.get("name").asText().trim());
                 if (cloudName > localName) {
+                    String message = "有新版本啦，前往 我的-设置 进行版本更新";
                     mActivity.runOnUiThread(() -> {
                         new AlertDialog.Builder(mActivity)
                                 .setTitle("提示")
-                                .setMessage("有新版本啦，前往 我的-设置 进行版本更新")
+                                .setMessage(message)
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {

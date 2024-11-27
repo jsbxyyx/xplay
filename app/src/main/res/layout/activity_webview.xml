@@ -7,6 +7,12 @@
     android:orientation="vertical"
     tools:context=".GeckoWebViewActivity">
 
+    <com.github.jsbxyyx.xbook.WebProgress
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:visibility="gone" />
+
     <org.mozilla.geckoview.GeckoView
         android:id="@+id/wv_html_view"
         android:layout_width="match_parent"
