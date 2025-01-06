@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Environment;
 
+import com.github.jsbxyyx.xbook.data.bean.Ip;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,17 +25,20 @@ public class Common {
 
     public static final String sdcard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
 
-    public static final String xurl = "https://http2.idingdang.org/xbook";
-    public static final String xburl = "https://http2.idingdang.org/xbookb";
+    private static final List<Ip> IPS = new ArrayList<>();
+
+    public static final String host = "http2.idingdang.org";
+    private static final String xurl = "https://" + host + "/xbook";
+    private static final String xburl = "https://" + host + "/xbookb";
     public static final String zurl = "";
     public static final String xbook_dir = sdcard + "/xbook";
     public static final long MAGIC = Long.parseLong("CAFEBABE", 16);
     public static final byte MG_XOR = 7;
     public static final String comma = ",";
-    public static final String vc = "vc";
-    public static final String vn = "vn";
-    public static final String sv = "sv";
-    public static final String platform = "platform";
+    public static final String header_vc = "vc";
+    public static final String header_vn = "vn";
+    public static final String header_sv = "sv";
+    public static final String header_platform = "platform";
     public static final String platform_android = "android";
 
     public static final String login_key = "userdata";
@@ -101,6 +106,10 @@ public class Common {
 
     public static boolean isEmpty(String str) {
         return str == null || str.isEmpty();
+    }
+
+    public static <E> boolean isEmpty(List<E> list) {
+        return list == null || list.isEmpty();
     }
 
     public static boolean isBlank(String str) {
@@ -182,6 +191,32 @@ public class Common {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public static String getXurl() {
+        return xurl;
+    }
+
+    public static String getXburl() {
+        return xburl;
+    }
+
+    public static void setIPS(List<Ip> ips) {
+        if (!isEmpty(ips)) {
+            IPS.clear();
+            IPS.addAll(ips);
+        }
+    }
+
+    public static List<Ip> getIPS() {
+        return IPS;
+    }
+
+    public static String getIp() {
+        if (IPS.isEmpty()) {
+            return host;
+        }
+        return IPS.get(0).getIp();
     }
 
 }

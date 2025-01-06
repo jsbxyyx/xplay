@@ -1,8 +1,6 @@
 package com.github.jsbxyyx.xbook.data;
 
-import static com.github.jsbxyyx.xbook.common.Common.xburl;
-
-import android.os.Build;
+import static com.github.jsbxyyx.xbook.common.Common.getXburl;
 
 import androidx.annotation.NonNull;
 
@@ -60,15 +58,11 @@ public class VideoNetHelper {
 
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "search request: %s : %s", reqUrl, s);
-        Request request = new Request.Builder()
-                .url(xburl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -117,15 +111,11 @@ public class VideoNetHelper {
 
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "hotrank request: %s : %s", reqUrl, s);
-        Request request = new Request.Builder()
-                .url(xburl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -174,15 +164,11 @@ public class VideoNetHelper {
 
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "hotrank request: %s : %s", reqUrl, s);
-        Request request = new Request.Builder()
-                .url(xburl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -213,6 +199,13 @@ public class VideoNetHelper {
                 }
             }
         });
+    }
+
+    void setCommonHeader(Request.Builder builder) {
+        builder.header(Common.header_vc, UiUtils.getVersionCode() + "")
+                .header(Common.header_vn, UiUtils.getVersionName())
+                .header(Common.header_platform, Common.platform_android)
+                .header(Common.header_sv, android.os.Build.VERSION.RELEASE);
     }
 
 }

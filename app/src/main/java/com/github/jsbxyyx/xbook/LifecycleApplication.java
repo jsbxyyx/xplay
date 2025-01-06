@@ -11,10 +11,13 @@ import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.IpNetHelper;
+import com.github.jsbxyyx.xbook.data.bean.Ip;
 import com.github.jsbxyyx.xbook.data.bean.MLog;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -24,6 +27,7 @@ import java.util.concurrent.CountDownLatch;
 public class LifecycleApplication extends Application {
 
     private BookNetHelper bookNetHelper;
+    private IpNetHelper ipNetHelper;
 
     @Override
     public void onCreate() {
@@ -32,6 +36,7 @@ public class LifecycleApplication extends Application {
         UiUtils.initContext(getApplicationContext());
 
         bookNetHelper = new BookNetHelper();
+        ipNetHelper = new IpNetHelper();
 
         String languages = "chinese,japanese,traditional chinese,english,korean,";
         String languagesData = SPUtils.getData(getBaseContext(), Common.search_language_key, null);
@@ -49,6 +54,23 @@ public class LifecycleApplication extends Application {
         if (Common.isNull(syncData)) {
             syncData = Common.checked;
             SPUtils.putData(getBaseContext(), Common.sync_key, syncData);
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
+        ipNetHelper.fetchIP(new DataCallback<List<Ip>>() {
+            @Override
+            public void call(List<Ip> ips, Throwable err) {
+                if (err != null) {
+                    UiUtils.showToast(err.getMessage());
+                }
+                Common.setIPS(ips);
+                LogUtil.d(getClass().getSimpleName(), "set ips : %s", Common.getIPS().size());
+                latch.countDown();
+            }
+        });
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
         }
 
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {

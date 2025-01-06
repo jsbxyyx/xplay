@@ -1,7 +1,7 @@
 package com.github.jsbxyyx.xbook.data;
 
-import static com.github.jsbxyyx.xbook.common.Common.xburl;
-import static com.github.jsbxyyx.xbook.common.Common.xurl;
+import static com.github.jsbxyyx.xbook.common.Common.getXurl;
+import static com.github.jsbxyyx.xbook.common.Common.getXburl;
 import static com.github.jsbxyyx.xbook.common.Common.zurl;
 
 import androidx.annotation.NonNull;
@@ -92,15 +92,11 @@ public class BookNetHelper {
 
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "search request: %s : %s", reqUrl, s);
-        Request request = new Request.Builder()
-                .url(xurl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXurl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -151,15 +147,11 @@ public class BookNetHelper {
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "detail request: %s : %s", reqUrl, s);
 
-        Request request = new Request.Builder()
-                .url(xurl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXurl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -220,15 +212,11 @@ public class BookNetHelper {
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "login request: %s : %s", reqUrl, s);
 
-        Request request = new Request.Builder()
-                .url(xurl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXurl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: ", LogUtil.getStackTraceString(e));
@@ -294,15 +282,11 @@ public class BookNetHelper {
 
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "download request: %s : %s", reqUrl, s);
-        Request request = new Request.Builder()
-                .url(xurl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXurl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -389,15 +373,11 @@ public class BookNetHelper {
 
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "download request: %s : %s", reqUrl, s);
-        Request request = new Request.Builder()
-                .url(xurl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXurl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -471,15 +451,11 @@ public class BookNetHelper {
 
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "profile request: %s : %s", reqUrl, s);
-        Request request = new Request.Builder()
-                .url(xurl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXurl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -539,15 +515,11 @@ public class BookNetHelper {
 
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "send-code request: %s : %s", reqUrl, s);
-        Request request = new Request.Builder()
-                .url(xurl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXurl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -600,15 +572,11 @@ public class BookNetHelper {
 
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "send-code password recovery request: %s : %s", reqUrl, s);
-        Request request = new Request.Builder()
-                .url(xurl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXurl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -669,15 +637,11 @@ public class BookNetHelper {
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "registration request: %s : %s", reqUrl, s);
 
-        Request request = new Request.Builder()
-                .url(xurl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXurl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -748,15 +712,11 @@ public class BookNetHelper {
                 String s = JsonUtil.toJson(object);
                 LogUtil.d(TAG, "cloud sync meta request: %s : %s", reqUrl, s);
 
-                Request request = new Request.Builder()
-                        .url(xburl)
-                        .header(Common.vc, UiUtils.getVersionCode() + "")
-                        .header(Common.vn, UiUtils.getVersionName())
-                        .header(Common.platform, Common.platform_android)
-                        .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                        .post(RequestBody.create(s, MediaType.parse("application/json")))
-                        .build();
-                HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
+                Request.Builder builder = new Request.Builder()
+                        .url(getXburl())
+                        .post(RequestBody.create(s, MediaType.parse("application/json")));
+                setCommonHeader(builder);
+                HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -808,15 +768,11 @@ public class BookNetHelper {
 
             String s = JsonUtil.toJson(object);
             LogUtil.d(TAG, "cloud sync data request: %s : %s", reqUrl, s);
-            Request request = new Request.Builder()
-                    .url(xburl)
-                    .header(Common.vc, UiUtils.getVersionCode() + "")
-                    .header(Common.vn, UiUtils.getVersionName())
-                    .header(Common.platform, Common.platform_android)
-                    .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                    .post(RequestBody.create(s, MediaType.parse("application/json")))
-                    .build();
-            HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
+            Request.Builder builder = new Request.Builder()
+                    .url(getXburl())
+                    .post(RequestBody.create(s, MediaType.parse("application/json")));
+            setCommonHeader(builder);
+            HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -866,15 +822,11 @@ public class BookNetHelper {
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "cloud list request: %s : %s", reqUrl, s);
 
-        Request request = new Request.Builder()
-                .url(xburl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .header(Common.vn, UiUtils.getVersionName())
-                .header(Common.platform, Common.platform_android)
-                .header(Common.sv, android.os.Build.VERSION.RELEASE)
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -921,12 +873,11 @@ public class BookNetHelper {
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "cloud download request: %s : %s", reqUrl, s);
 
-        Request request = new Request.Builder()
-                .url(xburl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -966,13 +917,12 @@ public class BookNetHelper {
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "log request: %s : %s", reqUrl, s);
 
-        Request request = new Request.Builder()
-                .url(xburl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
 
-        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
+        HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -1019,12 +969,11 @@ public class BookNetHelper {
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "cloud get meta request: %s : %s", reqUrl, s);
 
-        Request request = new Request.Builder()
-                .url(xburl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", e);
@@ -1069,12 +1018,11 @@ public class BookNetHelper {
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "cloud versions request: %s : %s", reqUrl, s);
 
-        Request request = new Request.Builder()
-                .url(xburl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", e);
@@ -1121,12 +1069,11 @@ public class BookNetHelper {
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "cloud issues request: %s : %s", reqUrl, s);
 
-        Request request = new Request.Builder()
-                .url(xburl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getSyncClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", e);
@@ -1177,12 +1124,11 @@ public class BookNetHelper {
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "resetpwd request: %s : %s", reqUrl, s);
 
-        Request request = new Request.Builder()
-                .url(xburl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -1232,12 +1178,11 @@ public class BookNetHelper {
         String s = JsonUtil.toJson(object);
         LogUtil.d(TAG, "detail suggest request: %s", s);
 
-        Request request = new Request.Builder()
-                .url(xburl)
-                .header(Common.vc, UiUtils.getVersionCode() + "")
-                .post(RequestBody.create(s, MediaType.parse("application/json")))
-                .build();
-        HttpHelper.getClient().newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
@@ -1266,6 +1211,13 @@ public class BookNetHelper {
                 dataCallback.call(books, null);
             }
         });
+    }
+
+    void setCommonHeader(Request.Builder builder) {
+        builder.header(Common.header_vc, UiUtils.getVersionCode() + "")
+                .header(Common.header_vn, UiUtils.getVersionName())
+                .header(Common.header_platform, Common.platform_android)
+                .header(Common.header_sv, android.os.Build.VERSION.RELEASE);
     }
 
 }
