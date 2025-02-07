@@ -1,7 +1,9 @@
 package com.github.jsbxyyx.xbook;
 
 import android.app.Application;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 
 import androidx.annotation.NonNull;
 
@@ -28,6 +30,8 @@ public class LifecycleApplication extends Application {
 
     private BookNetHelper bookNetHelper;
     private IpNetHelper ipNetHelper;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onCreate() {
@@ -60,7 +64,9 @@ public class LifecycleApplication extends Application {
             @Override
             public void call(List<Ip> ips, Throwable err) {
                 if (err != null) {
-                    UiUtils.showToast(err.getMessage());
+                    mHandler.post(() -> {
+                        UiUtils.showToast(err.getMessage());
+                    });
                 }
                 Common.setIPS(ips);
                 LogUtil.d(getClass().getSimpleName(), "set ips : %s", Common.getIPS().size());
