@@ -56,7 +56,6 @@ public class LifecycleApplication extends Application {
             SPUtils.putData(getBaseContext(), Common.sync_key, syncData);
         }
 
-        CountDownLatch latch = new CountDownLatch(1);
         ipNetHelper.fetchIP(new DataCallback<List<Ip>>() {
             @Override
             public void call(List<Ip> ips, Throwable err) {
@@ -65,13 +64,8 @@ public class LifecycleApplication extends Application {
                 }
                 Common.setIPS(ips);
                 LogUtil.d(getClass().getSimpleName(), "set ips : %s", Common.getIPS().size());
-                latch.countDown();
             }
         });
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-        }
 
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
