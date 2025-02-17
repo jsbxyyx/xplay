@@ -78,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         }
 
+
+
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         fm = getSupportFragmentManager();

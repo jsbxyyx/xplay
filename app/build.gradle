@@ -68,4 +68,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation 'org.mozilla.geckoview:geckoview:121.0.20240108143603'
+
+    // permissions
+    compileOnly 'com.android.support:support-fragment:24.2.0'
 }

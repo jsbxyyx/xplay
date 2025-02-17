@@ -76,16 +76,16 @@ public class QqVideo {
 
     public static class QqPlaylist {
         private String id;
-        private String dataType;
+        private String dataType; // --
         private String url;
         private String title;
         private String markLabel;
-        private String asnycParams;
-        private String displayType;
-        private String checkUpTime;
-        private String imgUrl;
+        private String asnycParams; // --
+        private String displayType; // --
+        private String checkUpTime; // --
+        private String imgUrl; // --
         private String duration;
-        private String rawTags;
+        private String rawTags; // --
 
         public String getId() {
             return id;

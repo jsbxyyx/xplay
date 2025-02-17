@@ -350,6 +350,8 @@ public class BookNetHelper {
                     if (listener != null) {
                         listener.onProgress(count, total);
                     }
+                } catch (IOException e) {
+                    UiUtils.showToast("存储失败, 请打开权限");
                 }
                 dataCallback.call(f, null);
             }

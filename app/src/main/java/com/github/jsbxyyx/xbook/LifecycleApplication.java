@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
@@ -31,11 +32,12 @@ public class LifecycleApplication extends Application {
     private BookNetHelper bookNetHelper;
     private IpNetHelper ipNetHelper;
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
-
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // 禁用深色模式
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         UiUtils.initContext(getApplicationContext());
 
@@ -64,12 +66,11 @@ public class LifecycleApplication extends Application {
             @Override
             public void call(List<Ip> ips, Throwable err) {
                 if (err != null) {
-                    mHandler.post(() -> {
-                        UiUtils.showToast(err.getMessage());
-                    });
+                    UiUtils.showToast(err.getMessage());
                 }
                 Common.setIPS(ips);
                 LogUtil.d(getClass().getSimpleName(), "set ips : %s", Common.getIPS().size());
+                UiUtils.showToast("最优服务器查询成功");
             }
         });
 
@@ -90,11 +91,7 @@ public class LifecycleApplication extends Application {
                             if (err != null) {
                                 LogUtil.e(getClass().getSimpleName(), "异常上报失败. %s", LogUtil.getStackTraceString(err));
                             } else {
-                                new Thread(() -> {
-                                    Looper.prepare();
-                                    UiUtils.showToast("闪退异常上报成功");
-                                    Looper.loop();
-                                }).start();
+                                UiUtils.showToast("闪退异常上报成功");
                                 Thread.sleep(2000);
                             }
                         } catch (InterruptedException ignore) {

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -20,6 +22,8 @@ import android.widget.Toast;
 public class UiUtils {
 
     private static Context mContext;
+
+    private static Handler mHandler = new Handler(Looper.getMainLooper());
 
     public static void initContext(Context context) {
         mContext = context;
@@ -55,7 +59,9 @@ public class UiUtils {
     }
 
     public static void showToast(CharSequence text) {
-        Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
+        mHandler.post(() -> {
+            Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
+        });
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {

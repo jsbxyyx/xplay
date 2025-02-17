@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +52,8 @@ public class HomeFragment extends Fragment {
 
     private BookNetHelper bookNetHelper;
     private BookDbHelper bookDbHelper;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Nullable
     @Override
@@ -143,7 +147,7 @@ public class HomeFragment extends Fragment {
                     data.add(new ContributionItem(parse, millisecond, entry.getValue()));
                 }
             }
-            mActivity.runOnUiThread(() -> {
+            mHandler.post(() -> {
                 contributionView.setData(startDate, data);
             });
         });
