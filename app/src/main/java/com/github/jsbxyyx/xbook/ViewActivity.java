@@ -193,7 +193,7 @@ public class ViewActivity extends AppCompatActivity {
                         }
                         LogUtil.d(getClass().getSimpleName(), "view sync meta: %s : %s", book.getId(), book.getTitle());
                         String sha = o.get("data").get("sha").asText();
-                        book.putRemarkProperty("sha", sha);
+                        book.fillSha(sha);
                         bookDbHelper.updateBook(book);
                     }
                 });

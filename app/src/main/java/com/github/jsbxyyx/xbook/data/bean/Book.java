@@ -160,6 +160,22 @@ public class Book implements java.io.Serializable {
         this.bookReader = bookReader;
     }
 
+    public String extractFilePath() {
+        return getRemarkProperty("file_path");
+    }
+
+    public void fillFilePath(String filePath) {
+        putRemarkProperty("file_path", filePath);
+    }
+
+    public String extractSha() {
+        return getRemarkProperty("sha");
+    }
+
+    public void fillSha(String sha) {
+        putRemarkProperty("sha", sha);
+    }
+
     public String getRemarkProperty(String key) {
         if (Common.isEmpty(remark)) {
             throw new IllegalArgumentException("remark is empty");

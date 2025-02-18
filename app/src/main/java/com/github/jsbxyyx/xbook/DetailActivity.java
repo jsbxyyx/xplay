@@ -141,9 +141,7 @@ public class DetailActivity extends AppCompatActivity {
                         return;
                     }
                     LogUtil.d(TAG, "call: file: %s : %s", file.getAbsolutePath(), file.length());
-                    Map<String, Object> remark = new HashMap<>();
-                    remark.put("file_path", file.getAbsolutePath());
-                    mBook.setRemark(JsonUtil.toJson(remark));
+                    mBook.fillFilePath(file.getAbsolutePath());
                     mBook.setUser(SPUtils.getData(getBaseContext(), Common.profile_email_key));
                     Book by = bookDbHelper.findBookByBid(mBook.getBid());
                     if (by == null) {
@@ -164,7 +162,7 @@ public class DetailActivity extends AppCompatActivity {
                                     String sha = o.get("data").get("sha").asText();
                                     Book book_db = bookDbHelper.findBookById(mBook.getId() + "");
                                     if (book_db != null) {
-                                        book_db.putRemarkProperty("sha", sha);
+                                        book_db.fillSha(sha);
                                         bookDbHelper.updateBook(book_db);
                                     }
 

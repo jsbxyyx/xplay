@@ -692,7 +692,7 @@ public class BookNetHelper {
             public void call(JsonNode o, Throwable err) {
                 if (o != null && o.get("data") != null && o.get("data").get("sha") != null) {
                     String sha = o.get("data").get("sha").asText();
-                    book.putRemarkProperty("sha", sha);
+                    book.fillSha(sha);
                 }
 
                 Map<String, Object> object = new HashMap<>();
@@ -708,7 +708,7 @@ public class BookNetHelper {
                 Map<String, Object> data = new HashMap<>();
                 data.put("title", Common.urlEncode(book.getId() + "-" + book.getTitle() + Common.book_metadata_suffix));
                 data.put("raw", Base64.getEncoder().encodeToString(JsonUtil.toJson(book).getBytes(StandardCharsets.UTF_8)));
-                data.put("sha", book.getRemarkProperty("sha"));
+                data.put("sha", book.extractSha());
                 object.put("data", data);
 
                 String s = JsonUtil.toJson(object);
@@ -760,7 +760,7 @@ public class BookNetHelper {
             headers.put(cookie_key, SessionManager.getSession());
             object.put("headers", headers);
 
-            String file_path = book.getRemarkProperty("file_path");
+            String file_path = book.extractFilePath();
             byte[] bytes = Files.readAllBytes(new File(file_path).toPath());
 
             Map<String, Object> data = new HashMap<>();

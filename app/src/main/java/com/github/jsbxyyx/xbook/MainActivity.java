@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         fm = getSupportFragmentManager();
@@ -89,19 +88,15 @@ public class MainActivity extends AppCompatActivity {
         SessionManager.setSession(SPUtils.getData(this, Common.login_key));
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.nav_home:
-                    position = 1;
-                    break;
-                case R.id.nav_list:
-                    position = 2;
-                    break;
-                case R.id.nav_video_list:
-                    position = 3;
-                    break;
-                case R.id.nav_profile:
-                    position = 4;
-                    break;
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                position = 1;
+            } else if (itemId == R.id.nav_list) {
+                position = 2;
+            } else if (itemId == R.id.nav_video_list) {
+                position = 3;
+            } else if (itemId == R.id.nav_profile) {
+                position = 4;
             }
             showFragment(position);
             return true;

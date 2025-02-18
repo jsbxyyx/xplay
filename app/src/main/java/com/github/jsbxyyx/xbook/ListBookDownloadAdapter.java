@@ -143,7 +143,7 @@ public class ListBookDownloadAdapter extends BaseAdapter {
         });
 
 
-        boolean exists = new File(book.getRemarkProperty("file_path")).exists();
+        boolean exists = new File(book.extractFilePath()).exists();
         holder.book_reader_btn_file_download.setTag(position);
         holder.book_reader_btn_file_download.setVisibility(exists ? View.GONE : View.VISIBLE);
         holder.book_reader_btn_file_download.setOnClickListener(new View.OnClickListener() {

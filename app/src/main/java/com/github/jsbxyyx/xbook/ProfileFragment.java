@@ -189,7 +189,7 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view, String type, int position) {
                 if (Common.action_delete.equals(type)) {
                     Book book = mBookDownloadAdapter.getDataList().get(position);
-                    String file_path = book.getRemarkProperty("file_path");
+                    String file_path = book.extractFilePath();
 
                     new AlertDialog.Builder(mActivity)
                             .setTitle("提示")
@@ -216,7 +216,7 @@ public class ProfileFragment extends Fragment {
                             String name = o.get("data").get("name").asText();
                             String sha = o.get("data").get("sha").asText();
                             Book book_db = bookDbHelper.findBookById(book.getId() + "");
-                            book_db.putRemarkProperty("sha", sha);
+                            book_db.fillSha(sha);
                             bookDbHelper.updateBook(book_db);
                             LogUtil.d(TAG, "upload 2: %s", name);
                             mActivity.runOnUiThread(() -> {
@@ -243,7 +243,7 @@ public class ProfileFragment extends Fragment {
                                 });
                                 Book book_db = bookDbHelper.findBookById(book.getId() + "");
                                 if (book_db != null) {
-                                    book_db.putRemarkProperty("sha", sha);
+                                    book_db.fillSha(sha);
                                     bookDbHelper.updateBook(book_db);
                                     if (book.getBookReader() != null) {
                                         bookDbHelper.updateBookReaderByBookId(book.getBookReader());
@@ -264,10 +264,20 @@ public class ProfileFragment extends Fragment {
                     });
                 } else if (Common.action_file_download.equals(type)) {
                     Book book = mBookDownloadAdapter.getDataList().get(position);
-                    if (!new File(book.getRemarkProperty("file_path")).exists()) {
+                    if (!new File(book.extractFilePath()).exists()) {
                         View parent = (View) view.getParent();
                         TextView tv_text = parent.findViewById(R.id.tv_text);
-                        bookNetHelper.downloadWithMagic(book.getDownloadUrl(), Common.xbook_dir, book.getBid(), new DataCallback.NopDataCallback(), new ProgressListener() {
+                        bookNetHelper.downloadWithMagic(book.getDownloadUrl(), Common.xbook_dir, book.getBid(), new DataCallback<File>() {
+                            @Override
+                            public void call(File f, Throwable err) {
+                                String file_path = book.extractFilePath();
+                                if (!Common.isBlank(file_path) && !file_path.equals(f.getAbsolutePath())) {
+                                    book.fillFilePath(f.getAbsolutePath());
+                                    bookDbHelper.updateBook(book);
+                                    LogUtil.i(TAG, "update " + book.getBid() + "/" + book.getTitle() + " file path.");
+                                }
+                            }
+                        }, new ProgressListener() {
                             @Override
                             public void onProgress(long bytesRead, long total) {
                                 double percent = bytesRead * 1.0 / total * 100;
@@ -295,7 +305,7 @@ public class ProfileFragment extends Fragment {
         lv_download_book.setAdapter(mBookDownloadAdapter);
         lv_download_book.setOnItemClickListener((parent, view, position, id) -> {
             Book book = mBookDownloadAdapter.getDataList().get(position);
-            String file_path = book.getRemarkProperty("file_path");
+            String file_path = book.extractFilePath();
             Intent intent = new Intent(mActivity, ViewActivity.class);
             intent.putExtra("file_path", file_path);
             intent.putExtra("book_id", book.getId() + "");
@@ -327,11 +337,9 @@ public class ProfileFragment extends Fragment {
                     LogUtil.d(TAG, "upAllBook: %s", book.getTitle());
                     String sha = o.get("data").get("sha").asText();
                     Book book_db = bookDbHelper.findBookById(book.getId() + "");
-                    book_db.putRemarkProperty("sha", sha);
+                    book_db.fillSha(sha);
                     bookDbHelper.updateBook(book_db);
-                    mActivity.runOnUiThread(() -> {
-                        UiUtils.showToast("同步成功《" + book.getTitle() + "》");
-                    });
+                    UiUtils.showToast("同步成功《" + book.getTitle() + "》");
                 }
             });
             try {
@@ -340,9 +348,7 @@ public class ProfileFragment extends Fragment {
                 e.printStackTrace();
             }
         }
-        mActivity.runOnUiThread(() -> {
-            UiUtils.showToast("本地同步到云成功");
-        });
+        UiUtils.showToast("本地同步到云成功");
     }
 
     private void downAllBook() {
@@ -391,7 +397,7 @@ public class ProfileFragment extends Fragment {
                             LogUtil.d(TAG, "ignore name : %s", name);
                             continue;
                         }
-                        File file = new File(book.getRemarkProperty("file_path"));
+                        File file = new File(book.extractFilePath());
                         if (file.exists()) {
                             LogUtil.d(TAG, "download: %s exist.", book.getTitle());
                             continue;
@@ -405,9 +411,7 @@ public class ProfileFragment extends Fragment {
                             try {
                                 if (err != null) {
                                     LogUtil.e(TAG, "%s 云下载失败. %s", name, LogUtil.getStackTraceString(err));
-                                    mActivity.runOnUiThread(() -> {
-                                        UiUtils.showToast("错误:" + err.getMessage());
-                                    });
+                                    UiUtils.showToast("错误:" + err.getMessage());
                                     return;
                                 }
                                 if (name.endsWith(Common.book_metadata_suffix)) {
@@ -417,7 +421,7 @@ public class ProfileFragment extends Fragment {
                                     });
                                     Book book_db = bookDbHelper.findBookById(book.getId() + "");
                                     if (book_db != null) {
-                                        book_db.putRemarkProperty("sha", sha);
+                                        book_db.fillSha(sha);
                                         bookDbHelper.updateBook(book_db);
                                         if (book.getBookReader() != null) {
                                             bookDbHelper.updateBookReaderByBookId(book.getBookReader());
@@ -433,15 +437,14 @@ public class ProfileFragment extends Fragment {
                                 } else {
                                     String id = name.split("\\-")[0];
                                     Book book = bookDbHelper.findBookById(id);
-                                    String file_path = book.getRemarkProperty("file_path");
+                                    String file_path = book.extractFilePath();
                                     Files.write(new File(file_path).toPath(), bytes);
                                     LogUtil.d(TAG, "downloaded: %s", name);
-                                    mActivity.runOnUiThread(() -> {
-                                        UiUtils.showToast("云同步《" + name + "》成功");
-                                    });
+                                    UiUtils.showToast("云同步《" + name + "》成功");
                                 }
                             } catch (Exception e) {
                                 LogUtil.e(TAG, "cloud download err. %s", LogUtil.getStackTraceString(e));
+                                UiUtils.showToast("下载失败.《" + name + "》，查看管理文件权限是否开启。");
                             } finally {
                                 latch.countDown();
                             }
