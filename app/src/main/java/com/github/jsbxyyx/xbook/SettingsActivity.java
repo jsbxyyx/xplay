@@ -10,21 +10,18 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.FileProvider;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jsbxyyx.permissions.OnPermissionCallback;
-import com.github.jsbxyyx.permissions.Permission;
-import com.github.jsbxyyx.permissions.XXPermissions;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
@@ -32,6 +29,9 @@ import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 
 import java.io.File;
 import java.util.Arrays;
@@ -322,9 +322,15 @@ public class SettingsActivity extends AppCompatActivity {
             try {
                 String[] permission = null;
                 if (context.getApplicationInfo().targetSdkVersion < 33) {
-                    permission = new String[]{Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE};
+                    permission = new String[]{
+                            Permission.READ_EXTERNAL_STORAGE,
+                            Permission.WRITE_EXTERNAL_STORAGE,
+                            Permission.MANAGE_EXTERNAL_STORAGE
+                    };
                 } else {
-                    permission = new String[]{Permission.READ_MEDIA_IMAGES, Permission.READ_MEDIA_VIDEO, Permission.READ_MEDIA_AUDIO, Permission.WRITE_EXTERNAL_STORAGE};
+                    permission = new String[]{
+                            Permission.MANAGE_EXTERNAL_STORAGE
+                    };
                 }
                 XXPermissions.with(mActivity)
                         .permission(permission)
@@ -336,23 +342,23 @@ public class SettingsActivity extends AppCompatActivity {
                                     UiUtils.showToast("获取部分权限成功，但部分权限未正常授予");
                                     return;
                                 }
-                                UiUtils.showToast("获取文件读写权限成功");
+                                UiUtils.showToast("获取管理文件权限成功");
                             }
 
                             @Override
                             public void onDenied(@NonNull List<String> permissions, boolean doNotAskAgain) {
                                 if (doNotAskAgain) {
-                                    UiUtils.showToast("被永久拒绝授权，请手动授予文件读写权限");
+                                    UiUtils.showToast("被永久拒绝授权，请手动授予管理文件权限");
                                     // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                     XXPermissions.startPermissionActivity(context, permissions);
                                 } else {
-                                    UiUtils.showToast("获取文件读写权限失败");
+                                    UiUtils.showToast("获取管理文件权限失败");
                                 }
                             }
                         });
             } catch (Exception e) {
                 LogUtil.e(getClass().getSimpleName(), LogUtil.getStackTraceString(e));
-                UiUtils.showToast("文件读写权限授权失败");
+                UiUtils.showToast("管理文件权限授权失败");
             }
         });
     }

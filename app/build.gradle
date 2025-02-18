@@ -53,6 +53,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
 }
 
 dependencies {
@@ -70,5 +74,5 @@ dependencies {
     implementation 'org.mozilla.geckoview:geckoview:121.0.20240108143603'
 
     // permissions
-    compileOnly 'com.android.support:support-fragment:24.2.0'
+    implementation 'com.github.getActivity:XXPermissions:20.0'
 }
