@@ -66,7 +66,8 @@ public class LifecycleApplication extends Application {
             @Override
             public void call(List<Ip> ips, Throwable err) {
                 if (err != null) {
-                    UiUtils.showToast(err.getMessage());
+                    UiUtils.showToast("最优服务器查询失败");
+                    return;
                 }
                 Common.setIPS(ips);
                 LogUtil.d(getClass().getSimpleName(), "set ips : %s", Common.getIPS().size());

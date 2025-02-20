@@ -157,9 +157,7 @@ public class HomeFragment extends Fragment {
             public void call(JsonNode o, Throwable err) {
                 if (err != null) {
                     LogUtil.d(getClass().getSimpleName(), "%s", LogUtil.getStackTraceString(err));
-                    mActivity.runOnUiThread(() -> {
-                        UiUtils.showToast("获取版本更新失败:" + err.getMessage());
-                    });
+                    UiUtils.showToast("获取版本更新失败:" + err.getMessage());
                     return;
                 }
                 JsonNode data = o.get("data");
