@@ -24,6 +24,7 @@ import com.github.jsbxyyx.xbook.common.DateUtils;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.ThreadUtils;
+import com.github.jsbxyyx.xbook.common.Tuple;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.contribution.ContributionConfig;
 import com.github.jsbxyyx.xbook.contribution.ContributionItem;
@@ -74,18 +75,11 @@ public class HomeFragment extends Fragment {
 
         TextView contribution_view_text = mActivity.findViewById(R.id.contribution_view_text);
 
-        int days = 182;
-        Date startDate = DateUtils.setHms(new Date(System.currentTimeMillis() - (1000L * 60 * 60 * 24 * days)), 0, 0, 0, 0);
+        Tuple<Integer, Date, List<ContributionItem>> tuple = contributionViewInitData();
 
         ContributionView contributionView = mActivity.findViewById(R.id.contribution_view);
-        Calendar startCalendar = Calendar.getInstance();
-        startCalendar.setTime(startDate);
-        List<ContributionItem> initData = new ArrayList<>(180);
-        for (int i = 0; i <= days; i++) {
-            initData.add(new ContributionItem(startCalendar.getTime(), 0));
-            startCalendar.add(Calendar.DAY_OF_MONTH, 1);
-        }
-        contributionView.setData(startDate, initData, ContributionConfig.defaultConfig());
+
+        contributionView.setData(tuple.getSecond(), tuple.getThird(), ContributionConfig.defaultConfig());
         contributionView.setOnItemClick(new ContributionView.OnItemClickListener() {
             @Override
             public void onClick(int position, ContributionItem item) {
@@ -111,7 +105,7 @@ public class HomeFragment extends Fragment {
 
         ThreadUtils.submit(() -> {
             Map<String, String> kv = Common.parseKv(SessionManager.getSession());
-            List<ViewTime> list = bookDbHelper.findViewTime(startDate, kv.getOrDefault(Common.serv_userid, ""));
+            List<ViewTime> list = bookDbHelper.findViewTime(tuple.getSecond(), kv.getOrDefault(Common.serv_userid, ""));
             List<ContributionItem> data = new ArrayList<>();
             if (list != null && !list.isEmpty()) {
                 Map<String, List<ViewTime>> map = new LinkedHashMap<>();
@@ -128,8 +122,8 @@ public class HomeFragment extends Fragment {
                 }
 
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(startDate);
-                for (int i = 0; i <= days; i++) {
+                calendar.setTime(tuple.getSecond());
+                for (int i = 0; i <= tuple.getFirst(); i++) {
                     String format = DateUtils.format(calendar.getTime(), "yyyy-MM-dd");
                     if (!map.containsKey(format)) {
                         data.add(new ContributionItem(calendar.getTime(), 0));
@@ -148,7 +142,9 @@ public class HomeFragment extends Fragment {
                 }
             }
             mHandler.post(() -> {
-                contributionView.setData(startDate, data);
+                if (!data.isEmpty()) {
+                    contributionView.setData(tuple.getSecond(), data);
+                }
             });
         });
 
@@ -189,6 +185,19 @@ public class HomeFragment extends Fragment {
             }
         });
 
+    }
+
+    private Tuple<Integer, Date, List<ContributionItem>> contributionViewInitData() {
+        int days = 182;
+        Date startDate = DateUtils.setHms(new Date(System.currentTimeMillis() - (1000L * 60 * 60 * 24 * days)), 0, 0, 0, 0);
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.setTime(startDate);
+        List<ContributionItem> initData = new ArrayList<>(180);
+        for (int i = 0; i <= days; i++) {
+            initData.add(new ContributionItem(startCalendar.getTime(), 0));
+            startCalendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return new Tuple<>(days, startDate, initData);
     }
 
 }
