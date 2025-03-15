@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +28,7 @@ public class Common {
 
     private static final List<Ip> IPS = new ArrayList<>();
 
-    public static final String host = "http2.idingdang.org";
+    public static final String host = new String(Ba.abtoa("a([0c$)u:j!w:$!w:$!x.nh5eg=="), StandardCharsets.UTF_8);
     private static final String xurl = "https://" + host + "/xbook";
     private static final String xburl = "https://" + host + "/xbookb";
     public static final String zurl = "";

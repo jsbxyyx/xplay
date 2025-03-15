@@ -3,6 +3,7 @@ package com.github.jsbxyyx.xbook.data;
 import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.jsbxyyx.xbook.common.Ba;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.HttpStatusException;
@@ -11,6 +12,7 @@ import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.data.bean.Ip;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +27,9 @@ public class IpNetHelper {
 
     public void fetchIP(DataCallback<List<Ip>> dataCallback) {
         final String reqUrl = "/ip";
+        final String h = new String(Ba.abtoa("a([0c$%u:j!w:$!w:$!x.nh5eg=="), StandardCharsets.UTF_8);
         Request.Builder builder = new Request.Builder()
-                .url("https://http1.idingdang.org" + reqUrl)
+                .url("https://" + h + reqUrl)
                 .get();
         LogUtil.d(TAG, "fetch ip request: %s", reqUrl);
         HttpHelper.getDnsClient().newCall(builder.build()).enqueue(new Callback() {
