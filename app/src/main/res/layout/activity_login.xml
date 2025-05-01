@@ -7,28 +7,42 @@
     android:orientation="vertical"
     tools:context=".LoginActivity">
 
-    <EditText
-        android:id="@+id/et_login_user"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:hint="请输入用户名" />
+        android:hint="@string/str_input_username">
 
-    <EditText
-        android:id="@+id/et_login_password"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_login_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:singleLine="true"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:hint="清输入密码" />
+        android:hint="@string/str_input_password">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_login_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:singleLine="true"
+            android:inputType="textPassword"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btn_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="登录" />
+        android:text="@string/str_login" />
 
     <TextView
         android:id="@+id/tv_registration"
@@ -36,6 +50,6 @@
         android:layout_height="30dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="注册" />
+        android:text="@string/str_reg" />
 
 </LinearLayout>

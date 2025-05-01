@@ -8,51 +8,69 @@
     android:padding="5dp"
     tools:context=".ForgetpwdActivity">
 
-    <EditText
-        android:id="@+id/et_login_user"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:hint="请输入邮箱" />
+        android:hint="请输入邮箱"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_login_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:singleLine="true"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/et_login_code"
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_weight="0.7"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.6"
-            android:inputType="text"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:hint="请输入验证码" />
+            android:hint="请输入验证码"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_login_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:singleLine="true"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/btn_send_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="?attr/materialButtonOutlinedStyle"
             android:text="发送" />
 
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/et_login_password"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:hint="请输入密码" />
+        android:hint="@string/str_input_password"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_login_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:singleLine="true"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btn_resetpwd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="重置密码" />
+        style="?attr/materialButtonStyle"
+        android:text="@string/str_reset_password" />
 
     <TextView
         android:id="@+id/tv_login"
@@ -60,6 +78,6 @@
         android:layout_height="30dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="登录" />
+        android:text="@string/str_login" />
 
 </LinearLayout>
