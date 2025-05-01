@@ -477,7 +477,7 @@ public class ProfileFragment extends Fragment {
 
     private void help() {
         Intent intent = new Intent(getContext(), GeckoWebViewActivity.class);
-        intent.putExtra("url", "https://http2.idingdang.org/donate");
+        intent.putExtra("url", "https://" + Common.host + "/donate");
         intent.putExtra("orientation", "v");
         startActivity(intent);
     }
