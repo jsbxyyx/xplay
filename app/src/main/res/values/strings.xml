@@ -10,4 +10,9 @@
     <string name="str_submit">提交</string>
     <string name="str_input_username">请输入用户名</string>
     <string name="str_reg">注册</string>
+    <string name="str_input_email">请输入邮箱</string>
+    <string name="str_input_nickname">请输入昵称</string>
+    <string name="str_input_code">请输入验证码</string>
+    <string name="str_send">发送</string>
+    <string name="str_forget_password">忘记密码</string>
 </resources>
