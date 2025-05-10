@@ -15,4 +15,18 @@
     <string name="str_input_code">请输入验证码</string>
     <string name="str_send">发送</string>
     <string name="str_forget_password">忘记密码</string>
+    <string name="str_clear_settings">清除设置</string>
+    <string name="str_files_permissions">打开文件管理权限</string>
+    <string name="str_current_version">当前版本：</string>
+    <string name="str_0_1">0.1</string>
+    <string name="str_online_reader">在线阅读</string>
+    <string name="str_reader_settings">阅读设置</string>
+    <string name="str_show_image">显示图片</string>
+    <string name="str_download_list_settings">下载列表设置</string>
+    <string name="str_sync">同步</string>
+    <string name="str_is_sync">是否同步</string>
+    <string name="str_search_book_language">搜索书籍语言</string>
+    <string name="str_search_book_format">搜索书籍格式</string>
+    <string name="str_search">搜索</string>
+    <string name="str_search_more">获取更多</string>
 </resources>

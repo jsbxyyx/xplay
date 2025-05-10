@@ -27,7 +27,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="搜索" />
+            android:text="@string/str_search" />
 
     </LinearLayout>
 
@@ -50,7 +50,7 @@
             android:layout_height="0dp"
             android:layout_weight="0.1"
             android:visibility="gone"
-            android:text="获取更多" />
+            android:text="@string/str_search_more" />
 
     </LinearLayout>
 

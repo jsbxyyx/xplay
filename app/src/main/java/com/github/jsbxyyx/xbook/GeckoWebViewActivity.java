@@ -46,6 +46,7 @@ public class GeckoWebViewActivity extends AppCompatActivity {
             mHttpd.start();
         } catch (IOException e) {
             LogUtil.e(getClass().getSimpleName(), "onCreate: %s", LogUtil.getStackTraceString(e));
+            UiUtils.showToast("服务启动失败");
         }
 
         String orientation = getIntent().getStringExtra("orientation");
@@ -119,6 +120,7 @@ public class GeckoWebViewActivity extends AppCompatActivity {
             webProgress.show();
         } catch (Exception e) {
             LogUtil.e(getClass().getSimpleName(), "onCreate: %s", LogUtil.getStackTraceString(e));
+            UiUtils.showToast("网页打开失败");
         }
     }
 

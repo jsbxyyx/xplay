@@ -2,6 +2,7 @@ package com.github.jsbxyyx.xbook.httpserver;
 
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -79,7 +80,7 @@ public class FileHttpServer extends NanoHTTPD {
                     if (name.endsWith(".js")
                             || name.endsWith(".css")
                             || name.endsWith(".htm")
-                            || name.endsWith(".html") || name.endsWith(".htm")
+                            || name.endsWith(".html")
                             || name.endsWith(".bcmap")) {
                         LogUtil.d(TAG, "ignore : %s", name);
                         in = new FileInputStream(rootFile);
@@ -94,6 +95,7 @@ public class FileHttpServer extends NanoHTTPD {
                             c.close();
                         } catch (IOException e) {
                             LogUtil.e(TAG, "%s", LogUtil.getStackTraceString(e));
+                            UiUtils.showToast("未开启文件管理权限，请前往APP-设置打开文件管理权限");
                         }
 
                         long magic = head.getLong();

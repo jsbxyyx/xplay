@@ -444,7 +444,7 @@ public class ProfileFragment extends Fragment {
                                 }
                             } catch (Exception e) {
                                 LogUtil.e(TAG, "cloud download err. %s", LogUtil.getStackTraceString(e));
-                                UiUtils.showToast("下载失败.《" + name + "》，查看管理文件权限是否开启。");
+                                UiUtils.showToast("下载失败.《" + name + "》，前往APP-设置打开管理文件权限");
                             } finally {
                                 latch.countDown();
                             }

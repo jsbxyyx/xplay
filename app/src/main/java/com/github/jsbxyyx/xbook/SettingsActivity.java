@@ -156,7 +156,7 @@ public class SettingsActivity extends AppCompatActivity {
                             if (percent == 100) {
                                 notificationManager.cancel(0);
                             } else {
-                                builder.setContentInfo(String.valueOf(percent) + "%").setProgress(100, percent, false);
+                                builder.setContentInfo(percent + "%").setProgress(100, percent, false);
                                 notificationManager.notify(0, builder.build());
                             }
                         });
@@ -170,9 +170,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void call(JsonNode jsonNode, Throwable err) {
                 if (err != null) {
                     LogUtil.d(getClass().getSimpleName(), "%s", LogUtil.getStackTraceString(err));
-                    runOnUiThread(() -> {
-                        UiUtils.showToast("获取版本更新失败:" + err.getMessage());
-                    });
+                    UiUtils.showToast("获取版本更新失败:" + err.getMessage());
                     return;
                 }
                 JsonNode data = jsonNode.get("data");
@@ -198,6 +196,7 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 } catch (Exception e) {
                     LogUtil.e(getClass().getSimpleName(), "cloud versions exception. %s", LogUtil.getStackTraceString(e));
+                    UiUtils.showToast("获取版本更新失败:" + err.getMessage());
                 }
             }
         });

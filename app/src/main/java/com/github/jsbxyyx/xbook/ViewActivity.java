@@ -82,6 +82,7 @@ public class ViewActivity extends AppCompatActivity {
             mHttpd.start();
         } catch (IOException e) {
             LogUtil.e(getClass().getSimpleName(), "onCreate: %s", LogUtil.getStackTraceString(e));
+            UiUtils.showToast("阅读器打开失败");
         }
 
         try {
@@ -136,6 +137,7 @@ public class ViewActivity extends AppCompatActivity {
             webView.loadUrl(url);
         } catch (IOException e) {
             LogUtil.e(getClass().getSimpleName(), "onCreate: %s", LogUtil.getStackTraceString(e));
+            UiUtils.showToast("未开启文件管理权限，前往APP设置-打开文件管理权限");
         }
     }
 

@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:gravity="center_vertical"
-                android:text="搜索书籍格式"
+                android:text="@string/str_search_book_format"
                 android:textStyle="bold"
                 />
 
@@ -75,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:gravity="center_vertical"
-                android:text="搜索书籍语言"
+                android:text="@string/str_search_book_language"
                 android:textStyle="bold"
                 />
 
@@ -123,7 +123,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:gravity="center_vertical"
-                android:text="是否同步"
+                android:text="@string/str_is_sync"
                 android:textStyle="bold"
                 />
 
@@ -131,7 +131,7 @@
                 android:id="@+id/cb_sync"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="同步"
+                android:text="@string/str_sync"
                 />
 
         </LinearLayout>
@@ -145,7 +145,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:gravity="center_vertical"
-                android:text="下载列表设置"
+                android:text="@string/str_download_list_settings"
                 android:textStyle="bold"
                 />
 
@@ -153,7 +153,7 @@
                 android:id="@+id/cb_show_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="显示图片"
+                android:text="@string/str_show_image"
                 />
 
         </LinearLayout>
@@ -167,7 +167,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:gravity="center_vertical"
-                android:text="阅读设置"
+                android:text="@string/str_reader_settings"
                 android:textStyle="bold"
                 />
 
@@ -175,7 +175,7 @@
                 android:id="@+id/cb_online_read"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="在线阅读"
+                android:text="@string/str_online_reader"
                 />
 
         </LinearLayout>
@@ -184,13 +184,13 @@
             android:id="@+id/btn_clear_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="清除设置" />
+            android:text="@string/str_clear_settings" />
 
         <Button
             android:id="@+id/btn_open_write"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="打开读写权限" />
+            android:text="@string/str_files_permissions" />
 
         <LinearLayout
             android:layout_marginTop="40dp"
@@ -210,14 +210,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:gravity="center"
-                    android:text="当前版本：" />
+                    android:text="@string/str_current_version" />
 
                 <TextView
                     android:id="@+id/tv_version"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:gravity="center"
-                    android:text="0.1" />
+                    android:text="@string/str_0_1" />
 
             </LinearLayout>
 
@@ -228,7 +228,7 @@
                 android:gravity="center_vertical"
                 app:iconGravity="textStart"
                 android:visibility="gone"
-                android:text="0.1"
+                android:text="@string/str_0_1"
                 app:icon="@drawable/baseline_file_download_24" />
 
         </LinearLayout>
