@@ -44,7 +44,7 @@ jobs:
           ls -al app/build/outputs/apk/release/
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "app/build/outputs/apk/release/*-v8a-release.apk"
+          artifacts: "app/build/outputs/apk/release/*-arm64-v8a-release.apk"
           # github auto generate temporary token
           token: ${{ github.token }}
           generateReleaseNotes: true
