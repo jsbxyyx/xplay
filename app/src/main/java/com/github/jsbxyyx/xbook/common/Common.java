@@ -6,13 +6,12 @@ import android.os.Environment;
 
 import com.github.jsbxyyx.xbook.data.bean.Ip;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,13 +65,44 @@ public class Common {
     public static final String serv_userid = "remix_userid";
     public static final String serv_userkey = "remix_userkey";
 
-    public static String urlEncode(String str) {
-        try {
-            return URLEncoder.encode(str, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+    public static String urlEncode(String source) {
+        if (source == null || source.trim().isEmpty()) {
             return "";
         }
+
+        byte[] bytes = source.getBytes(StandardCharsets.UTF_8);
+        boolean original = true;
+        for (byte b : bytes) {
+            if (!(
+                    (b >= 'a' && b <= 'z' || b >= 'A' && b <= 'Z')
+                            || (b >= '0' && b <= '9')
+                            || '-' == b || '.' == b || '_' == b || '~' == b
+            )) {
+                original = false;
+                break;
+            }
+        }
+        if (original) {
+            return source;
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(bytes.length);
+        for (byte b : bytes) {
+            if (
+                    (b >= 'a' && b <= 'z' || b >= 'A' && b <= 'Z')
+                            || (b >= '0' && b <= '9')
+                            || '-' == b || '.' == b || '_' == b || '~' == b
+            ) {
+                baos.write(b);
+            } else {
+                baos.write('%');
+                char hex1 = Character.toUpperCase(Character.forDigit((b >> 4) & 0xF, 16));
+                char hex2 = Character.toUpperCase(Character.forDigit(b & 0xF, 16));
+                baos.write(hex1);
+                baos.write(hex2);
+            }
+        }
+        return new String(baos.toByteArray(), StandardCharsets.UTF_8);
     }
 
     public static boolean statusSuccessful(int status) {

@@ -44,6 +44,7 @@ public class ListBookDownloadAdapter extends BaseAdapter {
     private static class ViewHolder {
         public ImageView book_image;
         public TextView book_title;
+        public TextView book_author;
         public TextView book_file;
         public TextView book_reader_pages_total;
         public Button book_reader_btn_del;
@@ -76,6 +77,7 @@ public class ListBookDownloadAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.book_reader_item, null);
             holder.book_image = convertView.findViewById(R.id.book_reader_image);
             holder.book_title = convertView.findViewById(R.id.book_reader_title);
+            holder.book_author = convertView.findViewById(R.id.book_reader_author);
             holder.book_file = convertView.findViewById(R.id.book_reader_file);
             holder.book_reader_pages_total = convertView.findViewById(R.id.book_reader_pages_total);
             holder.book_reader_btn_del = convertView.findViewById(R.id.book_reader_btn_del);
@@ -96,6 +98,7 @@ public class ListBookDownloadAdapter extends BaseAdapter {
             holder.book_image.setVisibility(View.GONE);
         }
         holder.book_title.setText(book.getTitle());
+        holder.book_author.setText(book.getAuthors());
         holder.book_file.setText(book.getFile());
         if (bookReader != null) {
             double percent = Integer.parseInt(bookReader.getCur()) * 1.0 / Integer.parseInt(bookReader.getPages());
