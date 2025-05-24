@@ -3,6 +3,7 @@ package com.github.jsbxyyx.xbook.data;
 import static com.github.jsbxyyx.xbook.common.Common.getXurl;
 import static com.github.jsbxyyx.xbook.common.Common.getXburl;
 import static com.github.jsbxyyx.xbook.common.Common.zurl;
+import static com.github.jsbxyyx.xbook.common.UriUtil.urlEncode;
 
 import androidx.annotation.NonNull;
 
@@ -58,7 +59,7 @@ public class BookNetHelper {
     public void search(String keyword, int page, List<String> languages, List<String> extensions, DataCallback<List<Book>> dataCallback) {
         Map<String, Object> object = new HashMap<>();
 
-        String reqUrl = zurl + "/s/" + Common.urlEncode(keyword);
+        String reqUrl = zurl + "/s/" + urlEncode(keyword);
         object.put("method", "GET");
         object.put("url", reqUrl);
 
@@ -201,11 +202,11 @@ public class BookNetHelper {
 
         StringBuilder data = new StringBuilder();
         data.append("isModal=true").append("&");
-        data.append("email=").append(Common.urlEncode(email)).append("&");
-        data.append("password=").append(Common.urlEncode(password)).append("&");
+        data.append("email=").append(urlEncode(email)).append("&");
+        data.append("password=").append(urlEncode(password)).append("&");
         data.append("site_mode=books").append("&");
         data.append("action=login").append("&");
-        data.append("redirectUrl=").append(Common.urlEncode(zurl)).append("&");
+        data.append("redirectUrl=").append(urlEncode(zurl)).append("&");
         data.append("gg_json_mode=1");
         object.put("data", data.toString());
 
@@ -506,7 +507,7 @@ public class BookNetHelper {
         Map<String, Object> data = new HashMap<>();
         data.put("email", email);
         data.put("password", password);
-        data.put("name", Common.isBlank(nickname) ? Common.urlEncode(email.split("\\@")[0]) : Common.urlEncode(nickname));
+        data.put("name", Common.isBlank(nickname) ? urlEncode(email.split("\\@")[0]) : urlEncode(nickname));
         data.put("rx", "215");
         data.put("action", "registration");
         data.put("redirectUrl", "");
@@ -626,9 +627,9 @@ public class BookNetHelper {
 
         StringBuilder data = new StringBuilder();
         data.append("isModal=true").append("&");
-        data.append("email=").append(Common.urlEncode(email)).append("&");
-        data.append("password=").append(Common.urlEncode(password)).append("&");
-        data.append("name=").append(Common.isBlank(nickname) ? Common.urlEncode(email.split("\\@")[0]) : Common.urlEncode(nickname)).append("&");
+        data.append("email=").append(urlEncode(email)).append("&");
+        data.append("password=").append(urlEncode(password)).append("&");
+        data.append("name=").append(Common.isBlank(nickname) ? urlEncode(email.split("\\@")[0]) : urlEncode(nickname)).append("&");
         data.append("rx=215").append("&");
         data.append("action=registration").append("&");
         data.append("redirectUrl=").append("&");
@@ -706,7 +707,7 @@ public class BookNetHelper {
                 object.put("headers", headers);
 
                 Map<String, Object> data = new HashMap<>();
-                data.put("title", Common.urlEncode(book.getId() + "-" + book.getTitle() + Common.book_metadata_suffix));
+                data.put("title", urlEncode(book.getId() + "-" + book.getTitle() + Common.book_metadata_suffix));
                 data.put("raw", Base64.getEncoder().encodeToString(JsonUtil.toJson(book).getBytes(StandardCharsets.UTF_8)));
                 data.put("sha", book.extractSha());
                 object.put("data", data);
@@ -764,7 +765,7 @@ public class BookNetHelper {
             byte[] bytes = Files.readAllBytes(new File(file_path).toPath());
 
             Map<String, Object> data = new HashMap<>();
-            data.put("title", Common.urlEncode(book.getId() + "-" + book.getTitle() + "." + MediaTypeFactory.getFilenameExtension(file_path)));
+            data.put("title", urlEncode(book.getId() + "-" + book.getTitle() + "." + MediaTypeFactory.getFilenameExtension(file_path)));
             data.put("raw", Base64.getEncoder().encodeToString(bytes));
             object.put("data", data);
 
@@ -868,7 +869,7 @@ public class BookNetHelper {
         object.put("headers", headers);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("title", Common.urlEncode(title));
+        data.put("title", urlEncode(title));
         data.put("token", token);
         object.put("data", data);
 
@@ -912,7 +913,7 @@ public class BookNetHelper {
         object.put("headers", headers);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("title", Common.urlEncode(mLog.getTitle()));
+        data.put("title", urlEncode(mLog.getTitle()));
         data.put("raw", Base64.getEncoder().encodeToString(mLog.getRaw().getBytes(StandardCharsets.UTF_8)));
         object.put("data", data);
 
@@ -964,7 +965,7 @@ public class BookNetHelper {
         object.put("headers", headers);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("title", Common.urlEncode(book.getId() + "-" + book.getTitle() + Common.book_metadata_suffix));
+        data.put("title", urlEncode(book.getId() + "-" + book.getTitle() + Common.book_metadata_suffix));
         data.put("raw", "");
         object.put("data", data);
 
