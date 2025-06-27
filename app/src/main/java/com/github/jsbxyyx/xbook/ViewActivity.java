@@ -121,13 +121,13 @@ public class ViewActivity extends AppCompatActivity {
             }
             String onlineReadData = SPUtils.getData(getBaseContext(), Common.online_read_key, Common.unchecked);
             String htmlUrl = "";
+            String fileUrl = "http://127.0.0.1:" + port;
             if (Common.checked.equals(onlineReadData)) {
                 htmlUrl = "https://xxzkid.github.io/public/" + html;
             } else {
-                htmlUrl = "http://127.0.0.1:" + port + "/" + www + "/" + html;
+                htmlUrl = fileUrl + "/" + www + "/" + html;
             }
             LogUtil.d(getClass().getSimpleName(), "html : %s", htmlUrl);
-            String fileUrl = "http://127.0.0.1:" + port;
             String param = String.format(
                     "cur=%s&pages=%s&book_id=%s&name=%s&t=%s&navh=%s&file_url=%s&online=%s",
                     cur, pages, bookId, name, System.currentTimeMillis(), navH,
