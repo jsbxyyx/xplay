@@ -2,8 +2,10 @@ package com.github.jsbxyyx.xbook.data;
 
 import static com.github.jsbxyyx.xbook.common.Common.getXurl;
 import static com.github.jsbxyyx.xbook.common.Common.getXburl;
+import static com.github.jsbxyyx.xbook.common.Common.x_message;
 import static com.github.jsbxyyx.xbook.common.Common.zurl;
-import static com.github.jsbxyyx.xbook.common.UriUtil.urlEncode;
+import static com.github.jsbxyyx.xbook.common.UriUtils.decodeURIComponent;
+import static com.github.jsbxyyx.xbook.common.UriUtils.encodeURIComponent;
 
 import androidx.annotation.NonNull;
 
@@ -59,7 +61,7 @@ public class BookNetHelper {
     public void search(String keyword, int page, List<String> languages, List<String> extensions, DataCallback<List<Book>> dataCallback) {
         Map<String, Object> object = new HashMap<>();
 
-        String reqUrl = zurl + "/s/" + urlEncode(keyword);
+        String reqUrl = zurl + "/s/" + encodeURIComponent(keyword);
         object.put("method", "GET");
         object.put("url", reqUrl);
 
@@ -107,7 +109,7 @@ public class BookNetHelper {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -116,7 +118,7 @@ public class BookNetHelper {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
-                        dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                        dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                         return;
                     }
                     JsonNode data = jsonObject.get("data");
@@ -163,7 +165,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -172,7 +174,7 @@ public class BookNetHelper {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
-                        dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                        dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                         return;
                     }
                     JsonNode data = jsonObject.get("data");
@@ -202,11 +204,11 @@ public class BookNetHelper {
 
         StringBuilder data = new StringBuilder();
         data.append("isModal=true").append("&");
-        data.append("email=").append(urlEncode(email)).append("&");
-        data.append("password=").append(urlEncode(password)).append("&");
+        data.append("email=").append(encodeURIComponent(email)).append("&");
+        data.append("password=").append(encodeURIComponent(password)).append("&");
         data.append("site_mode=books").append("&");
         data.append("action=login").append("&");
-        data.append("redirectUrl=").append(urlEncode(zurl)).append("&");
+        data.append("redirectUrl=").append(encodeURIComponent(zurl)).append("&");
         data.append("gg_json_mode=1");
         object.put("data", data.toString());
 
@@ -228,7 +230,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -237,7 +239,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 JsonNode respData = JsonUtil.readTree(jsonObject.get("data").asText());
@@ -298,7 +300,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 File dir = new File(destDir);
@@ -391,7 +393,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 File dir = new File(Common.sdcard);
@@ -469,7 +471,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -478,7 +480,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 JsonNode data = jsonObject.get("data");
@@ -507,7 +509,7 @@ public class BookNetHelper {
         Map<String, Object> data = new HashMap<>();
         data.put("email", email);
         data.put("password", password);
-        data.put("name", Common.isBlank(nickname) ? urlEncode(email.split("\\@")[0]) : urlEncode(nickname));
+        data.put("name", Common.isBlank(nickname) ? encodeURIComponent(email.split("\\@")[0]) : encodeURIComponent(nickname));
         data.put("rx", "215");
         data.put("action", "registration");
         data.put("redirectUrl", "");
@@ -533,7 +535,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -542,7 +544,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 String data = jsonObject.get("data").asText();
@@ -590,7 +592,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -599,7 +601,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 String data = jsonObject.get("data").asText();
@@ -627,9 +629,9 @@ public class BookNetHelper {
 
         StringBuilder data = new StringBuilder();
         data.append("isModal=true").append("&");
-        data.append("email=").append(urlEncode(email)).append("&");
-        data.append("password=").append(urlEncode(password)).append("&");
-        data.append("name=").append(Common.isBlank(nickname) ? urlEncode(email.split("\\@")[0]) : urlEncode(nickname)).append("&");
+        data.append("email=").append(encodeURIComponent(email)).append("&");
+        data.append("password=").append(encodeURIComponent(password)).append("&");
+        data.append("name=").append(Common.isBlank(nickname) ? encodeURIComponent(email.split("\\@")[0]) : encodeURIComponent(nickname)).append("&");
         data.append("rx=215").append("&");
         data.append("action=registration").append("&");
         data.append("redirectUrl=").append("&");
@@ -655,7 +657,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -664,7 +666,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 String data = jsonObject.get("data").asText();
@@ -707,7 +709,7 @@ public class BookNetHelper {
                 object.put("headers", headers);
 
                 Map<String, Object> data = new HashMap<>();
-                data.put("title", urlEncode(book.getId() + "-" + book.getTitle() + Common.book_metadata_suffix));
+                data.put("title", encodeURIComponent(book.getId() + "-" + book.getTitle() + Common.book_metadata_suffix));
                 data.put("raw", Base64.getEncoder().encodeToString(JsonUtil.toJson(book).getBytes(StandardCharsets.UTF_8)));
                 data.put("sha", book.extractSha());
                 object.put("data", data);
@@ -730,7 +732,7 @@ public class BookNetHelper {
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if (!response.isSuccessful()) {
                             LogUtil.d(TAG, "onResponse: %s", response.code());
-                            dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                            dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                             return;
                         }
                         String string = response.body().string();
@@ -739,7 +741,7 @@ public class BookNetHelper {
                         int status = jsonObject.get("status").asInt();
                         if (!Common.statusSuccessful(status)) {
                             LogUtil.d(TAG, "onResponse: %s", status);
-                            dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                            dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                             return;
                         }
                         dataCallback.call(jsonObject, null);
@@ -765,7 +767,7 @@ public class BookNetHelper {
             byte[] bytes = Files.readAllBytes(new File(file_path).toPath());
 
             Map<String, Object> data = new HashMap<>();
-            data.put("title", urlEncode(book.getId() + "-" + book.getTitle() + "." + MediaTypeFactory.getFilenameExtension(file_path)));
+            data.put("title", encodeURIComponent(book.getId() + "-" + book.getTitle() + "." + MediaTypeFactory.getFilenameExtension(file_path)));
             data.put("raw", Base64.getEncoder().encodeToString(bytes));
             object.put("data", data);
 
@@ -786,7 +788,7 @@ public class BookNetHelper {
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if (!response.isSuccessful()) {
                         LogUtil.d(TAG, "onResponse: %s", response.code());
-                        dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                        dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(Common.x_message)), response.code(), reqUrl));
                         return;
                     }
                     String string = response.body().string();
@@ -795,7 +797,7 @@ public class BookNetHelper {
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
                         LogUtil.d(TAG, "onResponse: %s", status);
-                        dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                        dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(Common.x_message)), status, reqUrl));
                         return;
                     }
                     dataCallback.call(jsonObject, null);
@@ -840,7 +842,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -849,7 +851,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 dataCallback.call(jsonObject, null);
@@ -869,7 +871,7 @@ public class BookNetHelper {
         object.put("headers", headers);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("title", urlEncode(title));
+        data.put("title", encodeURIComponent(title));
         data.put("token", token);
         object.put("data", data);
 
@@ -891,7 +893,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(new byte[0], new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(new byte[0], new HttpStatusException(decodeURIComponent(response.header(Common.x_message)), response.code(), reqUrl));
                     return;
                 }
                 byte[] bytes = response.body().bytes();
@@ -913,7 +915,7 @@ public class BookNetHelper {
         object.put("headers", headers);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("title", urlEncode(mLog.getTitle()));
+        data.put("title", encodeURIComponent(mLog.getTitle()));
         data.put("raw", Base64.getEncoder().encodeToString(mLog.getRaw().getBytes(StandardCharsets.UTF_8)));
         object.put("data", data);
 
@@ -936,7 +938,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -945,7 +947,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 dataCallback.call(jsonObject, null);
@@ -965,7 +967,7 @@ public class BookNetHelper {
         object.put("headers", headers);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("title", urlEncode(book.getId() + "-" + book.getTitle() + Common.book_metadata_suffix));
+        data.put("title", encodeURIComponent(book.getId() + "-" + book.getTitle() + Common.book_metadata_suffix));
         data.put("raw", "");
         object.put("data", data);
 
@@ -987,7 +989,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -996,7 +998,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 dataCallback.call(jsonObject, null);
@@ -1036,7 +1038,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -1045,7 +1047,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 dataCallback.call(jsonObject, null);
@@ -1087,7 +1089,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -1096,7 +1098,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 dataCallback.call(jsonObject, null);
@@ -1142,7 +1144,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -1151,7 +1153,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 JsonNode data = jsonObject.get("data");
@@ -1196,7 +1198,7 @@ public class BookNetHelper {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -1205,7 +1207,7 @@ public class BookNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(null, new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 JsonNode list = jsonObject.get("data").get("list");

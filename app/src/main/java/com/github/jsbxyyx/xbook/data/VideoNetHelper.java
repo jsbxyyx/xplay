@@ -1,6 +1,8 @@
 package com.github.jsbxyyx.xbook.data;
 
 import static com.github.jsbxyyx.xbook.common.Common.getXburl;
+import static com.github.jsbxyyx.xbook.common.Common.x_message;
+import static com.github.jsbxyyx.xbook.common.UriUtils.decodeURIComponent;
 
 import androidx.annotation.NonNull;
 
@@ -72,7 +74,7 @@ public class VideoNetHelper {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -81,7 +83,7 @@ public class VideoNetHelper {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
-                        dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                        dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                         return;
                     }
                     JsonNode data = jsonObject.get("data");
@@ -125,7 +127,7 @@ public class VideoNetHelper {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -134,7 +136,7 @@ public class VideoNetHelper {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
-                        dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                        dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                         return;
                     }
                     JsonNode data = jsonObject.get("data");
@@ -178,7 +180,7 @@ public class VideoNetHelper {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -187,7 +189,7 @@ public class VideoNetHelper {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
-                        dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                        dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                         return;
                     }
                     JsonNode data = jsonObject.get("data");

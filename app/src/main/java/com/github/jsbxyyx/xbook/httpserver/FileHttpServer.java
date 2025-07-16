@@ -1,6 +1,6 @@
 package com.github.jsbxyyx.xbook.httpserver;
 
-import static com.github.jsbxyyx.xbook.common.UriUtil.urlEncode;
+import static com.github.jsbxyyx.xbook.common.UriUtils.encodeURIComponent;
 
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
@@ -69,7 +69,7 @@ public class FileHttpServer extends NanoHTTPD {
                 if (files != null && files.length > 0) {
                     for (File file : files) {
                         String name = file.getAbsolutePath().replace(Common.xbook_dir + "/", "");
-                        String href = urlEncode(name);
+                        String href = encodeURIComponent(name);
                         answer += "<a href=\"" + href + "\" alt = \"\">" + name + "</a><br>";
                     }
                 }

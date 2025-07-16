@@ -1,5 +1,8 @@
 package com.github.jsbxyyx.xbook.data;
 
+import static com.github.jsbxyyx.xbook.common.Common.x_message;
+import static com.github.jsbxyyx.xbook.common.UriUtils.decodeURIComponent;
+
 import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,7 +46,7 @@ public class IpNetHelper {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", response.code(), reqUrl));
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
                     return;
                 }
                 String string = response.body().string();
@@ -52,14 +55,14 @@ public class IpNetHelper {
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
                     LogUtil.d(TAG, "onResponse: %s", status);
-                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 JsonNode data = jsonObject.get("data");
                 JsonNode v4 = data.get("v4");
                 if (v4 == null) {
                     LogUtil.d(TAG, "v4 not found: %s", data);
-                    dataCallback.call(new ArrayList<>(), new HttpStatusException(response.header(Common.x_message) + "", status, reqUrl));
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
                     return;
                 }
                 JsonNode cm = v4.get("CM");

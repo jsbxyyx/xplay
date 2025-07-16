@@ -1,6 +1,6 @@
 package com.github.jsbxyyx.xbook;
 
-import static com.github.jsbxyyx.xbook.common.UriUtil.urlEncode;
+import static com.github.jsbxyyx.xbook.common.UriUtils.encodeURIComponent;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -97,8 +97,8 @@ public class ViewActivity extends AppCompatActivity {
             // webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
             // webView.clearCache(true);
             webView.addJavascriptInterface(new BookJavascript(this), "xbook");
-            String name = urlEncode(
-                    urlEncode(
+            String name = encodeURIComponent(
+                    encodeURIComponent(
                             file_path.replace(Common.xbook_dir + "/", "")
                     )
             );
@@ -131,7 +131,7 @@ public class ViewActivity extends AppCompatActivity {
             String param = String.format(
                     "cur=%s&pages=%s&book_id=%s&name=%s&t=%s&navh=%s&file_url=%s&online=%s",
                     cur, pages, bookId, name, System.currentTimeMillis(), navH,
-                    urlEncode(fileUrl), onlineReadData
+                    encodeURIComponent(fileUrl), onlineReadData
             );
             String url = "${htmlUrl}?${param}"
                     .replace("${htmlUrl}", htmlUrl)
