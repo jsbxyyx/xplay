@@ -249,7 +249,7 @@
     <div onclick="fontClick(this)" style="width: 1rem; cursor: pointer; float: left; margin-left: 5px;">Aa
     </div>
     <div style="float: right; margin-left: 35%;">
-      <input id="curPage" type="number" value="" style="max-width: 3rem" onkeydown="goPage(event)">
+      <input id="curPage" type="number" value="" style="max-width: 3rem" onkeydown="clickGoPage(event)">
       &nbsp;/&nbsp;
       <span id="totalPages"></span>
     </div>
@@ -313,7 +313,7 @@
         'white-space': 'pre-wrap',
         'word-break': 'break-word',
         'max-height': '60%',
-      }
+      },
     }
 
     var file = base + "/" + getUrlParam("name") + "?_=" + new Date().getTime();
@@ -384,12 +384,27 @@
       width: (window.innerWidth) + 'px',
       height: (window.innerHeight - pageToolHeight - epubToolHeight) + "px"
     });
-    var displayed = rendition.display();
 
     body_ele.style.color = gold_theme['body']['color'];
     body_ele.style.background = gold_theme['body']['background'];
     rendition.themes.default(gold_theme);
-    rendition.themes.default({ [fontEle]: { "font-size": "clamp(12px, 2vw, 24px) !important" } });
+    // rendition.themes.default({ [fontEle]: { "font-size": "clamp(12px, 2vw, 24px) !important" } });
+
+    var displayed = rendition.display();
+
+    /*
+    rendition.hooks.content.register(function(contents, view) {
+      view.addScript("zepto.min.js");
+      var body = contents.content;
+      var images = body.getElementsByTagName("img");
+      var clientWidth = body.clientWidth;
+      for (var i = 0; i < images.length; i++) {
+        images[i].style.removeProperty("max-width");
+        $(images[i]).css("max-width", "");
+        // images[i].style.maxWidth = clientWidth + 'px !important';
+      }
+    });
+    */
 
     book.ready.then(function () {
       console.log('epub ready 1');
@@ -397,7 +412,6 @@
       var navigation = book.navigation;
       // console.log('navigation:', navigation);
       createToc(navigation);
-
       return book.locations.generate();
     }).then(() => {
       console.log('epub ready 2');
@@ -406,6 +420,7 @@
       document.getElementById('totalPages').innerText = totalPage;
 
       rendition.on("relocated", function (location) {
+        console.log('rendition.relocated ' + JSON.stringify(location));
         // var currentPosition = rendition.currentLocation().start.cfi;
         // var progress = book.locations.percentageFromCfi(location.start.cfi);
         var currentPage = book.locations.locationFromCfi(location.start.cfi);
@@ -419,31 +434,37 @@
       });
 
       if ((cur != null && cur != '') && (pages != null && pages != '')) {
-        var percent = parseInt(cur) / parseInt(pages);
-        console.log('goto: ' + cur + ' / ' + pages + ' / ' + percent);
-        var cfi = book.locations.cfiFromPercentage(percent);
-        rendition.display(cfi);
+        //var percent = parseInt(cur) / parseInt(pages);
+        //console.log('goto: ' + cur + ' / ' + pages + ' / ' + percent);
+        //var cfi = book.locations.cfiFromPercentage(percent);
+        //rendition.display(cfi);
+        goPage(cur, pages);
       }
 
     });
 
-    function goPage(e) {
+    function clickGoPage(e) {
+      console.log('clickGoPage');
       var evt = window.event || e;
       if (evt.keyCode == 13) {
         evt.preventDefault();
         var curPage = document.getElementById('curPage');
         var totalPages = document.getElementById('totalPages');
-        var _cur = parseInt(curPage.value);
-        var _totalPages = parseInt(totalPages.innerText);
-        if (_cur > _totalPages) {
-          return;
-        }
-        document.activeElement.blur();
-        var percent = parseInt(_cur) / parseInt(_totalPages);
-        console.log('goto: ' + _cur + ' / ' + _totalPages + ' / ' + percent);
-        var cfi = book.locations.cfiFromPercentage(percent);
-        rendition.display(cfi);
+        goPage(curPage.value, totalPages.innerText);
       }
+    }
+
+    function goPage(cur, pages) {
+      var _cur = parseInt(cur);
+      var _totalPages = parseInt(pages);
+      if (_cur > _totalPages) {
+        return;
+      }
+      document.activeElement.blur();
+      var percent = parseInt(_cur) / parseInt(_totalPages);
+      console.log('goto: ' + _cur + ' / ' + _totalPages + ' / ' + percent);
+      var cfi = book.locations.cfiFromPercentage(percent);
+      rendition.display(cfi);
     }
 
     function focusMode() {
