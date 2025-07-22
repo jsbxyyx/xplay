@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 import android.webkit.WebView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,6 +53,7 @@ public class ViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_view);
 
         LogUtil.d(getClass().getSimpleName(), "onCreate");
