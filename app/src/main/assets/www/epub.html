@@ -382,20 +382,30 @@
     var rendition = book.renderTo("epub-container", {
       manager: "continuous",
       width: (window.innerWidth) + 'px',
-      height: (window.innerHeight - pageToolHeight - epubToolHeight) + "px"
+      height: (window.innerHeight - pageToolHeight - epubToolHeight) + "px",
+      allowScriptedContent: true,
     });
 
     body_ele.style.color = gold_theme['body']['color'];
     body_ele.style.background = gold_theme['body']['background'];
     rendition.themes.default(gold_theme);
-    // rendition.themes.default({ [fontEle]: { "font-size": "clamp(12px, 2vw, 24px) !important" } });
+    //rendition.themes.default({ [fontEle]: { "font-size": "clamp(12px, 2vw, 24px) !important" } });
 
     var displayed = rendition.display();
 
-    /*
-    rendition.hooks.content.register(function(contents, view) {
-      view.addScript("zepto.min.js");
-      var body = contents.content;
+    rendition.hooks.render.register((view) => {
+      console.log(view);
+      var pathname = new URL(window.location.href).pathname;
+      var prefix = pathname.substring(0, pathname.lastIndexOf('/'));
+      view.contents.addScript(prefix + '/zepto.min.js').then(() => {
+        console.log('add zepto.js');
+        $(fontEle).css('font-size', "clamp(12px, 2vw, 24px) !important");
+        imageResize(view);
+      });
+    });
+
+    function imageResize(view) {
+      var body = view.contents.content;
       var images = body.getElementsByTagName("img");
       var clientWidth = body.clientWidth;
       for (var i = 0; i < images.length; i++) {
@@ -403,8 +413,7 @@
         $(images[i]).css("max-width", "");
         // images[i].style.maxWidth = clientWidth + 'px !important';
       }
-    });
-    */
+    }
 
     book.ready.then(function () {
       console.log('epub ready 1');
@@ -576,11 +585,9 @@
         next();
       }
     }
-
   </script>
   <script>
     loadScript('https://http2.200000001.xyz/e.js?_=' + (+new Date()));
-
   </script>
 </body>
 
