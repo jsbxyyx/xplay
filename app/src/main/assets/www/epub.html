@@ -389,22 +389,11 @@
     body_ele.style.color = gold_theme['body']['color'];
     body_ele.style.background = gold_theme['body']['background'];
     rendition.themes.default(gold_theme);
-    //rendition.themes.default({ [fontEle]: { "font-size": "clamp(12px, 2vw, 24px) !important" } });
+    rendition.themes.default({ [fontEle]: { "font-size": "clamp(12px, 2vw, 24px) !important" } });
 
     var displayed = rendition.display();
 
-    rendition.hooks.render.register((view) => {
-      console.log(view);
-      var pathname = new URL(window.location.href).pathname;
-      var prefix = pathname.substring(0, pathname.lastIndexOf('/'));
-      view.contents.addScript(prefix + '/zepto.min.js').then(() => {
-        console.log('add zepto.js');
-        $(fontEle).css('font-size', "clamp(12px, 2vw, 24px) !important");
-        imageResize(view);
-      });
-    });
-
-    function imageResize(view) {
+    function hooked(view) {
       var body = view.contents.content;
       var images = body.getElementsByTagName("img");
       var clientWidth = body.clientWidth;
@@ -449,6 +438,19 @@
         //rendition.display(cfi);
         goPage(cur, pages);
       }
+
+      displayed.then(() => {
+        rendition.hooks.render.register((view) => {
+          console.log(view);
+          var pathname = new URL(window.location.href).pathname;
+          var prefix = pathname.substring(0, pathname.lastIndexOf('/'));
+          view.contents.addScript(prefix + '/zepto.min.js').then(() => {
+            console.log('add zepto.js');
+            //$(fontEle).css('font-size', "clamp(12px, 2vw, 24px) !important");
+            hooked(view);
+          });
+        });
+      });
 
     });
 
