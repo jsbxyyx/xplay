@@ -106,10 +106,12 @@ public class BookDbHelper extends SQLiteOpenHelper {
                 LogUtil.i(TAG, "sql:[%s]", drop_backup_sql);
                 db.execSQL(drop_backup_sql);
 
-                db.endTransaction();
+                db.setTransactionSuccessful();
             } catch (Exception e) {
                 LogUtil.e(TAG, LogUtil.getStackTraceString(e));
                 UiUtils.showToast("升级失败，请卸载重新安装");
+            } finally {
+                db.endTransaction();
             }
         }
     }
@@ -225,11 +227,11 @@ public class BookDbHelper extends SQLiteOpenHelper {
     }
 
     public void deleteBook(Long id) {
+        SQLiteDatabase db = getWritableDatabase();
         try {
             l.lock();
-            SQLiteDatabase db = getWritableDatabase();
 
-            db.beginTransaction();
+            db.beginTransactionNonExclusive();
 
             TableBook t1 = new TableBook();
             String sql1 = t1.delete(t1.id);
@@ -243,8 +245,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
             LogUtil.d(TAG, "sql:[%s] args:%s", sql2, Arrays.toString(args2));
             db.execSQL(sql2, args2);
 
-            db.endTransaction();
+            db.setTransactionSuccessful();
         } finally {
+            db.endTransaction();
             l.unlock();
         }
     }
