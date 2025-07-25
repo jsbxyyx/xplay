@@ -11,16 +11,16 @@ public class TableField {
     private boolean autoincrement;
     private String defaultValue;
 
-    public static TableField ofPK(String name) {
+    public static TableField pk(String name) {
         return of(name, "INTEGER", true, true, true, null);
     }
 
-    public static TableField of(String name, String type) {
-        return of(name, type, false, false, false, null);
+    public static TableField column(String name, String type, boolean notNull) {
+        return column(name, type, notNull, null);
     }
 
-    public static TableField of(String name, String type, boolean notNull) {
-        return of(name, type, notNull, false, false, null);
+    public static TableField column(String name, String type, boolean notNull, String defaultValue) {
+        return of(name, type, notNull, false, false, defaultValue);
     }
 
     public static TableField of(String name, String type, boolean notNull, boolean primaryKey, boolean autoincrement, String defaultValue) {

@@ -5,13 +5,13 @@ import java.util.List;
 
 public class TableViewTime extends TableStruct {
 
-    public final TableField id = TableField.ofPK("id");
-    public final TableField target_id = TableField.of("target_id", "TEXT", true);
-    public final TableField target_type = TableField.of("target_type", "TEXT", true);
-    public final TableField time = TableField.of("time", "TEXT", true);
-    public final TableField created = TableField.of("created", "TEXT", true);
-    public final TableField user = TableField.of("user", "TEXT", true);
-    public final TableField remark = TableField.of("remark", "TEXT");
+    public final TableField id = TableField.pk("id");
+    public final TableField target_id = TableField.column("target_id", "TEXT", true);
+    public final TableField target_type = TableField.column("target_type", "TEXT", true);
+    public final TableField time = TableField.column("time", "TEXT", true);
+    public final TableField created = TableField.column("created", "TEXT", true);
+    public final TableField user = TableField.column("user", "TEXT", true);
+    public final TableField remark = TableField.column("remark", "TEXT", false);
 
     public String getTableName() {
         return "view_time";

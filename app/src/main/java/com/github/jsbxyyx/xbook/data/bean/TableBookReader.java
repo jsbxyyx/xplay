@@ -5,13 +5,13 @@ import java.util.List;
 
 public class TableBookReader extends TableStruct {
 
-    public final TableField id = TableField.of("id", "INTEGER", true, true, true, null);
-    public final TableField book_id = TableField.of("book_id", "INTEGER", true);
-    public final TableField cur = TableField.of("cur", "TEXT", true);
-    public final TableField pages = TableField.of("pages", "TEXT", true);
-    public final TableField created = TableField.of("created", "DATETIME", true);
-    public final TableField user = TableField.of("user", "TEXT", true);
-    public final TableField remark = TableField.of("remark", "TEXT");
+    public final TableField id = TableField.pk("id");
+    public final TableField book_id = TableField.column("book_id", "INTEGER", true);
+    public final TableField cur = TableField.column("cur", "TEXT", true);
+    public final TableField pages = TableField.column("pages", "TEXT", true);
+    public final TableField created = TableField.column("created", "DATETIME", true);
+    public final TableField user = TableField.column("user", "TEXT", true);
+    public final TableField remark = TableField.column("remark", "TEXT", false);
 
     public String getTableName() {
         return "book_reader";

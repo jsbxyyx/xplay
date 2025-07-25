@@ -5,21 +5,21 @@ import java.util.List;
 
 public class TableBook extends TableStruct {
 
-    public final TableField id = TableField.ofPK("id");
-    public final TableField bid = TableField.of("book_id", "TEXT", true);
-    public final TableField isbn = TableField.of("isbn", "TEXT", true);
-    public final TableField img = TableField.of("img", "TEXT", true);
-    public final TableField title = TableField.of("title", "TEXT", true);
-    public final TableField publisher = TableField.of("publisher", "TEXT");
-    public final TableField authors = TableField.of("authors", "TEXT");
-    public final TableField file = TableField.of("file", "TEXT");
-    public final TableField language = TableField.of("language", "TEXT");
-    public final TableField year = TableField.of("year", "TEXT");
-    public final TableField detail_url = TableField.of("detail_url", "TEXT", true);
-    public final TableField download_url = TableField.of("download_url", "TEXT", true);
-    public final TableField remark = TableField.of("remark", "TEXT");
-    public final TableField created = TableField.of("created", "DATETIME", true);
-    public final TableField user = TableField.of("user", "TEXT", true);
+    public final TableField id = TableField.pk("id");
+    public final TableField bid = TableField.column("book_id", "TEXT", true);
+    public final TableField isbn = TableField.column("isbn", "TEXT", true);
+    public final TableField img = TableField.column("img", "TEXT", true);
+    public final TableField title = TableField.column("title", "TEXT", true);
+    public final TableField publisher = TableField.column("publisher", "TEXT", false);
+    public final TableField authors = TableField.column("authors", "TEXT", false);
+    public final TableField file = TableField.column("file", "TEXT", false);
+    public final TableField language = TableField.column("language", "TEXT", false);
+    public final TableField year = TableField.column("year", "TEXT", false);
+    public final TableField detail_url = TableField.column("detail_url", "TEXT", true);
+    public final TableField download_url = TableField.column("download_url", "TEXT", true);
+    public final TableField remark = TableField.column("remark", "TEXT", false);
+    public final TableField created = TableField.column("created", "DATETIME", true);
+    public final TableField user = TableField.column("user", "TEXT", true);
 
     public String getTableName() {
         return "book";
