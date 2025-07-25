@@ -82,11 +82,12 @@ public class BookDbHelper extends SQLiteOpenHelper {
                 db.beginTransaction();
 
                 TableBookReader t = new TableBookReader();
+
                 String suffix = "_backup";
                 String backup_create_sql = t.create(true, false, suffix);
                 String backup_table_name = t.getTableName() + suffix;
-                String origin_table_name = t.getTableName();
                 String origin_create_sql = t.create(false, false, "");
+                String origin_table_name = t.getTableName();
 
                 LogUtil.i(TAG, "sql:[%s]", backup_create_sql);
                 db.execSQL(backup_create_sql);
