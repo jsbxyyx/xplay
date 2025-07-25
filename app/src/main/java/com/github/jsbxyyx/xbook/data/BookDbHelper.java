@@ -8,11 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.github.jsbxyyx.xbook.common.LogUtil;
+import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.BookReader;
 import com.github.jsbxyyx.xbook.data.bean.ViewTime;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -27,7 +27,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
 
     private String TAG = getClass().getName();
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "xbook.db";
 
     private final ReentrantLock l = new ReentrantLock();
@@ -115,8 +115,29 @@ public class BookDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        LogUtil.w(TAG, "onUpgrade: !!!");
+        LogUtil.w(TAG, "onUpgrade: !!! old:" + oldVersion + " new:" + newVersion);
         onCreate(db);
+        if (oldVersion < 2) {
+            try {
+                db.beginTransaction();
+
+                db.execSQL("ALTER TABLE " + t_book_reader + " ADD COLUMN " + f_book_reader_cur + "2 TEXT NOT NULL");
+                db.execSQL("ALTER TABLE " + t_book_reader + " ADD COLUMN " + f_book_reader_pages + "2 TEXT NOT NULL");
+
+                db.execSQL("UPDATE " + t_book_reader + " SET " + f_book_reader_cur + "2 = " + f_book_reader_cur);
+                db.execSQL("UPDATE " + t_book_reader + " SET " + f_book_reader_pages + "2 = " + f_book_reader_pages);
+
+                db.execSQL("ALTER TABLE " + t_book_reader + " DROP COLUMN " + f_book_reader_cur);
+                db.execSQL("ALTER TABLE " + t_book_reader + " DROP COLUMN " + f_book_reader_pages);
+
+                db.execSQL("ALTER TABLE " + t_book_reader + " RENAME COLUMN " + f_book_reader_cur + "2 TO " + f_book_reader_cur);
+                db.execSQL("ALTER TABLE " + t_book_reader + " RENAME COLUMN " + f_book_reader_pages + "2 TO " + f_book_reader_cur);
+
+                db.endTransaction();
+            } catch (Exception e){
+                UiUtils.showToast("升级失败，请卸载重新安装");
+            }
+        }
     }
 
     public void insertBook(Book e) {

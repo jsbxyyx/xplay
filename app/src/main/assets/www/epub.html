@@ -264,7 +264,7 @@
   </div>
 
   <script src="jszip.min.js"></script>
-  <script src="epub.min.js"></script>
+  <script src="epub.js"></script>
   <script type="text/javascript">
     function loadScript(url, fn) {
       try {
@@ -380,9 +380,10 @@
 
     var book = ePub(file, {});
     var rendition = book.renderTo("epub-container", {
-      manager: "continuous",
+      flow: "paginated",
       width: (window.innerWidth) + 'px',
       height: (window.innerHeight - pageToolHeight - epubToolHeight) + "px",
+      manager: "continuous",
       allowScriptedContent: true,
     });
 
@@ -410,7 +411,7 @@
       var navigation = book.navigation;
       // console.log('navigation:', navigation);
       createToc(navigation);
-      return book.locations.generate(1600);
+      return book.locations.generate();
     }).then(() => {
       console.log('epub ready 2');
 

@@ -96,6 +96,9 @@ public class ViewActivity extends AppCompatActivity {
 
             webView = findViewById(R.id.wv_view);
             webView.getSettings().setJavaScriptEnabled(true);
+            webView.getSettings().setAllowContentAccess(true);
+            webView.getSettings().setAllowFileAccess(true);
+            webView.getSettings().setDomStorageEnabled(true);
             // webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
             // webView.clearCache(true);
             webView.addJavascriptInterface(new BookJavascript(this), "xbook");
