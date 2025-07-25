@@ -50,6 +50,7 @@ public class HomeFragment extends Fragment {
 
     private View mView;
     private Activity mActivity;
+    private ContributionView contributionView;
 
     private BookNetHelper bookNetHelper;
     private BookDbHelper bookDbHelper;
@@ -77,7 +78,7 @@ public class HomeFragment extends Fragment {
 
         Tuple<Integer, Date, List<ContributionItem>> tuple = contributionViewInitData();
 
-        ContributionView contributionView = mActivity.findViewById(R.id.contribution_view);
+        contributionView = mActivity.findViewById(R.id.contribution_view);
 
         contributionView.setData(tuple.getSecond(), tuple.getThird(), ContributionConfig.defaultConfig());
         contributionView.setOnItemClick(new ContributionView.OnItemClickListener() {
@@ -101,51 +102,6 @@ public class HomeFragment extends Fragment {
                 }
                 contribution_view_text.setText(builder.toString());
             }
-        });
-
-        ThreadUtils.submit(() -> {
-            Map<String, String> kv = Common.parseKv(SessionManager.getSession());
-            List<ViewTime> list = bookDbHelper.findViewTime(tuple.getSecond(), kv.getOrDefault(Common.serv_userid, ""));
-            List<ContributionItem> data = new ArrayList<>();
-            if (list != null && !list.isEmpty()) {
-                Map<String, List<ViewTime>> map = new LinkedHashMap<>();
-                for (ViewTime viewTime : list) {
-                    String created = viewTime.getCreated();
-                    String key = DateUtils.format(new Date(Long.parseLong(created)), "yyyy-MM-dd");
-                    if (map.get(key) != null) {
-                        map.get(key).add(viewTime);
-                    } else {
-                        List<ViewTime> viewTimeList = new ArrayList<>();
-                        viewTimeList.add(viewTime);
-                        map.put(key, viewTimeList);
-                    }
-                }
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(tuple.getSecond());
-                for (int i = 0; i <= tuple.getFirst(); i++) {
-                    String format = DateUtils.format(calendar.getTime(), "yyyy-MM-dd");
-                    if (!map.containsKey(format)) {
-                        data.add(new ContributionItem(calendar.getTime(), 0));
-                    } else {
-                        LogUtil.d(TAG, "contains date : %s", format);
-                    }
-                    calendar.add(Calendar.DAY_OF_MONTH, 1);
-                }
-                for (Map.Entry<String, List<ViewTime>> entry : map.entrySet()) {
-                    Date parse = DateUtils.parse(entry.getKey(), "yyyy-MM-dd");
-                    int millisecond = 0;
-                    for (ViewTime vt : entry.getValue()) {
-                        millisecond += vt.getTime();
-                    }
-                    data.add(new ContributionItem(parse, millisecond, entry.getValue()));
-                }
-            }
-            mHandler.post(() -> {
-                if (!data.isEmpty()) {
-                    contributionView.setData(tuple.getSecond(), data);
-                }
-            });
         });
 
         bookNetHelper.cloudVersions(new DataCallback<JsonNode>() {
@@ -200,4 +156,55 @@ public class HomeFragment extends Fragment {
         return new Tuple<>(days, startDate, initData);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Tuple<Integer, Date, List<ContributionItem>> tuple = contributionViewInitData();
+
+        ThreadUtils.submit(() -> {
+            Map<String, String> kv = Common.parseKv(SessionManager.getSession());
+            List<ViewTime> list = bookDbHelper.findViewTime(tuple.getSecond(), kv.getOrDefault(Common.serv_userid, ""));
+            List<ContributionItem> data = new ArrayList<>();
+            if (list != null && !list.isEmpty()) {
+                Map<String, List<ViewTime>> map = new LinkedHashMap<>();
+                for (ViewTime viewTime : list) {
+                    String created = viewTime.getCreated();
+                    String key = DateUtils.format(new Date(Long.parseLong(created)), "yyyy-MM-dd");
+                    if (map.get(key) != null) {
+                        map.get(key).add(viewTime);
+                    } else {
+                        List<ViewTime> viewTimeList = new ArrayList<>();
+                        viewTimeList.add(viewTime);
+                        map.put(key, viewTimeList);
+                    }
+                }
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(tuple.getSecond());
+                for (int i = 0; i <= tuple.getFirst(); i++) {
+                    String format = DateUtils.format(calendar.getTime(), "yyyy-MM-dd");
+                    if (!map.containsKey(format)) {
+                        data.add(new ContributionItem(calendar.getTime(), 0));
+                    } else {
+                        LogUtil.d(TAG, "contains date : %s", format);
+                    }
+                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+                }
+                for (Map.Entry<String, List<ViewTime>> entry : map.entrySet()) {
+                    Date parse = DateUtils.parse(entry.getKey(), "yyyy-MM-dd");
+                    int millisecond = 0;
+                    for (ViewTime vt : entry.getValue()) {
+                        millisecond += vt.getTime();
+                    }
+                    data.add(new ContributionItem(parse, millisecond, entry.getValue()));
+                }
+            }
+            mHandler.post(() -> {
+                if (!data.isEmpty()) {
+                    contributionView.setData(tuple.getSecond(), data);
+                }
+            });
+        });
+    }
 }

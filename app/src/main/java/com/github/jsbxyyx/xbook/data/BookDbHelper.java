@@ -360,7 +360,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
             TableViewTime t = new TableViewTime();
-            String sql = t.selectAll(t.user) + " AND " + t.created + " >= ?";
+            String sql = t.selectAll(t.user) + " AND " + t.created.getName() + ">=?";
             String[] params = new String[]{user, start.getTime() + ""};
             LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
             try (Cursor cursor = db.rawQuery(sql, params)) {
