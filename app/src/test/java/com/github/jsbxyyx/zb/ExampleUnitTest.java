@@ -22,18 +22,18 @@ public class ExampleUnitTest {
 
         TableBookReader t = new TableBookReader();
         String create = t.create(true, true, "");
-        System.out.println(create);
+        System.out.printf("[%s]\n", create);
 
         String update = t.update(new TableField[]{t.remark, t.id}, t.id, t.book_id);
-        System.out.println(update);
+        System.out.printf("[%s]\n", update);
 
         String delete = t.delete(t.id, t.book_id);
-        System.out.println(delete);
+        System.out.printf("[%s]\n", delete);
 
         String select = t.selectAll(t.id, t.book_id);
-        System.out.println(select);
+        System.out.printf("[%s]\n", select);
 
         String allField = t.getAllFieldString(t.id);
-        System.out.println(allField);
+        System.out.printf("[%s]\n", allField);
     }
 }

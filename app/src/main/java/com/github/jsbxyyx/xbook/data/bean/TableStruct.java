@@ -58,8 +58,8 @@ public abstract class TableStruct {
 
     public String update(TableField[] update, TableField... where) {
         StringBuilder sql = new StringBuilder();
-        sql.append("UPDATE ").append(getTableName()).append(" ");
-        sql.append("SET ");
+        sql.append("UPDATE ").append(getTableName());
+        sql.append(" SET ");
         for (int i = 0, len = update.length; i < len; i++) {
             TableField f = update[i];
             if (i > 0) {
@@ -102,24 +102,24 @@ public abstract class TableStruct {
                 sql.append(",\n");
             }
             sql.append("  ");
-            sql.append(f.getName()).append(" ");
-            sql.append(f.getType()).append(" ");
+            sql.append(f.getName());
+            sql.append(" ");
+            sql.append(f.getType());
             if (f.isNotNull()) {
-                sql.append("NOT NULL ");
+                sql.append(" NOT NULL");
             }
             if (f.isPrimaryKey()) {
-                sql.append("PRIMARY KEY ");
+                sql.append(" PRIMARY KEY");
             }
             if (f.isAutoincrement()) {
-                sql.append("AUTOINCREMENT ");
+                sql.append(" AUTOINCREMENT");
             }
             if (f.getDefaultValue() != null) {
-                sql.append("DEFAULT '").append(f.getDefaultValue()).append("' ");
+                sql.append(" DEFAULT '").append(f.getDefaultValue()).append("'");
             }
         }
-
         sql.append("\n");
-        sql.append(");");
+        sql.append(")");
         return sql.toString();
     }
 
