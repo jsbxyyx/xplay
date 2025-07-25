@@ -71,7 +71,7 @@ public class HomeFragment extends Fragment {
         mActivity = getActivity();
 
         bookNetHelper = new BookNetHelper();
-        bookDbHelper = new BookDbHelper(mActivity);
+        bookDbHelper = BookDbHelper.getInstance();
 
         TextView contribution_view_text = mActivity.findViewById(R.id.contribution_view_text);
 

@@ -58,7 +58,7 @@ public class ViewActivity extends AppCompatActivity {
 
         LogUtil.d(getClass().getSimpleName(), "onCreate");
 
-        bookDbHelper = new BookDbHelper(this);
+        bookDbHelper = BookDbHelper.getInstance();
         bookNetHelper = new BookNetHelper();
 
         int navH = UiUtils.getNavigationBarRealHeight(this);

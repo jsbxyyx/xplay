@@ -8,6 +8,7 @@ import android.os.Message;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.github.jsbxyyx.xbook.common.AppUtils;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
@@ -39,6 +40,7 @@ public class LifecycleApplication extends Application {
         // 禁用深色模式
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
+        AppUtils.initContext(getApplicationContext());
         UiUtils.initContext(getApplicationContext());
 
         bookNetHelper = new BookNetHelper();

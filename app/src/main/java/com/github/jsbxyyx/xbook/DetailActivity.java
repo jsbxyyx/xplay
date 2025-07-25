@@ -53,7 +53,7 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        bookDbHelper = new BookDbHelper(this);
+        bookDbHelper = BookDbHelper.getInstance();
 
         detailUrl = getIntent().getStringExtra("detailUrl");
         if (Common.isEmpty(detailUrl)) {

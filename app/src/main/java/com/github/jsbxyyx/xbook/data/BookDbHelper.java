@@ -7,10 +7,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.github.jsbxyyx.xbook.common.AppUtils;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.BookReader;
+import com.github.jsbxyyx.xbook.data.bean.TableBook;
+import com.github.jsbxyyx.xbook.data.bean.TableBookReader;
+import com.github.jsbxyyx.xbook.data.bean.TableField;
+import com.github.jsbxyyx.xbook.data.bean.TableViewTime;
 import com.github.jsbxyyx.xbook.data.bean.ViewTime;
 
 import java.util.ArrayList;
@@ -25,91 +30,43 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class BookDbHelper extends SQLiteOpenHelper {
 
-    private String TAG = getClass().getName();
+    private final String TAG = getClass().getName();
 
     private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "xbook.db";
 
     private final ReentrantLock l = new ReentrantLock();
 
-    private String t_book = "book";
-    private String f_book_id = "id";
-    private String f_book_bid = "book_id";
-    private String f_book_isbn = "isbn";
-    private String f_book_img = "img";
-    private String f_book_title = "title";
-    private String f_book_publisher = "publisher";
-    private String f_book_authors = "authors";
-    private String f_book_file = "file";
-    private String f_book_language = "language";
-    private String f_book_year = "year";
-    private String f_book_detail_url = "detail_url";
-    private String f_book_download_url = "download_url";
-    private String f_book_remark = "remark";
-    private String f_book_created = "created";
-    private String f_book_user = "user";
+    private static volatile BookDbHelper instance;
 
-    private String t_book_reader = "book_reader";
-    private String f_book_reader_id = "id";
-    private String f_book_reader_book_id = "book_id";
-    private String f_book_reader_cur = "cur";
-    private String f_book_reader_pages = "pages";
-    private String f_book_reader_created = "created";
-    private String f_book_reader_user = "user";
-    private String f_book_reader_remark = "remark";
-
-    private String t_view_time = "view_time";
-    private String f_view_time_id = "id";
-    private String f_view_time_target_id = "target_id";
-    private String f_view_time_target_type = "target_type";
-    private String f_view_time_time = "time";
-    private String f_view_time_created = "created";
-    private String f_view_time_user = "user";
-    private String f_view_time_remark = "remark";
-
-    public BookDbHelper(Context context) {
+    private BookDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public static BookDbHelper getInstance() {
+        if (instance == null) {
+            synchronized (BookDbHelper.class) {
+                if (instance == null) {
+                    instance = new BookDbHelper(AppUtils.getContext());
+                }
+            }
+        }
+        return instance;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table if not exists " + t_book + " ( "
-                + f_book_id + " INTEGER primary key AUTOINCREMENT"
-                + ", " + f_book_bid + " TEXT not null"
-                + ", " + f_book_isbn + " TEXT not null"
-                + ", " + f_book_img + " TEXT not null"
-                + ", " + f_book_title + " TEXT not null"
-                + ", " + f_book_publisher + " TEXT"
-                + ", " + f_book_authors + " TEXT"
-                + ", " + f_book_file + " TEXT"
-                + ", " + f_book_language + " TEXT"
-                + ", " + f_book_year + " TEXT"
-                + ", " + f_book_detail_url + " TEXT not null"
-                + ", " + f_book_download_url + " TEXT not null"
-                + ", " + f_book_remark + " TEXT"
-                + ", " + f_book_created + " DATETIME not null"
-                + ", " + f_book_user + " TEXT not null"
-                + ")");
+        TableBook t1 = new TableBook();
+        String s1 = t1.create(false, true, "");
+        db.execSQL(s1);
 
-        db.execSQL("create table if not exists " + t_book_reader + " ( "
-                + f_book_reader_id + " INTEGER primary key AUTOINCREMENT"
-                + ", " + f_book_reader_book_id + " INTEGER not null"
-                + ", " + f_book_reader_cur + " INTEGER not null"
-                + ", " + f_book_reader_pages + " INTEGER not null"
-                + ", " + f_book_reader_created + " DATETIME not null"
-                + ", " + f_book_reader_user + " TEXT not null"
-                + ", " + f_book_reader_remark + " TEXT"
-                + ")");
+        TableBookReader t2 = new TableBookReader();
+        String s2 = t2.create(false, true, "");
+        db.execSQL(s2);
 
-        db.execSQL("create table if not exists " + t_view_time + " ( "
-                + f_view_time_id + " INTEGER primary key AUTOINCREMENT"
-                + ", " + f_view_time_target_id + " TEXT NOT NULL"
-                + ", " + f_view_time_target_type + " TEXT NOT NULL"
-                + ", " + f_view_time_time + " INTEGER NOT NULL"
-                + ", " + f_view_time_created + " DATETIME NOT NULL"
-                + ", " + f_view_time_user + " TEXT NOT NULL"
-                + ", " + f_view_time_remark + " TEXT"
-                + ")");
+        TableViewTime t3 = new TableViewTime();
+        String s3 = t3.create(false, true, "");
+        db.execSQL(s3);
     }
 
 
@@ -121,20 +78,33 @@ public class BookDbHelper extends SQLiteOpenHelper {
             try {
                 db.beginTransaction();
 
-                db.execSQL("ALTER TABLE " + t_book_reader + " ADD COLUMN " + f_book_reader_cur + "2 TEXT NOT NULL");
-                db.execSQL("ALTER TABLE " + t_book_reader + " ADD COLUMN " + f_book_reader_pages + "2 TEXT NOT NULL");
+                TableBookReader t = new TableBookReader();
+                String suffix = "_backup";
+                String backup_create = t.create(true, false, suffix);
+                String backup_table_name = t.getTableName() + suffix;
+                String origin_table_name = t.getTableName();
+                String origin_create = t.create(false, false, "");
 
-                db.execSQL("UPDATE " + t_book_reader + " SET " + f_book_reader_cur + "2 = " + f_book_reader_cur);
-                db.execSQL("UPDATE " + t_book_reader + " SET " + f_book_reader_pages + "2 = " + f_book_reader_pages);
-
-                db.execSQL("ALTER TABLE " + t_book_reader + " DROP COLUMN " + f_book_reader_cur);
-                db.execSQL("ALTER TABLE " + t_book_reader + " DROP COLUMN " + f_book_reader_pages);
-
-                db.execSQL("ALTER TABLE " + t_book_reader + " RENAME COLUMN " + f_book_reader_cur + "2 TO " + f_book_reader_cur);
-                db.execSQL("ALTER TABLE " + t_book_reader + " RENAME COLUMN " + f_book_reader_pages + "2 TO " + f_book_reader_cur);
+                LogUtil.i(TAG, "[" + backup_create + "]");
+                db.execSQL(backup_create);
+                String insert_backup_sql = "INSERT INTO " + backup_table_name + " SELECT " + t.getAllFieldString() + " FROM " + origin_table_name;
+                LogUtil.i(TAG, "[" + insert_backup_sql + "]");
+                db.execSQL(insert_backup_sql);
+                String drop_origin_sql = "DROP TABLE " + origin_table_name;
+                LogUtil.i(TAG, "[" + drop_origin_sql + "]");
+                db.execSQL(drop_origin_sql);
+                LogUtil.i(TAG, "[" + origin_create + "]");
+                db.execSQL(origin_create);
+                String insert_origin_sql = "INSERT INTO " + origin_table_name + " SELECT " + t.getAllFieldString() + " FROM " + backup_table_name;
+                LogUtil.i(TAG, "[" + insert_origin_sql + "]");
+                db.execSQL(insert_origin_sql);
+                String drop_backup_sql = "DROP TABLE " + backup_table_name;
+                LogUtil.i(TAG, "[" + drop_backup_sql + "]");
+                db.execSQL(drop_backup_sql);
 
                 db.endTransaction();
-            } catch (Exception e){
+            } catch (Exception e) {
+                LogUtil.e(TAG, LogUtil.getStackTraceString(e));
                 UiUtils.showToast("升级失败，请卸载重新安装");
             }
         }
@@ -145,23 +115,26 @@ public class BookDbHelper extends SQLiteOpenHelper {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put(f_book_id, e.getId());
-            values.put(f_book_bid, e.getBid());
-            values.put(f_book_isbn, e.getIsbn());
-            values.put(f_book_img, e.getCoverImage());
-            values.put(f_book_title, e.getTitle());
-            values.put(f_book_publisher, e.getPublisher());
-            values.put(f_book_authors, e.getAuthors());
-            values.put(f_book_file, e.getFile());
-            values.put(f_book_language, e.getLanguage());
-            values.put(f_book_year, e.getYear());
-            values.put(f_book_detail_url, e.getDetailUrl());
-            values.put(f_book_download_url, e.getDownloadUrl());
-            values.put(f_book_remark, e.getRemark());
-            values.put(f_book_created, new Date().getTime());
-            values.put(f_book_user, e.getUser());
 
-            db.insert(t_book, null, values);
+            TableBook t = new TableBook();
+
+            values.put(t.id.getName(), e.getId());
+            values.put(t.bid.getName(), e.getBid());
+            values.put(t.isbn.getName(), e.getIsbn());
+            values.put(t.img.getName(), e.getCoverImage());
+            values.put(t.title.getName(), e.getTitle());
+            values.put(t.publisher.getName(), e.getPublisher());
+            values.put(t.authors.getName(), e.getAuthors());
+            values.put(t.file.getName(), e.getFile());
+            values.put(t.language.getName(), e.getLanguage());
+            values.put(t.year.getName(), e.getYear());
+            values.put(t.detail_url.getName(), e.getDetailUrl());
+            values.put(t.download_url.getName(), e.getDownloadUrl());
+            values.put(t.remark.getName(), e.getRemark());
+            values.put(t.created.getName(), new Date().getTime());
+            values.put(t.user.getName(), e.getUser());
+
+            db.insert(t.getTableName(), null, values);
         } finally {
             l.unlock();
         }
@@ -171,7 +144,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
         try {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
-            String sql = String.format("select * from %s where %s=?", t_book, f_book_bid);
+
+            TableBook t = new TableBook();
+            String sql = t.selectAll(t.bid);
             String[] params = new String[]{bid};
             LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
             try (Cursor cursor = db.rawQuery(sql, params)) {
@@ -191,7 +166,8 @@ public class BookDbHelper extends SQLiteOpenHelper {
         try {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
-            String sql = String.format("select * from %s where %s=?", t_book, f_book_id);
+            TableBook t = new TableBook();
+            String sql = t.selectAll(t.id);
             String[] params = new String[]{id};
             LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
             try (Cursor cursor = db.rawQuery(sql, params)) {
@@ -212,7 +188,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
             l.lock();
             List<Book> list = new ArrayList<>();
             SQLiteDatabase db = getWritableDatabase();
-            String sql = String.format("select * from %s", t_book);
+
+            TableBook t = new TableBook();
+            String sql = t.selectAll();
             String[] params = new String[]{};
             LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
             try (Cursor cursor = db.rawQuery(sql, params)) {
@@ -234,7 +212,8 @@ public class BookDbHelper extends SQLiteOpenHelper {
         try {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
-            String sql = String.format("select * from %s where %s=?", t_book_reader, f_book_reader_book_id);
+            TableBookReader t = new TableBookReader();
+            String sql = t.selectAll(t.book_id);
             String[] params = new String[]{bookId + ""};
             LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
             try (Cursor cursor = db.rawQuery(sql, params)) {
@@ -254,11 +233,15 @@ public class BookDbHelper extends SQLiteOpenHelper {
         try {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
-            String sql1 = String.format("delete from %s where %s=?", t_book, f_book_id);
+
+            TableBook t1 = new TableBook();
+            String sql1 = t1.delete(t1.id);
             Object[] params1 = new Object[]{id};
             LogUtil.d(TAG, "sql:[%s] params:%s", sql1, Arrays.toString(params1));
             db.execSQL(sql1, params1);
-            String sql2 = String.format("delete from %s where %s=?", t_book_reader, f_book_reader_book_id);
+
+            TableBookReader t2 = new TableBookReader();
+            String sql2 = t2.delete(t2.book_id);
             Object[] params2 = new Object[]{id};
             LogUtil.d(TAG, "sql:[%s] params:%s", sql2, Arrays.toString(params2));
             db.execSQL(sql2, params2);
@@ -271,12 +254,8 @@ public class BookDbHelper extends SQLiteOpenHelper {
         try {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
-            String sql1 = String.format("update %s set %s=?, %s=?, %s=?, %s=?, %s=?, %s=?, %s=?, %s=?, %s=?, %s=?, %s=?, %s=?, %s=?, %s=? where %s=?",
-                    t_book,
-                    f_book_bid, f_book_isbn, f_book_img, f_book_title, f_book_publisher,
-                    f_book_authors, f_book_file, f_book_language, f_book_year, f_book_detail_url,
-                    f_book_download_url, f_book_remark, f_book_created, f_book_user,
-                    f_book_id);
+            TableBook t1 = new TableBook();
+            String sql1 = t1.update(t1.getAllField(t1.id).toArray(new TableField[0]), t1.id);
             Object[] params = new Object[]{
                     book.getBid(), book.getIsbn(), book.getCoverImage(), book.getTitle(),
                     book.getPublisher(), book.getAuthors(), book.getFile(), book.getLanguage(),
@@ -296,14 +275,15 @@ public class BookDbHelper extends SQLiteOpenHelper {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put(f_book_reader_id, e.getId());
-            values.put(f_book_reader_book_id, e.getBookId());
-            values.put(f_book_reader_cur, e.getCur());
-            values.put(f_book_reader_pages, e.getPages());
-            values.put(f_book_reader_created, new Date().getTime());
-            values.put(f_book_reader_user, e.getUser());
-            values.put(f_book_reader_remark, e.getRemark());
-            db.insert(t_book_reader, null, values);
+            TableBookReader t = new TableBookReader();
+            values.put(t.id.getName(), e.getId());
+            values.put(t.book_id.getName(), e.getBookId());
+            values.put(t.cur.getName(), e.getCur());
+            values.put(t.pages.getName(), e.getPages());
+            values.put(t.created.getName(), new Date().getTime());
+            values.put(t.user.getName(), e.getUser());
+            values.put(t.remark.getName(), e.getRemark());
+            db.insert(t.getTableName(), null, values);
         } finally {
             l.unlock();
         }
@@ -313,10 +293,8 @@ public class BookDbHelper extends SQLiteOpenHelper {
         try {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
-            String sql = String.format("update %s set %s=?, %s=?, %s=? where %s=?",
-                    t_book_reader,
-                    f_book_reader_cur, f_book_reader_pages, f_book_reader_remark,
-                    f_book_reader_book_id);
+            TableBookReader t = new TableBookReader();
+            String sql = t.update(new TableField[]{t.cur, t.pages, t.remark}, t.book_id);
             Object[] params = new Object[]{e.getCur(), e.getPages(), e.getRemark(), e.getBookId()};
             LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
             db.execSQL(sql, params);
@@ -327,48 +305,51 @@ public class BookDbHelper extends SQLiteOpenHelper {
 
     @SuppressLint("Range")
     private void buildBook(Cursor cursor, Book e) {
-        e.setId(cursor.getLong(cursor.getColumnIndex(f_book_id)));
-        e.setBid(cursor.getString(cursor.getColumnIndex(f_book_bid)));
-        e.setIsbn(cursor.getString(cursor.getColumnIndex(f_book_isbn)));
-        e.setCoverImage(cursor.getString(cursor.getColumnIndex(f_book_img)));
-        e.setTitle(cursor.getString(cursor.getColumnIndex(f_book_title)));
-        e.setPublisher(cursor.getString(cursor.getColumnIndex(f_book_publisher)));
-        e.setAuthors(cursor.getString(cursor.getColumnIndex(f_book_authors)));
-        e.setFile(cursor.getString(cursor.getColumnIndex(f_book_file)));
-        e.setLanguage(cursor.getString(cursor.getColumnIndex(f_book_language)));
-        e.setYear(cursor.getString(cursor.getColumnIndex(f_book_year)));
-        e.setDetailUrl(cursor.getString(cursor.getColumnIndex(f_book_detail_url)));
-        e.setDownloadUrl(cursor.getString(cursor.getColumnIndex(f_book_download_url)));
-        e.setRemark(cursor.getString(cursor.getColumnIndex(f_book_remark)));
-        e.setCreated(cursor.getString(cursor.getColumnIndex(f_book_created)));
-        e.setUser(cursor.getString(cursor.getColumnIndex(f_book_user)));
+        TableBook t = new TableBook();
+        e.setId(cursor.getLong(cursor.getColumnIndex(t.id.getName())));
+        e.setBid(cursor.getString(cursor.getColumnIndex(t.bid.getName())));
+        e.setIsbn(cursor.getString(cursor.getColumnIndex(t.isbn.getName())));
+        e.setCoverImage(cursor.getString(cursor.getColumnIndex(t.img.getName())));
+        e.setTitle(cursor.getString(cursor.getColumnIndex(t.title.getName())));
+        e.setPublisher(cursor.getString(cursor.getColumnIndex(t.publisher.getName())));
+        e.setAuthors(cursor.getString(cursor.getColumnIndex(t.authors.getName())));
+        e.setFile(cursor.getString(cursor.getColumnIndex(t.file.getName())));
+        e.setLanguage(cursor.getString(cursor.getColumnIndex(t.language.getName())));
+        e.setYear(cursor.getString(cursor.getColumnIndex(t.year.getName())));
+        e.setDetailUrl(cursor.getString(cursor.getColumnIndex(t.detail_url.getName())));
+        e.setDownloadUrl(cursor.getString(cursor.getColumnIndex(t.download_url.getName())));
+        e.setRemark(cursor.getString(cursor.getColumnIndex(t.remark.getName())));
+        e.setCreated(cursor.getString(cursor.getColumnIndex(t.created.getName())));
+        e.setUser(cursor.getString(cursor.getColumnIndex(t.user.getName())));
         e.setBookReader(findBookReaderByBookId(e.getId()));
     }
 
     @SuppressLint("Range")
     private void buildBookReader(Cursor cursor, BookReader e) {
-        e.setId(cursor.getString(cursor.getColumnIndex(f_book_reader_id)));
-        e.setBookId(cursor.getString(cursor.getColumnIndex(f_book_reader_book_id)));
-        e.setCur(cursor.getString(cursor.getColumnIndex(f_book_reader_cur)));
-        e.setPages(cursor.getString(cursor.getColumnIndex(f_book_reader_pages)));
-        e.setCreated(cursor.getString(cursor.getColumnIndex(f_book_reader_created)));
-        e.setUser(cursor.getString(cursor.getColumnIndex(f_book_reader_user)));
-        e.setRemark(cursor.getString(cursor.getColumnIndex(f_book_reader_remark)));
+        TableBookReader t = new TableBookReader();
+        e.setId(cursor.getString(cursor.getColumnIndex(t.id.getName())));
+        e.setBookId(cursor.getString(cursor.getColumnIndex(t.book_id.getName())));
+        e.setCur(cursor.getString(cursor.getColumnIndex(t.cur.getName())));
+        e.setPages(cursor.getString(cursor.getColumnIndex(t.pages.getName())));
+        e.setCreated(cursor.getString(cursor.getColumnIndex(t.created.getName())));
+        e.setUser(cursor.getString(cursor.getColumnIndex(t.user.getName())));
+        e.setRemark(cursor.getString(cursor.getColumnIndex(t.remark.getName())));
     }
 
     public void insertViewTime(ViewTime e) {
         try {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
+            TableViewTime t = new TableViewTime();
             ContentValues values = new ContentValues();
-            values.put(f_view_time_id, e.getId());
-            values.put(f_view_time_target_id, e.getTargetId());
-            values.put(f_view_time_target_type, e.getTargetType());
-            values.put(f_view_time_time, e.getTime());
-            values.put(f_view_time_created, new Date().getTime());
-            values.put(f_view_time_user, e.getUser());
-            values.put(f_view_time_remark, e.getRemark());
-            db.insert(t_view_time, null, values);
+            values.put(t.id.getName(), e.getId());
+            values.put(t.target_id.getName(), e.getTargetId());
+            values.put(t.target_type.getName(), e.getTargetType());
+            values.put(t.time.getName(), e.getTime());
+            values.put(t.created.getName(), new Date().getTime());
+            values.put(t.user.getName(), e.getUser());
+            values.put(t.remark.getName(), e.getRemark());
+            db.insert(t.getTableName(), null, values);
         } finally {
             l.unlock();
         }
@@ -378,8 +359,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
         try {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
-            String sql = String.format("select * from %s where %s >= ? and %s = ?", t_view_time, f_view_time_created, f_view_time_user);
-            String[] params = new String[]{start.getTime() + "", user};
+            TableViewTime t = new TableViewTime();
+            String sql = t.selectAll(t.user) + " AND " + t.created + " >= ?";
+            String[] params = new String[]{user, start.getTime() + ""};
             LogUtil.d(TAG, "sql:[%s] params:%s", sql, Arrays.toString(params));
             try (Cursor cursor = db.rawQuery(sql, params)) {
                 List<ViewTime> list = new ArrayList<>();
@@ -399,12 +381,13 @@ public class BookDbHelper extends SQLiteOpenHelper {
 
     @SuppressLint("Range")
     private void buildViewTime(Cursor cursor, ViewTime e) {
-        e.setId(cursor.getLong(cursor.getColumnIndex(f_view_time_id)));
-        e.setTargetId(cursor.getString(cursor.getColumnIndex(f_view_time_target_id)));
-        e.setTargetType(cursor.getString(cursor.getColumnIndex(f_view_time_target_type)));
-        e.setTime(cursor.getLong(cursor.getColumnIndex(f_view_time_time)));
-        e.setCreated(cursor.getString(cursor.getColumnIndex(f_view_time_created)));
-        e.setUser(cursor.getString(cursor.getColumnIndex(f_view_time_user)));
-        e.setRemark(cursor.getString(cursor.getColumnIndex(f_view_time_remark)));
+        TableViewTime t = new TableViewTime();
+        e.setId(cursor.getLong(cursor.getColumnIndex(t.id.getName())));
+        e.setTargetId(cursor.getString(cursor.getColumnIndex(t.target_id.getName())));
+        e.setTargetType(cursor.getString(cursor.getColumnIndex(t.target_type.getName())));
+        e.setTime(cursor.getLong(cursor.getColumnIndex(t.time.getName())));
+        e.setCreated(cursor.getString(cursor.getColumnIndex(t.created.getName())));
+        e.setUser(cursor.getString(cursor.getColumnIndex(t.user.getName())));
+        e.setRemark(cursor.getString(cursor.getColumnIndex(t.remark.getName())));
     }
 }

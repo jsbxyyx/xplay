@@ -25,7 +25,7 @@ public class BookJavascript {
 
     public BookJavascript(Context context) {
         mContext = context;
-        bookDbHelper = new BookDbHelper(context);
+        bookDbHelper = BookDbHelper.getInstance();
     }
 
     @JavascriptInterface
