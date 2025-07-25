@@ -58,7 +58,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         TableBook t1 = new TableBook();
         String s1 = t1.create(false, true, "");
-        LogUtil.i(TAG, "sql:[%s]", s1);
+        LogUtil.i(TAG, "SQL：[%s]", s1);
         db.execSQL(s1);
 
         TableBookReader t2 = new TableBookReader();
@@ -121,15 +121,15 @@ public class BookDbHelper extends SQLiteOpenHelper {
 
             TableBook t = new TableBook();
             String sql = t.insert();
-            Object[] bindArgs = new Object[]{
+            Object[] args = new Object[]{
                     e.getId(), e.getBid(), e.getIsbn(),
                     e.getCoverImage(), e.getTitle(), e.getPublisher(),
                     e.getAuthors(), e.getFile(), e.getLanguage(),
                     e.getYear(), e.getDetailUrl(), e.getDownloadUrl(),
                     e.getRemark(), new Date().getTime(), e.getUser()
             };
-            LogUtil.d(TAG, "sql:[%s] bindArgs:%s", sql, Arrays.toString(bindArgs));
-            db.execSQL(sql, bindArgs);
+            LogUtil.d(TAG, "sql:[%s] args:%s", sql, Arrays.toString(args));
+            db.execSQL(sql, args);
         } finally {
             l.unlock();
         }
@@ -142,9 +142,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
 
             TableBook t = new TableBook();
             String sql = t.selectAll(t.bid);
-            String[] selectionArgs = new String[]{bid};
-            LogUtil.d(TAG, "sql:[%s] selectionArgs:%s", sql, Arrays.toString(selectionArgs));
-            try (Cursor cursor = db.rawQuery(sql, selectionArgs)) {
+            String[] args = new String[]{bid};
+            LogUtil.d(TAG, "sql:[%s] args:%s", sql, Arrays.toString(args));
+            try (Cursor cursor = db.rawQuery(sql, args)) {
                 if (cursor.moveToFirst()) {
                     Book e = new Book();
                     buildBook(cursor, e);
@@ -163,9 +163,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = getWritableDatabase();
             TableBook t = new TableBook();
             String sql = t.selectAll(t.id);
-            String[] selectionArgs = new String[]{id};
-            LogUtil.d(TAG, "sql:[%s] selectionArgs:%s", sql, Arrays.toString(selectionArgs));
-            try (Cursor cursor = db.rawQuery(sql, selectionArgs)) {
+            String[] args = new String[]{id};
+            LogUtil.d(TAG, "sql:[%s] args:%s", sql, Arrays.toString(args));
+            try (Cursor cursor = db.rawQuery(sql, args)) {
                 if (cursor.moveToFirst()) {
                     Book e = new Book();
                     buildBook(cursor, e);
@@ -186,9 +186,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
 
             TableBook t = new TableBook();
             String sql = t.selectAll();
-            String[] selectionArgs = new String[]{};
-            LogUtil.d(TAG, "sql:[%s] selectionArgs:%s", sql, Arrays.toString(selectionArgs));
-            try (Cursor cursor = db.rawQuery(sql, selectionArgs)) {
+            String[] args = new String[]{};
+            LogUtil.d(TAG, "sql:[%s] args:%s", sql, Arrays.toString(args));
+            try (Cursor cursor = db.rawQuery(sql, args)) {
                 if (cursor.moveToFirst()) {
                     do {
                         Book e = new Book();
@@ -209,9 +209,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = getWritableDatabase();
             TableBookReader t = new TableBookReader();
             String sql = t.selectAll(t.book_id);
-            String[] selectionArgs = new String[]{bookId + ""};
-            LogUtil.d(TAG, "sql:[%s] selectionArgs:%s", sql, Arrays.toString(selectionArgs));
-            try (Cursor cursor = db.rawQuery(sql, selectionArgs)) {
+            String[] args = new String[]{bookId + ""};
+            LogUtil.d(TAG, "sql:[%s] args:%s", sql, Arrays.toString(args));
+            try (Cursor cursor = db.rawQuery(sql, args)) {
                 if (cursor.moveToFirst()) {
                     BookReader e = new BookReader();
                     buildBookReader(cursor, e);
@@ -229,17 +229,21 @@ public class BookDbHelper extends SQLiteOpenHelper {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
 
+            db.beginTransaction();
+
             TableBook t1 = new TableBook();
             String sql1 = t1.delete(t1.id);
-            Object[] bindArgs1 = new Object[]{id};
-            LogUtil.d(TAG, "sql:[%s] bindArgs:%s", sql1, Arrays.toString(bindArgs1));
-            db.execSQL(sql1, bindArgs1);
+            Object[] args1 = new Object[]{id};
+            LogUtil.d(TAG, "sql:[%s] args:%s", sql1, Arrays.toString(args1));
+            db.execSQL(sql1, args1);
 
             TableBookReader t2 = new TableBookReader();
             String sql2 = t2.delete(t2.book_id);
-            Object[] bindArgs2 = new Object[]{id};
-            LogUtil.d(TAG, "sql:[%s] bindArgs:%s", sql2, Arrays.toString(bindArgs2));
-            db.execSQL(sql2, bindArgs2);
+            Object[] args2 = new Object[]{id};
+            LogUtil.d(TAG, "sql:[%s] args:%s", sql2, Arrays.toString(args2));
+            db.execSQL(sql2, args2);
+
+            db.endTransaction();
         } finally {
             l.unlock();
         }
@@ -251,15 +255,15 @@ public class BookDbHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = getWritableDatabase();
             TableBook t = new TableBook();
             String sql = t.update(t.getAllField(t.id).toArray(new TableField[0]), t.id);
-            Object[] bindArgs = new Object[]{
+            Object[] args = new Object[]{
                     book.getBid(), book.getIsbn(), book.getCoverImage(), book.getTitle(),
                     book.getPublisher(), book.getAuthors(), book.getFile(), book.getLanguage(),
                     book.getYear(), book.getDetailUrl(), book.getDownloadUrl(), book.getRemark(),
                     book.getCreated(), book.getUser(),
                     book.getId()
             };
-            LogUtil.d(TAG, "sql:[%s] bindArgs:%s", sql, Arrays.toString(bindArgs));
-            db.execSQL(sql, bindArgs);
+            LogUtil.d(TAG, "sql:[%s] args:%s", sql, Arrays.toString(args));
+            db.execSQL(sql, args);
         } finally {
             l.unlock();
         }
@@ -272,13 +276,13 @@ public class BookDbHelper extends SQLiteOpenHelper {
 
             TableBookReader t = new TableBookReader();
             String sql = t.insert();
-            Object[] bindArgs = new Object[]{
+            Object[] args = new Object[]{
                     e.getId(), e.getBookId(), e.getCur(),
                     e.getPages(), new Date().getTime(), e.getUser(),
                     e.getRemark()
             };
-            LogUtil.d(TAG, "sql:[%s] bindArgs:%s", sql, Arrays.toString(bindArgs));
-            db.execSQL(sql, bindArgs);
+            LogUtil.d(TAG, "sql:[%s] args:%s", sql, Arrays.toString(args));
+            db.execSQL(sql, args);
         } finally {
             l.unlock();
         }
@@ -290,12 +294,12 @@ public class BookDbHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = getWritableDatabase();
             TableBookReader t = new TableBookReader();
             String sql = t.update(new TableField[]{t.cur, t.pages, t.remark}, t.book_id);
-            Object[] bindArgs = new Object[]{
+            Object[] args = new Object[]{
                     e.getCur(), e.getPages(), e.getRemark(),
                     e.getBookId()
             };
-            LogUtil.d(TAG, "sql:[%s] bindArgs:%s", sql, Arrays.toString(bindArgs));
-            db.execSQL(sql, bindArgs);
+            LogUtil.d(TAG, "sql:[%s] args:%s", sql, Arrays.toString(args));
+            db.execSQL(sql, args);
         } finally {
             l.unlock();
         }
@@ -341,13 +345,13 @@ public class BookDbHelper extends SQLiteOpenHelper {
             TableViewTime t = new TableViewTime();
 
             String sql = t.insert();
-            Object[] bindArgs = new Object[]{
+            Object[] args = new Object[]{
                     e.getId(), e.getTargetId(), e.getTargetType(),
                     e.getTime(), new Date().getTime(), e.getUser(),
                     e.getRemark()
             };
-            LogUtil.d(TAG, "sql:[%s] bindArgs:%s", sql, Arrays.toString(bindArgs));
-            db.execSQL(sql, bindArgs);
+            LogUtil.d(TAG, "sql:[%s] args:%s", sql, Arrays.toString(args));
+            db.execSQL(sql, args);
         } finally {
             l.unlock();
         }
@@ -359,9 +363,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = getWritableDatabase();
             TableViewTime t = new TableViewTime();
             String sql = t.selectAll(t.user) + " AND " + t.created.getName() + ">=?";
-            String[] selectionArgs = new String[]{user, start.getTime() + ""};
-            LogUtil.d(TAG, "sql:[%s] selectionArgs:%s", sql, Arrays.toString(selectionArgs));
-            try (Cursor cursor = db.rawQuery(sql, selectionArgs)) {
+            String[] args = new String[]{user, start.getTime() + ""};
+            LogUtil.d(TAG, "sql:[%s] args:%s", sql, Arrays.toString(args));
+            try (Cursor cursor = db.rawQuery(sql, args)) {
                 List<ViewTime> list = new ArrayList<>();
                 if (cursor.moveToFirst()) {
                     do {
