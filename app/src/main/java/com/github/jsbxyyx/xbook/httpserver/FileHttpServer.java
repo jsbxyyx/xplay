@@ -83,7 +83,8 @@ public class FileHttpServer extends NanoHTTPD {
                             || name.endsWith(".css")
                             || name.endsWith(".htm")
                             || name.endsWith(".html")
-                            || name.endsWith(".bcmap")) {
+                            || name.endsWith(".bcmap")
+                            || name.endsWith(".map")) {
                         LogUtil.d(TAG, "ignore : %s", name);
                         in = new FileInputStream(rootFile);
                         totalBytes = in.available();
