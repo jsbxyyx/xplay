@@ -24,6 +24,9 @@ public class ExampleUnitTest {
         String create = t.create(true, true, "");
         System.out.printf("[%s]\n", create);
 
+        String insert = t.insert();
+        System.out.printf("[%s]\n", insert);
+
         String update = t.update(new TableField[]{t.remark, t.id}, t.id, t.book_id);
         System.out.printf("[%s]\n", update);
 

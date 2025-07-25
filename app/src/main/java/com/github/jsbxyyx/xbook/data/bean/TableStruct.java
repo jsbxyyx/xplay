@@ -6,6 +6,8 @@ public abstract class TableStruct {
 
     public abstract String getTableName();
 
+    public abstract TableField getPk();
+
     public abstract List<TableField> getAllField(TableField... excludes);
 
     public String getAllFieldString(TableField... excludes) {
@@ -18,6 +20,25 @@ public abstract class TableStruct {
             }
             sql.append(f.getName());
         }
+        return sql.toString();
+    }
+
+    public String insert() {
+        StringBuilder sql = new StringBuilder();
+        sql.append("INSERT INTO ");
+        sql.append(getTableName());
+        sql.append(" (");
+        sql.append(getAllFieldString());
+        sql.append(")");
+        sql.append(" VALUES (");
+        List<TableField> all = getAllField();
+        for (int i = 0, len = all.size(); i < len; i++) {
+            if (i > 0) {
+                sql.append(", ");
+            }
+            sql.append("?");
+        }
+        sql.append(")");
         return sql.toString();
     }
 

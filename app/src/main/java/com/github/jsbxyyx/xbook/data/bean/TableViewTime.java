@@ -13,10 +13,17 @@ public class TableViewTime extends TableStruct {
     public final TableField user = TableField.column("user", "TEXT", true);
     public final TableField remark = TableField.column("remark", "TEXT", false);
 
+    @Override
     public String getTableName() {
         return "view_time";
     }
 
+    @Override
+    public TableField getPk() {
+        return id;
+    }
+
+    @Override
     public List<TableField> getAllField(TableField... excludes) {
         List<TableField> list = new ArrayList<>();
         list.add(id);
