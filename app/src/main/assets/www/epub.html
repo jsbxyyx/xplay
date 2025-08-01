@@ -635,6 +635,9 @@
     }
     function playClick(obj) {
       epub_tts_enable = !epub_tts_enable;
+      if (window.xbook && window.xbook.toast) {
+        window.xbook.toast('播放' + (epub_tts_enable ? "开启" : "关闭"));
+      }
       console.log("tts enable : " + epub_tts_enable);
       tts();
     }
