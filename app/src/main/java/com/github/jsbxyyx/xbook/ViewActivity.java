@@ -101,7 +101,7 @@ public class ViewActivity extends AppCompatActivity {
             webView.getSettings().setDomStorageEnabled(true);
             // webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
             // webView.clearCache(true);
-            webView.addJavascriptInterface(new BookJavascript(this), "xbook");
+            webView.addJavascriptInterface(new BookJavascript(this, webView), "xbook");
             String name = encodeURIComponent(
                     encodeURIComponent(
                             file_path.replace(Common.xbook_dir + "/", "")

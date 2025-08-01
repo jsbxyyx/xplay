@@ -246,9 +246,9 @@
 <body>
   <div id="epub-tool" style="display: block; height: 1.5rem; margin: 0.5rem 0.2rem 0rem 0.2rem;">
     <div onclick="outlineClick(this)" style="width: 1rem; cursor: pointer; float: left;">三</div>
-    <div onclick="fontClick(this)" style="width: 1rem; cursor: pointer; float: left; margin-left: 5px;">Aa
-    </div>
-    <div style="float: right; margin-left: 35%;">
+    <div onclick="fontClick(this)" style="width: 1rem; cursor: pointer; float: left; margin-left: 10px;">Aa</div>
+    <div onclick="playClick(this)" style="width: 1rem; cursor: pointer; float: left; margin-left: 10px;">▷</div>
+    <div style="float: right;">
       <input id="curPage" type="number" value="" style="max-width: 3rem" onkeydown="clickGoPage(event)">
       &nbsp;/&nbsp;
       <span id="totalPages"></span>
@@ -321,6 +321,8 @@
     var cur = getUrlParam("cur");
     var pages = getUrlParam("pages");
     console.log('book_id:' + book_id + ', cur:' + cur + ', pages:' + pages);
+    var epub_current_text = '';
+    var epub_tts_enable = false;
 
     var page_tool_ele = document.getElementById('page-tool');
     var pageToolHeight = page_tool_ele.offsetHeight;
@@ -405,6 +407,10 @@
       }
     }
 
+    var play_end_callback = function() {
+      next();
+    }
+
     var makeRangeCfi = function(a, b) {
       var CFI = new ePub.CFI();
       var start = CFI.parse(a);
@@ -468,13 +474,7 @@
             window.xbook.report(book_id, currentPage, totalPage);
           }
         }
-        var currentLocation = rendition.currentLocation();
-        var a = currentLocation.start.cfi;
-        var b = currentLocation.end.cfi;
-        book.getRange(makeRangeCfi(a, b)).then(function(range) {
-          var text = range.toString()
-          console.log("text:" + text);
-        });
+        tts();
       });
 
       if ((cur != null && cur != '') && (pages != null && pages != '')) {
@@ -631,6 +631,45 @@
         prev();
       } else if (key == 'down') {
         next();
+      }
+    }
+    function playClick(obj) {
+      epub_tts_enable = !epub_tts_enable;
+      console.log("tts enable : " + epub_tts_enable);
+      tts();
+    }
+    function tts() {
+      if (epub_tts_enable && rendition) {
+        var currentLocation = rendition.currentLocation();
+        var a = currentLocation.start.cfi;
+        var b = currentLocation.end.cfi;
+        book.getRange(makeRangeCfi(a, b)).then(function(range) {
+          var text = range.toString();
+          console.log("text:" + text);
+          if ($.trim(text) != '') {
+            if ($.trim(epub_current_text) == '') {
+              epub_current_text = text;
+            } else {
+              var splits = text.split('\n');
+              if (splits.length > 0) {
+                if (epub_current_text.length > 10 && splits[0].length > 10) {
+                  var sub1 = epub_current_text.substring(epub_current_text.length - 10);
+                  var sub2 = splits[0].substring(splits[0].length - 10);
+                  if (sub1 != sub2) {
+                    epub_current_text = text;
+                  } else {
+                    epub_current_text = splits[1];
+                  }
+                } else {
+                  epub_current_text = splits[1];
+                }
+              }
+            }
+            if (window.xbook && window.xbook.play) {
+              window.xbook.play(epub_current_text, 'window.play_end_callback');
+            }
+          }
+        });
       }
     }
   </script>
