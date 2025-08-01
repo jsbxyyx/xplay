@@ -185,7 +185,6 @@ public class ViewActivity extends AppCompatActivity {
         if (webView != null) {
             webView.destroy();
         }
-
         String syncData = SPUtils.getData(getBaseContext(), Common.sync_key);
         if (Common.checked.equals(syncData)) {
             Book book = bookDbHelper.findBookById(bookId);

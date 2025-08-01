@@ -26,9 +26,12 @@ import java.util.Map;
  */
 public class BookJavascript {
 
+    private final String TAG = getClass().getSimpleName();
+
     private Context mContext;
     private WebView mWebView;
     private BookDbHelper bookDbHelper;
+    private MediaPlayer mediaPlayer;
 
     public BookJavascript(Context context, WebView webView) {
         mContext = context;
@@ -84,15 +87,21 @@ public class BookJavascript {
         try {
             ByteArrayOutputStream output = TTSClient.audioByText(text, null, null, null, null, null);
             if (output.size() <= 0) {
-                UiUtils.showToast("TTS failed.");
+                UiUtils.showToast("TTS failed, empty.");
                 return "-1";
             }
             File tempMp3 = File.createTempFile("tts", ".mp3");
-            tempMp3.deleteOnExit();
             try (FileOutputStream fos = new FileOutputStream(tempMp3)) {
                 fos.write(output.toByteArray());
             }
-            MediaPlayer mediaPlayer = new MediaPlayer();
+            if (mediaPlayer != null) {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+            mediaPlayer = new MediaPlayer();
             mediaPlayer.setDataSource(tempMp3.getAbsolutePath());
 
             mediaPlayer.prepareAsync();
@@ -103,12 +112,27 @@ public class BookJavascript {
                 }
             });
             mediaPlayer.setOnCompletionListener((mp) -> {
-                mWebView.post(() -> {
-                    mWebView.loadUrl("javascript:" + callback + "()");
-                });
+                if (!Common.isBlank(callback)) {
+                    mWebView.post(() -> {
+                        mWebView.loadUrl("javascript:" + callback + "()");
+                    });
+                }
+                boolean b = tempMp3.delete();
+                if (!b) {
+                    tempMp3.deleteOnExit();
+                }
+            });
+            mediaPlayer.setOnErrorListener((mp, what, extra) -> {
+                LogUtil.e(TAG, "ErrorListener:%d, %d", what, extra);
+                boolean b = tempMp3.delete();
+                if (!b) {
+                    tempMp3.deleteOnExit();
+                }
+                return true;
             });
         } catch (Exception e) {
-            UiUtils.showToast("TTS failed.");
+            LogUtil.e(TAG, "tts error. %s", LogUtil.getStackTraceString(e));
+            UiUtils.showToast("TTS failed, error.");
             return "-1";
         }
         return "0";

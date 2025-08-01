@@ -669,7 +669,11 @@
               }
             }
             if (window.xbook && window.xbook.play) {
-              window.xbook.play(epub_current_text, 'window.play_end_callback');
+              var ret = window.xbook.play(epub_current_text, 'window.play_end_callback');
+              if (ret == '-1') {
+                epub_tts_enable = false;
+                window.xbook.play('停止播放', '');
+              }
             }
           }
         });

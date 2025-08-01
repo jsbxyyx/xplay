@@ -97,7 +97,7 @@ public class TTSClient extends WebSocketClient {
 
     @Override
     public void onMessage(String text) {
-        log("onMessage:\r\n" + text);
+        log("onMessage:\r\n" + text, true);
         if (text.contains("turn.start")) {
             // （新的）音频流开始传输开始，清空重置buffer
             buffers.reset();
@@ -107,7 +107,7 @@ public class TTSClient extends WebSocketClient {
                 cf.complete(buffers);
                 close(1000);
             } catch (Exception e) {
-                log(e.getMessage());
+                log(e.getMessage(), false);
             }
         }
     }
@@ -125,12 +125,12 @@ public class TTSClient extends WebSocketClient {
             buffers.write(data);
         } catch (IOException ignore) {
         }
-        log("rawData:" + encodeHex(rawData));
+        log("rawData:" + encodeHex(rawData), true);
     }
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        log("onClose code:" + code + ", reason:" + reason + ", remote:" + remote);
+        log("onClose code:" + code + ", reason:" + reason + ", remote:" + remote, false);
         if (code != 1000) {
             cf.complete(new ByteArrayOutputStream());
         }
@@ -139,11 +139,11 @@ public class TTSClient extends WebSocketClient {
     @Override
     public void onError(Exception e) {
         cf.complete(new ByteArrayOutputStream());
-        log("onClose e:" + e.getMessage());
+        log("onClose e:" + e.getMessage(), false);
     }
 
-    static void log(String str) {
-        if (debug) {
+    static void log(String str, boolean skip) {
+        if (debug && skip) {
             System.out.println(str);
         }
         if (appendable != null) {
@@ -234,15 +234,19 @@ public class TTSClient extends WebSocketClient {
         while (!client2.isOpen()) {
             Thread.sleep(50);
             if (client2.isClosed()) {
-                log("client is closed.");
+                log("client is closed.", false);
                 return new ByteArrayOutputStream();
             }
         }
         String ssmlWithData = ssml_with_data(ssml);
-        log("ssml:[\n" + ssmlWithData + "\n]");
+        log("ssml:[\n" + ssmlWithData + "\n]", false);
         client2.send(ssmlWithData);
-        ByteArrayOutputStream output = cf.get(30, TimeUnit.SECONDS);
-        return output;
+        try {
+            return cf.get(10, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            log("get audio error.", false);
+            return new ByteArrayOutputStream();
+        }
     }
 
     public static ByteArrayOutputStream audioByText(String text, String lang, String voiceName, String pitch, String rate, String volume) throws Exception {
@@ -275,7 +279,7 @@ public class TTSClient extends WebSocketClient {
         if (output.size() > 0) {
             String name = System.currentTimeMillis() + ".mp3";
             Files.write(new File(System.getProperty("user.dir") + "/" + name).toPath(), output.toByteArray());
-            log("write " + name);
+            log("write " + name, false);
         }
     }
 
