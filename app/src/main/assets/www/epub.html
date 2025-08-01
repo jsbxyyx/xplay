@@ -405,6 +405,44 @@
       }
     }
 
+    var makeRangeCfi = function(a, b) {
+      var CFI = new ePub.CFI();
+      var start = CFI.parse(a);
+      var end = CFI.parse(b);
+      var cfi = {
+          range: true,
+          base: start.base,
+          path: {
+              steps: [],
+              terminal: null
+          },
+          start: start.path,
+          end: end.path
+      }
+      var len = cfi.start.steps.length;
+      for (var i = 0; i < len; i++) {
+        if (CFI.equalStep(cfi.start.steps[i], cfi.end.steps[i])) {
+          if (i == len - 1) {
+            if (cfi.start.terminal === cfi.end.terminal) {
+              cfi.path.steps.push(cfi.start.steps[i]);
+              cfi.range = false;
+            }
+          } else {
+            cfi.path.steps.push(cfi.start.steps[i]);
+          }
+        } else {
+          break;
+        }
+      }
+      cfi.start.steps = cfi.start.steps.slice(cfi.path.steps.length);
+      cfi.end.steps = cfi.end.steps.slice(cfi.path.steps.length);
+      return 'epubcfi(' + CFI.segmentString(cfi.base)
+          + '!' + CFI.segmentString(cfi.path)
+          + ',' + CFI.segmentString(cfi.start)
+          + ',' + CFI.segmentString(cfi.end)
+          + ')';
+    }
+
     book.ready.then(function () {
       console.log('epub ready 1');
       // 目录
@@ -430,6 +468,13 @@
             window.xbook.report(book_id, currentPage, totalPage);
           }
         }
+        var currentLocation = rendition.currentLocation();
+        var a = currentLocation.start.cfi;
+        var b = currentLocation.end.cfi;
+        book.getRange(makeRangeCfi(a, b)).then(function(range) {
+          var text = range.toString()
+          console.log("text:" + text);
+        });
       });
 
       if ((cur != null && cur != '') && (pages != null && pages != '')) {
