@@ -56,7 +56,7 @@ public abstract class TableStruct {
                 if (i > 0) {
                     sql.append(" AND ");
                 }
-                sql.append(f.getName()).append("=").append("?");
+                sql.append(f.getName()).append(" = ").append("?");
             }
         }
         return sql.toString();
@@ -72,7 +72,7 @@ public abstract class TableStruct {
                 if (i > 0) {
                     sql.append(" AND ");
                 }
-                sql.append(f.getName()).append("=").append("?");
+                sql.append(f.getName()).append(" = ").append("?");
             }
         }
         return sql.toString();
@@ -87,7 +87,7 @@ public abstract class TableStruct {
             if (i > 0) {
                 sql.append(", ");
             }
-            sql.append(f.getName()).append("=").append("?");
+            sql.append(f.getName()).append(" = ").append("?");
         }
         if (where != null && where.length > 0) {
             sql.append(" WHERE ");
@@ -96,7 +96,7 @@ public abstract class TableStruct {
                 if (i > 0) {
                     sql.append(", ");
                 }
-                sql.append(f.getName()).append("=").append("?");
+                sql.append(f.getName()).append(" = ").append("?");
             }
         }
         return sql.toString();
