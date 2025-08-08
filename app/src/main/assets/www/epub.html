@@ -647,27 +647,31 @@
         var a = currentLocation.start.cfi;
         var b = currentLocation.end.cfi;
         book.getRange(makeRangeCfi(a, b)).then(function(range) {
-          var text = range.toString();
-          console.log("text:" + text);
+          var text = $.trim(range.toString());
+          console.log("range text : [" + text + "]");
           if ($.trim(text) != '') {
+            var temp_text = '';
             if ($.trim(epub_current_text) == '') {
-              epub_current_text = text;
+              temp_text = text;
             } else {
               var splits = text.split('\n');
               if (splits.length > 0) {
                 if (epub_current_text.length > 10 && splits[0].length > 10) {
                   var sub1 = epub_current_text.substring(epub_current_text.length - 10);
                   var sub2 = splits[0].substring(splits[0].length - 10);
+                  console.log("sub1:[" + sub1 + "], sub2:[" + sub2 + "]");
                   if (sub1 != sub2) {
-                    epub_current_text = text;
+                    temp_text = text;
                   } else {
-                    epub_current_text = splits[1];
+                    temp_text = splits[1];
                   }
                 } else {
-                  epub_current_text = splits[1];
+                  temp_text = splits[1];
                 }
               }
             }
+            epub_current_text = temp_text;
+            console.log('play text : [' + epub_current_text + ']');
             if (window.xbook && window.xbook.play) {
               var ret = window.xbook.play(epub_current_text, 'window.play_end_callback');
               if (ret == '-1') {
