@@ -6,7 +6,6 @@ import android.os.Environment;
 
 import com.github.jsbxyyx.xbook.data.bean.Ip;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,8 +14,10 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @author jsbxyyx
@@ -208,6 +209,53 @@ public class Common {
             return host;
         }
         return IPS.get(0).getIp();
+    }
+
+    public static <T> Map<String, T> listToMap(List<T> list, Function<T, String> f) {
+        if (list == null || list.isEmpty()) {
+            return new HashMap<>();
+        }
+        Map<String, T> map = new LinkedHashMap<>(list.size());
+        for (T t : list) {
+            String key = f.apply(t);
+            map.put(key, t);
+        }
+        return map;
+    }
+
+    public static <T> Map<String, List<T>> listToMap2(List<T> list, Function<T, String> f) {
+        if (list == null || list.isEmpty()) {
+            return new HashMap<>();
+        }
+        Map<String, List<T>> map = new LinkedHashMap<>(list.size());
+        for (T t : list) {
+            String key = f.apply(t);
+            map.putIfAbsent(key, new ArrayList<>());
+            map.get(key).add(t);
+        }
+        return map;
+    }
+
+    public static Map<String, Object> newMap(Object... objects) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        if (objects != null && objects.length > 1 && objects.length % 2 == 0) {
+            for (int i = 0; i < objects.length; ) {
+                String key = objects[i++].toString();
+                Object value = objects[i++];
+                map.put(key, value);
+            }
+        }
+        return map;
+    }
+
+    public static <T> List<T> newList(T... objects) {
+        List<T> list = new ArrayList<>();
+        if (objects != null && objects.length > 0) {
+            for (T object : objects) {
+                list.add(object);
+            }
+        }
+        return list;
     }
 
 }

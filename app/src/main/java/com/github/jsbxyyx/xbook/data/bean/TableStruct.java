@@ -1,5 +1,6 @@
 package com.github.jsbxyyx.xbook.data.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class TableStruct {
@@ -102,6 +103,10 @@ public abstract class TableStruct {
     }
 
     public String create(boolean temporary, boolean notExists, String suffix) {
+        return create(temporary, notExists, suffix, new ArrayList<>());
+    }
+
+    public String create(boolean temporary, boolean notExists, String suffix, List<TableField> excludes) {
         StringBuilder sql = new StringBuilder();
         sql.append("CREATE ");
         if (temporary) {
@@ -116,7 +121,7 @@ public abstract class TableStruct {
         sql.append(" (");
         sql.append("\n");
 
-        List<TableField> all = getAllField();
+        List<TableField> all = getAllField(excludes.toArray(new TableField[0]));
         for (int i = 0, size = all.size(); i < size; i++) {
             TableField f = all.get(i);
             if (i > 0) {
@@ -143,5 +148,7 @@ public abstract class TableStruct {
         sql.append(")");
         return sql.toString();
     }
+
+
 
 }

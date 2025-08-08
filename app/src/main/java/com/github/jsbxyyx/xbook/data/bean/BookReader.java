@@ -15,6 +15,7 @@ public class BookReader implements java.io.Serializable {
     private String created;
     private String user;
     private String remark;
+    private String updated;
 
     public String getId() {
         return id;
@@ -72,6 +73,14 @@ public class BookReader implements java.io.Serializable {
         this.remark = remark;
     }
 
+    public String getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(String updated) {
+        this.updated = updated;
+    }
+
     @Override
     public String toString() {
         return "BookReader{" +
@@ -82,6 +91,7 @@ public class BookReader implements java.io.Serializable {
                 ", created='" + created + '\'' +
                 ", user='" + user + '\'' +
                 ", remark='" + remark + '\'' +
+                ", updated='" + updated + '\'' +
                 '}';
     }
 }

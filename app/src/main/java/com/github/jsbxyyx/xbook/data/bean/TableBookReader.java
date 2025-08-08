@@ -12,6 +12,7 @@ public class TableBookReader extends TableStruct {
     public final TableField created = TableField.column("created", "DATETIME", true);
     public final TableField user = TableField.column("user", "TEXT", true);
     public final TableField remark = TableField.column("remark", "TEXT", false);
+    public final TableField updated = TableField.column("updated", "INTEGER", false);
 
     @Override
     public String getTableName() {
@@ -33,6 +34,7 @@ public class TableBookReader extends TableStruct {
         list.add(created);
         list.add(user);
         list.add(remark);
+        list.add(updated);
         if (excludes != null) {
             for (TableField f : excludes) {
                 list.remove(f);

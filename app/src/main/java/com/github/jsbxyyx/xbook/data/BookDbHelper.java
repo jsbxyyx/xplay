@@ -1,7 +1,8 @@
 package com.github.jsbxyyx.xbook.data;
 
+import static com.github.jsbxyyx.xbook.common.Common.newList;
+
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -32,7 +33,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
 
     private final String TAG = getClass().getName();
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "xbook.db";
 
     private final ReentrantLock l = new ReentrantLock();
@@ -89,6 +90,12 @@ public class BookDbHelper extends SQLiteOpenHelper {
                 String origin_create_sql = t.create(false, false, "");
                 String origin_table_name = t.getTableName();
 
+                // 1. 创建备份表 create table xxx_backup
+                // 2. 从原表同步数据到备份表 insert into xxx_backup select xxx_all_field from xxx
+                // 3. 删除原表 drop table xxx
+                // 4. 创建新原表 create table xxx
+                // 5. 从备份表同步数据到新原表 insert into xxx select xxx_backup_all_field from xxx_backup
+                // 6. 删除备份表 drop table xxx_backup
                 LogUtil.i(TAG, "sql:[%s]", backup_create_sql);
                 db.execSQL(backup_create_sql);
                 String insert_backup_sql = "INSERT INTO " + backup_table_name + " SELECT " + t.getAllFieldString() + " FROM " + origin_table_name;
@@ -103,6 +110,51 @@ public class BookDbHelper extends SQLiteOpenHelper {
                 LogUtil.i(TAG, "sql:[%s]", insert_origin_sql);
                 db.execSQL(insert_origin_sql);
                 String drop_backup_sql = "DROP TABLE " + backup_table_name;
+                LogUtil.i(TAG, "sql:[%s]", drop_backup_sql);
+                db.execSQL(drop_backup_sql);
+
+                db.setTransactionSuccessful();
+            } catch (Exception e) {
+                LogUtil.e(TAG, LogUtil.getStackTraceString(e));
+                UiUtils.showToast("升级失败，请卸载重新安装");
+            } finally {
+                db.endTransaction();
+            }
+        } else if (oldVersion < 3) {
+            try {
+                db.beginTransaction();
+
+                TableBookReader old_t = new TableBookReader();
+                TableBookReader new_t = new TableBookReader();
+
+                String suffix = "_backup";
+                String backup_old_create_sql = old_t.create(true, false, suffix, newList(old_t.updated));
+                String backup_old_table_name = old_t.getTableName() + suffix;
+                String old_table_all_field = old_t.getAllFieldString(old_t.updated);
+
+                String new_create_sql = new_t.create(false, true, "");
+                String new_field_value = ",0";
+
+                // 1. 备份原表 create table xxx_backup
+                // 2. 备份原表数据 insert into xxx_backup select xxx_all_field from xxx
+                // 3. 删除原表 drop table xxx
+                // 4. 创建新表 create table xxx 新增字段
+                // 5. 恢复数据 insert into xxx select xxx_backup_all_field [,新增字段默认值] from xxx_backup
+                // 6. 删除备份表 drop table xxx_backup
+                LogUtil.i(TAG, "sql:[%s]", backup_old_create_sql);
+                db.execSQL(backup_old_create_sql);
+                String insert_backup_sql = "INSERT INTO " + backup_old_table_name + " SELECT " + old_table_all_field + " FROM " + old_t.getTableName();
+                LogUtil.i(TAG, "sql:[%s]", insert_backup_sql);
+                db.execSQL(insert_backup_sql);
+                String drop_old_sql = "DROP TABLE " + old_t.getTableName();
+                LogUtil.i(TAG, "sql:[%s]", drop_old_sql);
+                db.execSQL(drop_old_sql);
+                LogUtil.i(TAG, "sql:[%s]", new_create_sql);
+                db.execSQL(new_create_sql);
+                String insert_new_sql = "INSERT INTO " + new_t.getTableName() + " SELECT " + old_table_all_field + new_field_value + " FROM " + backup_old_table_name;
+                LogUtil.i(TAG, "sql:[%s]", insert_new_sql);
+                db.execSQL(insert_new_sql);
+                String drop_backup_sql = "DROP TABLE " + backup_old_table_name;
                 LogUtil.i(TAG, "sql:[%s]", drop_backup_sql);
                 db.execSQL(drop_backup_sql);
 
@@ -282,7 +334,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
             Object[] args = new Object[]{
                     e.getId(), e.getBookId(), e.getCur(),
                     e.getPages(), new Date().getTime(), e.getUser(),
-                    e.getRemark()
+                    e.getRemark(), e.getUpdated()
             };
             LogUtil.d(TAG, "sql:[%s] args:%s", sql, Arrays.toString(args));
             db.execSQL(sql, args);
@@ -296,9 +348,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
             l.lock();
             SQLiteDatabase db = getWritableDatabase();
             TableBookReader t = new TableBookReader();
-            String sql = t.update(new TableField[]{t.cur, t.pages, t.remark}, t.book_id);
+            String sql = t.update(new TableField[]{t.cur, t.pages, t.remark, t.updated}, t.book_id);
             Object[] args = new Object[]{
-                    e.getCur(), e.getPages(), e.getRemark(),
+                    e.getCur(), e.getPages(), e.getRemark(), e.getUpdated() == null ? new Date().getTime() : e.getUpdated(),
                     e.getBookId()
             };
             LogUtil.d(TAG, "sql:[%s] args:%s", sql, Arrays.toString(args));
@@ -339,6 +391,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
         e.setCreated(cursor.getString(cursor.getColumnIndex(t.created.getName())));
         e.setUser(cursor.getString(cursor.getColumnIndex(t.user.getName())));
         e.setRemark(cursor.getString(cursor.getColumnIndex(t.remark.getName())));
+        e.setUpdated(cursor.getString(cursor.getColumnIndex(t.updated.getName())));
     }
 
     public void insertViewTime(ViewTime e) {

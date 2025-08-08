@@ -182,6 +182,27 @@ public class ProfileFragment extends Fragment {
         String readerImageShow = SPUtils.getData(mActivity, Common.reader_image_show_key, "1");
 
         List<Book> dataList = bookDbHelper.findAllBook();
+        dataList.sort((t1, t2) -> {
+            if (t1 == null) {
+                return 0;
+            }
+            if (t2 == null) {
+                return 0;
+            }
+            if (t1.getBookReader() == null) {
+                return 0;
+            }
+            if (t2.getBookReader() == null) {
+                return 0;
+            }
+            if (t1.getBookReader().getUpdated() == null) {
+                return 0;
+            }
+            if (t2.getBookReader().getUpdated() == null) {
+                return 0;
+            }
+            return t2.getBookReader().getUpdated().compareTo(t1.getBookReader().getUpdated());
+        });
         lv_download_book = mView.findViewById(R.id.lv_download_book);
         mBookDownloadAdapter = new ListBookDownloadAdapter(mActivity, dataList,
                 Common.checked.equals(readerImageShow), new ListItemClickListener() {
