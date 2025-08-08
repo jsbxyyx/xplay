@@ -13,9 +13,9 @@ import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.BookReader;
+import com.github.jsbxyyx.xbook.tts.FutureResult;
 import com.github.jsbxyyx.xbook.tts.TTSClient;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Map;
@@ -85,15 +85,16 @@ public class BookJavascript {
     @JavascriptInterface
     public String play(String text, String callback) {
         try {
-            ByteArrayOutputStream output = TTSClient.audioByText(text, null, null, null, null, null);
-            if (output.size() <= 0) {
-                UiUtils.showToast("TTS failed, empty.");
+            FutureResult fr = TTSClient.audioByText(text, null, null, null, null, null);
+            if (fr.code != 0) {
+                UiUtils.showToast(fr.message);
                 return "-1";
             }
             File tempMp3 = File.createTempFile("tts", ".mp3");
             try (FileOutputStream fos = new FileOutputStream(tempMp3)) {
-                fos.write(output.toByteArray());
+                fos.write(fr.output.toByteArray());
             }
+
             if (mediaPlayer != null) {
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
@@ -124,6 +125,11 @@ public class BookJavascript {
             });
             mediaPlayer.setOnErrorListener((mp, what, extra) -> {
                 LogUtil.e(TAG, "ErrorListener:%d, %d", what, extra);
+                if (!Common.isBlank(callback)) {
+                    mWebView.post(() -> {
+                        mWebView.loadUrl("javascript:" + callback + "()");
+                    });
+                }
                 boolean b = tempMp3.delete();
                 if (!b) {
                     tempMp3.deleteOnExit();

@@ -23,22 +23,22 @@ import java.util.concurrent.TimeUnit;
 
 public class TTSClient extends WebSocketClient {
 
-    private static String BASE_URL = "speech.platform.bing.com/consumer/speech/synthesize/readaloud";
-    private static String TRUSTED_CLIENT_TOKEN = "6A5AA1D4EAFF4E9FB37E23D68491D6F4";
+    private static final String BASE_URL = "speech.platform.bing.com/consumer/speech/synthesize/readaloud";
+    private static final String TRUSTED_CLIENT_TOKEN = "6A5AA1D4EAFF4E9FB37E23D68491D6F4";
 
-    private static String WSS_URL = "wss://{BASE_URL}/edge/v1?TrustedClientToken={TRUSTED_CLIENT_TOKEN}"
+    private static final String WSS_URL = "wss://{BASE_URL}/edge/v1?TrustedClientToken={TRUSTED_CLIENT_TOKEN}"
             .replace("{BASE_URL}", BASE_URL).replace("{TRUSTED_CLIENT_TOKEN}", TRUSTED_CLIENT_TOKEN);
-    private static String VOICE_LIST_URL = "https://{BASE_URL}/voices/list?trustedclienttoken={TRUSTED_CLIENT_TOKEN}"
+    private static final String VOICE_LIST_URL = "https://{BASE_URL}/voices/list?trustedclienttoken={TRUSTED_CLIENT_TOKEN}"
             .replace("{BASE_URL}", BASE_URL).replace("{TRUSTED_CLIENT_TOKEN}", TRUSTED_CLIENT_TOKEN);
 
-    private static String DEFAULT_VOICE = "zh-CN-XiaoxiaoNeural";
+    private static final String DEFAULT_VOICE = "zh-CN-XiaoxiaoNeural";
 
-    private static String CHROMIUM_FULL_VERSION = "130.0.2849.68";
-    private static String CHROMIUM_MAJOR_VERSION = CHROMIUM_FULL_VERSION.split("\\.", 2)[0];
-    private static String SEC_MS_GEC_VERSION = "1-{CHROMIUM_FULL_VERSION}"
+    private static final String CHROMIUM_FULL_VERSION = "130.0.2849.68";
+    private static final String CHROMIUM_MAJOR_VERSION = CHROMIUM_FULL_VERSION.split("\\.", 2)[0];
+    private static final String SEC_MS_GEC_VERSION = "1-{CHROMIUM_FULL_VERSION}"
             .replace("{CHROMIUM_FULL_VERSION}", CHROMIUM_FULL_VERSION);
 
-    private static Map<String, String> BASE_HEADERS = new HashMap() {
+    private static final Map<String, String> BASE_HEADERS = new HashMap() {
         {
             put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{CHROMIUM_MAJOR_VERSION}.0.0.0 Safari/537.36 Edg/{CHROMIUM_MAJOR_VERSION}.0.0.0"
                     .replace("{CHROMIUM_MAJOR_VERSION}", CHROMIUM_MAJOR_VERSION));
@@ -46,7 +46,7 @@ public class TTSClient extends WebSocketClient {
             put("Accept-Language", "en-US,en;q=0.9");
         }
     };
-    private static Map<String, String> WSS_HEADERS = new HashMap() {
+    private static final Map<String, String> WSS_HEADERS = new HashMap() {
         {
             put("Pragma", "no-cache");
             put("Cache-Control", "no-cache");
@@ -54,7 +54,7 @@ public class TTSClient extends WebSocketClient {
             putAll(BASE_HEADERS);
         }
     };
-    private static Map<String, String> VOICE_HEADERS = new HashMap() {
+    private static final Map<String, String> VOICE_HEADERS = new HashMap() {
         {
             put("Authority", "speech.platform.bing.com");
             put("Sec-CH-UA", "\" Not;A Brand\";v=\"99\", \"Microsoft Edge\";v=\"{CHROMIUM_MAJOR_VERSION}\", \"Chromium\";v=\"{CHROMIUM_MAJOR_VERSION}\""
@@ -70,10 +70,10 @@ public class TTSClient extends WebSocketClient {
 
     public static boolean debug = false;
     private final ByteArrayOutputStream buffers = new ByteArrayOutputStream(1024);
-    private final CompletableFuture<ByteArrayOutputStream> cf;
+    private final CompletableFuture<FutureResult> cf;
     private static Appendable appendable;
 
-    public TTSClient(URI serverUri, Map<String, String> httpHeaders, CompletableFuture<ByteArrayOutputStream> cf) {
+    public TTSClient(URI serverUri, Map<String, String> httpHeaders, CompletableFuture<FutureResult> cf) {
         super(serverUri, httpHeaders);
         this.cf = cf;
     }
@@ -104,7 +104,7 @@ public class TTSClient extends WebSocketClient {
         } else if (text.contains("turn.end")) {
             // 音频流结束，写为文件
             try {
-                cf.complete(buffers);
+                cf.complete(FutureResult.success(buffers));
                 close(1000);
             } catch (Exception e) {
                 log(e.getMessage(), false);
@@ -132,14 +132,14 @@ public class TTSClient extends WebSocketClient {
     public void onClose(int code, String reason, boolean remote) {
         log("onClose code:" + code + ", reason:" + reason + ", remote:" + remote, false);
         if (code != 1000) {
-            cf.complete(new ByteArrayOutputStream());
+            cf.complete(FutureResult.error("Close : " + reason));
         }
     }
 
     @Override
     public void onError(Exception e) {
-        cf.complete(new ByteArrayOutputStream());
-        log("onClose e:" + e.getMessage(), false);
+        cf.complete(FutureResult.error("Client is error"));
+        log("onError e:" + e.getMessage(), false);
     }
 
     static void log(String str, boolean skip) {
@@ -224,8 +224,8 @@ public class TTSClient extends WebSocketClient {
         }
     }
 
-    public static ByteArrayOutputStream audioBySsml(String ssml) throws Exception {
-        CompletableFuture<ByteArrayOutputStream> cf = new CompletableFuture<>();
+    public static FutureResult audioBySsml(String ssml) throws Exception {
+        CompletableFuture<FutureResult> cf = new CompletableFuture<>();
         // Microsoft Server Speech Text to Speech Voice (en-US, AriaNeural)
         // zh-CN-XiaoxiaoNeural
 
@@ -235,21 +235,21 @@ public class TTSClient extends WebSocketClient {
             Thread.sleep(50);
             if (client2.isClosed()) {
                 log("client is closed.", false);
-                return new ByteArrayOutputStream();
+                return FutureResult.error("Client is closed");
             }
         }
         String ssmlWithData = ssml_with_data(ssml);
         log("ssml:[\n" + ssmlWithData + "\n]", false);
         client2.send(ssmlWithData);
         try {
-            return cf.get(10, TimeUnit.SECONDS);
+            return cf.get(15000, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             log("get audio error.", false);
-            return new ByteArrayOutputStream();
+            return FutureResult.error("Get audio error");
         }
     }
 
-    public static ByteArrayOutputStream audioByText(String text, String lang, String voiceName, String pitch, String rate, String volume) throws Exception {
+    public static FutureResult audioByText(String text, String lang, String voiceName, String pitch, String rate, String volume) throws Exception {
         if (lang == null) lang = "zh-CN";
         if (voiceName == null) voiceName = DEFAULT_VOICE;
         if (pitch == null) pitch = "+0Hz";
@@ -275,10 +275,10 @@ public class TTSClient extends WebSocketClient {
     }
 
     static void tts() throws Exception {
-        ByteArrayOutputStream output = audioByText("你好", null, null, null, null, null);
-        if (output.size() > 0) {
+        FutureResult fr = audioByText("你好", null, null, null, null, null);
+        if (fr.output.size() > 0) {
             String name = System.currentTimeMillis() + ".mp3";
-            Files.write(new File(System.getProperty("user.dir") + "/" + name).toPath(), output.toByteArray());
+            Files.write(new File(System.getProperty("user.dir") + "/" + name).toPath(), fr.output.toByteArray());
             log("write " + name, false);
         }
     }
