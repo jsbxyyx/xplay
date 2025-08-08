@@ -663,10 +663,10 @@
                   if (sub1 != sub2) {
                     temp_text = text;
                   } else {
-                    temp_text = splits[1];
+                    temp_text = text.substring(text.indexOf('\n') + 1);
                   }
                 } else {
-                  temp_text = splits[1];
+                  temp_text = text.substring(text.indexOf('\n') + 1);
                 }
               }
             }
