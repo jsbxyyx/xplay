@@ -230,25 +230,38 @@ public class HomeFragment extends Fragment {
         String readerImageShow = SPUtils.getData(mActivity, Common.reader_image_show_key, "1");
         List<Book> dataList = bookDbHelper.findAllBook();
         dataList.sort((t1, t2) -> {
-            if (t1 == null) {
+            if (t1 == null && t2 == null) {
                 return 0;
+            }
+            if (t1 == null) {
+                return 1;
             }
             if (t2 == null) {
+                return -1;
+            }
+            BookReader reader1 = t1.getBookReader();
+            BookReader reader2 = t2.getBookReader();
+            if (reader1 == null && reader2 == null) {
                 return 0;
             }
-            if (t1.getBookReader() == null) {
+            if (reader1 == null) {
+                return 1;
+            }
+            if (reader2 == null) {
+                return -1;
+            }
+            String updated1 = reader1.getUpdated();
+            String updated2 = reader2.getUpdated();
+            if (updated1 == null && updated2 == null) {
                 return 0;
             }
-            if (t2.getBookReader() == null) {
-                return 0;
+            if (updated1 == null) {
+                return 1;
             }
-            if (t1.getBookReader().getUpdated() == null) {
-                return 0;
+            if (updated2 == null) {
+                return -1;
             }
-            if (t2.getBookReader().getUpdated() == null) {
-                return 0;
-            }
-            return t2.getBookReader().getUpdated().compareTo(t1.getBookReader().getUpdated());
+            return updated2.compareTo(updated1);
         });
         lv_download_book = mView.findViewById(R.id.lv_download_book);
         mBookDownloadAdapter = new ListBookDownloadAdapter(mActivity, dataList,

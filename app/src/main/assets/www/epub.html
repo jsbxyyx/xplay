@@ -654,26 +654,28 @@
             if ($.trim(epub_current_text) == '') {
               temp_text = text;
             } else {
-              var splits = text.split('\n');
-              if (splits.length > 0) {
-                if (epub_current_text.length > 10 && splits[0].length > 10) {
-                  var sub1 = epub_current_text.substring(epub_current_text.length - 10);
-                  var sub2 = splits[0].substring(splits[0].length - 10);
-                  console.log("sub1:[" + sub1 + "], sub2:[" + sub2 + "]");
-                  if (sub1 != sub2) {
-                    temp_text = text;
-                  } else {
-                    temp_text = text.substring(text.indexOf('\n') + 1);
-                  }
+              var word_count = 10;
+              if (epub_current_text.length > word_count) {
+                var sub1 = epub_current_text.substring(epub_current_text.length - word_count);
+                var pre_text_index = text.indexOf(sub1);
+                console.log("sub1:[" + sub1 + "] pre_text_index:[" + pre_text_index + "]");
+                if (pre_text_index > -1) {
+                  temp_text = text.substring(pre_text_index + sub1.length);
                 } else {
-                  temp_text = text.substring(text.indexOf('\n') + 1);
+                  temp_text = text;
                 }
+              } else {
+                temp_text = text;
               }
             }
             epub_current_text = temp_text;
-            console.log('play text : [' + epub_current_text + ']');
+            var play_text = epub_current_text;
+            console.log('play text : [' + play_text + ']');
             if (window.xbook && window.xbook.play) {
-              var ret = window.xbook.play(epub_current_text, 'window.play_end_callback');
+              if ($.trim(play_text) == '') {
+                play_text = '1';
+              }
+              var ret = window.xbook.play(play_text, 'window.play_end_callback');
               if (ret == '-1') {
                 setTimeout(function() {
                   tts();

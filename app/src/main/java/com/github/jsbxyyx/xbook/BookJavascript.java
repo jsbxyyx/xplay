@@ -18,6 +18,7 @@ import com.github.jsbxyyx.xbook.tts.TTSClient;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -52,10 +53,12 @@ public class BookJavascript {
             bookReader.setPages(pages);
             bookReader.setUser(book.getUser());
             bookReader.setRemark("");
+            bookReader.setUpdated(new Date().getTime() + "");
             bookDbHelper.insertBookReader(bookReader);
         } else {
             bookReader.setCur(current);
             bookReader.setPages(pages);
+            bookReader.setUpdated(new Date().getTime() + "");
             bookDbHelper.updateBookReaderByBookId(bookReader);
         }
     }
