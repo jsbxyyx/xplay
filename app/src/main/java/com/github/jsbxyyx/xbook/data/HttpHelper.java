@@ -24,7 +24,7 @@ public class HttpHelper {
 
     private static CustomDns customDns = new CustomDns();
 
-    public static final OkHttpClient getDnsClient() {
+    public static OkHttpClient getDnsClient() {
         if (dnsClient != null) {
             return dnsClient;
         }
@@ -40,7 +40,7 @@ public class HttpHelper {
         }
     }
 
-    public static final OkHttpClient getClient() {
+    public static OkHttpClient getClient() {
         if (client != null) {
             return client;
         }
@@ -57,7 +57,7 @@ public class HttpHelper {
         }
     }
 
-    public static final OkHttpClient getSyncClient() {
+    public static OkHttpClient getSyncClient() {
         if (syncClient != null) {
             return syncClient;
         }
@@ -78,7 +78,9 @@ public class HttpHelper {
 
         @Override
         public List<InetAddress> lookup(String s) throws UnknownHostException {
-            if (!Common.isEmpty(Common.getIPS()) && Common.host.equals(s)) {
+            if (!Common.isEmpty(Common.getIPS()) && (
+                    Common.host.equals(s) || Common.tts_host.equals(s)
+            )) {
                 List<InetAddress> addresses = new ArrayList<>();
                 String ip = Common.getIp();
                 LogUtil.d("dns-lookup", "%s", ip);

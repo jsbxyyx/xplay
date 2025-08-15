@@ -7,14 +7,15 @@ import android.webkit.WebView;
 
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.IdUtil;
+import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.BookReader;
-import com.github.jsbxyyx.xbook.tts.FutureResult;
 import com.github.jsbxyyx.xbook.tts.TTSClient;
+import com.github.jsbxyyx.xbook.tts.FutureResult;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -90,12 +91,17 @@ public class BookJavascript {
         try {
             FutureResult fr = TTSClient.audioByText(text, null, null, null, null, null);
             if (fr.code != 0) {
-                UiUtils.showToast(fr.message);
+                try {
+                    String errorMessage = JsonUtil.readTree(fr.message).get("error").get("message").asText();
+                    UiUtils.showToast(errorMessage);
+                } catch (Exception e) {
+                    UiUtils.showToast("unknown error");
+                }
                 return "-1";
             }
             File tempMp3 = File.createTempFile("tts", ".mp3");
             try (FileOutputStream fos = new FileOutputStream(tempMp3)) {
-                fos.write(fr.output.toByteArray());
+                fos.write(fr.output);
             }
 
             if (mediaPlayer != null) {

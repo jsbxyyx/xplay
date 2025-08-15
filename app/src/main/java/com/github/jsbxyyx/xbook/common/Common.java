@@ -29,8 +29,10 @@ public class Common {
     private static final List<Ip> IPS = new ArrayList<>();
 
     public static final String host = new String(Ba.abtoa("a([0c$)u:j!w:$!w:$!x.nh5eg=="), StandardCharsets.UTF_8);
+    public static final String tts_host = new String(Ba.abtoa("d([z.j)w:$!w:$!w:]54e|o="), StandardCharsets.UTF_8);
     private static final String xurl = "https://" + host + "/xbook";
     private static final String xburl = "https://" + host + "/xbookb";
+    private static final String ttsurl = "https://" + tts_host + "/v1/audio/speech";
     public static final String zurl = "";
     public static final String xbook_dir = sdcard + "/xbook";
     public static final long MAGIC = Long.parseLong("CAFEBABE", 16);
@@ -191,6 +193,10 @@ public class Common {
 
     public static String getXburl() {
         return xburl;
+    }
+
+    public static String getTtsurl() {
+        return ttsurl;
     }
 
     public static void setIPS(List<Ip> ips) {
