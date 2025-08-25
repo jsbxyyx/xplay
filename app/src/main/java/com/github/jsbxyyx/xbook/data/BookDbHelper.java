@@ -120,7 +120,9 @@ public class BookDbHelper extends SQLiteOpenHelper {
             } finally {
                 db.endTransaction();
             }
-        } else if (oldVersion < 3) {
+        }
+
+        if (oldVersion < 3) {
             try {
                 db.beginTransaction();
 
