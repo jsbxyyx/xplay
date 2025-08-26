@@ -1,5 +1,6 @@
 package com.github.jsbxyyx.xbook;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +14,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.IdUtil;
-import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SPUtils;
@@ -21,12 +21,11 @@ import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
+import com.github.jsbxyyx.xbook.data.bean.Comment;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author jsbxyyx
@@ -41,7 +40,11 @@ public class DetailActivity extends AppCompatActivity {
     private ListView lv_detail_suggest;
     private ListBookAdapter lvListAdapter;
 
+    private ListView lv_detail_comments;
+    private ListCommentAdapter listCommentAdapter;
+
     private String detailUrl;
+    private String bid;
     private Book mBook;
 
     public DetailActivity() {
@@ -53,6 +56,8 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        Activity that = this;
+
         bookDbHelper = BookDbHelper.getInstance();
 
         detailUrl = getIntent().getStringExtra("detailUrl");
@@ -60,6 +65,7 @@ public class DetailActivity extends AppCompatActivity {
             UiUtils.showToast("书籍地址为空");
             return;
         }
+        bid = getIntent().getStringExtra("bid");
 
         TextView tv_detail_title = findViewById(R.id.tv_detail_title);
         ImageView iv_detail_img = findViewById(R.id.iv_detail_img);
@@ -105,6 +111,7 @@ public class DetailActivity extends AppCompatActivity {
             LogUtil.d(TAG, "lv_detail_suggest: setOnItemClickListener: %s", t);
             Intent intent = new Intent(this, DetailActivity.class);
             intent.putExtra("detailUrl", t.getDetailUrl());
+            intent.putExtra("bid", t.getBid());
             startActivity(intent);
         });
         bookNetHelper.detailSuggest(detailUrl, new DataCallback<List<Book>>() {
@@ -120,6 +127,27 @@ public class DetailActivity extends AppCompatActivity {
                     lvListAdapter.getDataList().addAll(list);
                     lvListAdapter.notifyDataSetChanged();
                     UiUtils.setListViewHeightBasedOnChildren(lv_detail_suggest);
+                });
+            }
+        });
+
+        lv_detail_comments = findViewById(R.id.lv_detail_comments);
+        listCommentAdapter = new ListCommentAdapter(this, null);
+        lv_detail_comments.setAdapter(listCommentAdapter);
+        bookNetHelper.bookComments(bid, new DataCallback<List<Comment>>() {
+
+            @Override
+            public void call(List<Comment> list, Throwable err) {
+                runOnUiThread(() -> {
+                    if (err != null) {
+                        UiUtils.showToast("获取推荐书籍评论失败:" + err.getMessage());
+                        return;
+                    }
+                    LogUtil.d(TAG, "comments size : %s", list.size());
+                    listCommentAdapter.getDataList().clear();
+                    listCommentAdapter.getDataList().addAll(list);
+                    listCommentAdapter.notifyDataSetChanged();
+                    UiUtils.setListViewHeightBasedOnChildren(lv_detail_comments);
                 });
             }
         });

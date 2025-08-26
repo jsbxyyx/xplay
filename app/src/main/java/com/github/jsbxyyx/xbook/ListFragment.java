@@ -67,6 +67,7 @@ public class ListFragment extends Fragment {
             LogUtil.d(TAG, "lv_list: setOnItemClickListener: %s", t);
             Intent intent = new Intent(mActivity, DetailActivity.class);
             intent.putExtra("detailUrl", t.getDetailUrl());
+            intent.putExtra("bid", t.getBid());
             mActivity.startActivity(intent);
         });
 

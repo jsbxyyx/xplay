@@ -21,6 +21,7 @@ import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.bean.Book;
+import com.github.jsbxyyx.xbook.data.bean.Comment;
 import com.github.jsbxyyx.xbook.data.bean.MLog;
 import com.github.jsbxyyx.xbook.data.bean.Profile;
 import com.github.jsbxyyx.xbook.httpserver.MediaTypeFactory;
@@ -1214,6 +1215,64 @@ public class BookNetHelper {
                 List<Book> books = JsonUtil.convertValue(list, new TypeReference<List<Book>>() {
                 });
                 dataCallback.call(books, null);
+            }
+        });
+    }
+
+    public void bookComments(String objectId, DataCallback<List<Comment>> dataCallback) {
+        Map<String, Object> object = new HashMap<>();
+        String reqUrl = "/zlib_comment";
+        object.put("method", "GET");
+        object.put("url", reqUrl);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("User-Agent", userAgent);
+        headers.put(cookie_key, SessionManager.getSession());
+        object.put("headers", headers);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("object", "book");
+        params.put("object_id", objectId);
+        params.put("page", "0");
+        object.put("params", params);
+
+        Map<String, Object> data = new HashMap<>();
+        object.put("data", data);
+
+        String s = JsonUtil.toJson(object);
+        LogUtil.d(TAG, "detail comment request: %s", s);
+
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
+                dataCallback.call(null, e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    LogUtil.d(TAG, "onResponse: %s", response.code());
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
+                    return;
+                }
+                String string = response.body().string();
+                LogUtil.d(TAG, "detail comment response: %s", string);
+                JsonNode jsonObject = JsonUtil.readTree(string);
+                int status = jsonObject.get("status").asInt();
+                if (!Common.statusSuccessful(status)) {
+                    LogUtil.d(TAG, "onResponse: %s", status);
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
+                    return;
+                }
+                JsonNode list = jsonObject.get("data").get("comments");
+                List<Comment> comments = JsonUtil.convertValue(list, new TypeReference<List<Comment>>() {
+                });
+                dataCallback.call(comments, null);
             }
         });
     }

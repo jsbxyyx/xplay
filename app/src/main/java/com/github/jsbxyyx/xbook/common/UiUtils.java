@@ -71,14 +71,10 @@ public class UiUtils {
             return;
         }
 
-        int totalHeight = listView.getPaddingTop() + listView.getPaddingBottom();
+        int totalHeight = 0;//listView.getPaddingTop() + listView.getPaddingBottom();
 
         for (int i = 0; i < listAdapter.getCount(); i++) {
             View listItem = listAdapter.getView(i, null, listView);
-            if (listItem instanceof ViewGroup) {
-                listItem.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            }
-
             listItem.measure(0, 0);
             totalHeight += listItem.getMeasuredHeight();
         }
