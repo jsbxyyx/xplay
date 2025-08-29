@@ -67,6 +67,8 @@ public class Common {
     public static final String x_message = "X-message";
     public static final String serv_userid = "remix_userid";
     public static final String serv_userkey = "remix_userkey";
+    public static final String TYPE_BL = "BL";
+    public static final String TYPE_B = "B";
 
     public static boolean statusSuccessful(int status) {
         return status >= 200 && status <= 299;

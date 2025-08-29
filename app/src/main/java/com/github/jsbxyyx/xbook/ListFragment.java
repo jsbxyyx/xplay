@@ -6,10 +6,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +35,7 @@ public class ListFragment extends Fragment {
 
     private View mView;
     private Activity mActivity;
+    private Spinner sp_type;
     private ListView lv_list;
     private ListBookAdapter lvListAdapter;
     private BookNetHelper bookNetHelper;
@@ -62,6 +64,16 @@ public class ListFragment extends Fragment {
         lvListAdapter = new ListBookAdapter(mActivity, null);
         lv_list.setAdapter(lvListAdapter);
 
+        sp_type = view.findViewById(R.id.sp_type);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                mActivity,
+                R.array.types_array,
+                android.R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp_type.setAdapter(adapter);
+        sp_type.setSelection(0);
+
         lv_list.setOnItemClickListener((parent, view1, position, id) -> {
             Book t = (Book) lv_list.getAdapter().getItem(position);
             LogUtil.d(TAG, "lv_list: setOnItemClickListener: %s", t);
@@ -85,44 +97,75 @@ public class ListFragment extends Fragment {
     private void showListView(boolean clear) {
         Button btn_more = mView.findViewById(R.id.btn_more);
         EditText et_keyword = mView.findViewById(R.id.et_keyword);
+        Spinner sp_types = mView.findViewById(R.id.sp_type);
         String keyword = et_keyword.getText().toString();
         if (Common.isEmpty(keyword)) {
             keyword = et_keyword.getHint().toString();
             et_keyword.setText(keyword);
         }
+        String type = sp_types.getAdapter().getItem(sp_types.getSelectedItemPosition()).toString();
 
         LoadingDialog loading = new LoadingDialog(mActivity);
         mActivity.runOnUiThread(() -> {
             loading.show();
         });
-        List<String> languages = Common.split(SPUtils.getData(mActivity, Common.search_language_key), Common.comma);
-        List<String> extensions = Common.split(SPUtils.getData(mActivity, Common.search_ext_key), Common.comma);
-        bookNetHelper.search(keyword, page, languages, extensions, (list, err) -> {
-            LogUtil.d(TAG, "onResponse: book size: %d", list.size());
-            mActivity.runOnUiThread(() -> {
-                loading.dismiss();
-                if (err != null) {
-                    UiUtils.showToast("书籍搜索失败: " + err.getMessage());
-                    return;
-                }
-                if (clear) {
-                    lvListAdapter.getDataList().clear();
-                }
-                if (page == 1 && list.isEmpty()) {
-                    UiUtils.showToast("未搜索到书籍");
-                    btn_more.setVisibility(View.GONE);
-                    return;
-                }
-                lvListAdapter.getDataList().addAll(list);
-                lvListAdapter.notifyDataSetChanged();
-                if (!list.isEmpty()) {
-                    btn_more.setVisibility(View.VISIBLE);
-                } else {
-                    btn_more.setVisibility(View.GONE);
-                }
-                page += 1;
+
+        if (Common.TYPE_BL.equals(type)) {
+            bookNetHelper.searchBooklists(keyword, page, (list, err) -> {
+                mActivity.runOnUiThread(() -> {
+                    loading.dismiss();
+                    if (err != null) {
+                        UiUtils.showToast("书籍搜索失败: " + err.getMessage());
+                        return;
+                    }
+                    if (clear) {
+                        lvListAdapter.getDataList().clear();
+                    }
+                    if (page == 1 && list.isEmpty()) {
+                        UiUtils.showToast("未搜索到书籍");
+                        btn_more.setVisibility(View.GONE);
+                        return;
+                    }
+                    lvListAdapter.getDataList().addAll(list);
+                    lvListAdapter.notifyDataSetChanged();
+                    if (!list.isEmpty()) {
+                        btn_more.setVisibility(View.VISIBLE);
+                    } else {
+                        btn_more.setVisibility(View.GONE);
+                    }
+                    page += 1;
+                });
             });
-        });
+        } else {
+            List<String> languages = Common.split(SPUtils.getData(mActivity, Common.search_language_key), Common.comma);
+            List<String> extensions = Common.split(SPUtils.getData(mActivity, Common.search_ext_key), Common.comma);
+            bookNetHelper.search(keyword, page, languages, extensions, (list, err) -> {
+                LogUtil.d(TAG, "onResponse: book size: %d", list.size());
+                mActivity.runOnUiThread(() -> {
+                    loading.dismiss();
+                    if (err != null) {
+                        UiUtils.showToast("书籍搜索失败: " + err.getMessage());
+                        return;
+                    }
+                    if (clear) {
+                        lvListAdapter.getDataList().clear();
+                    }
+                    if (page == 1 && list.isEmpty()) {
+                        UiUtils.showToast("未搜索到书籍");
+                        btn_more.setVisibility(View.GONE);
+                        return;
+                    }
+                    lvListAdapter.getDataList().addAll(list);
+                    lvListAdapter.notifyDataSetChanged();
+                    if (!list.isEmpty()) {
+                        btn_more.setVisibility(View.VISIBLE);
+                    } else {
+                        btn_more.setVisibility(View.GONE);
+                    }
+                    page += 1;
+                });
+            });
+        }
     }
 
 }
