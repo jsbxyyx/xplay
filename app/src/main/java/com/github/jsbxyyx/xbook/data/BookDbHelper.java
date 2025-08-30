@@ -59,7 +59,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         TableBook t1 = new TableBook();
         String s1 = t1.create(false, true, "");
-        LogUtil.i(TAG, "SQL：[%s]", s1);
+        LogUtil.i(TAG, "sql：[%s]", s1);
         db.execSQL(s1);
 
         TableBookReader t2 = new TableBookReader();

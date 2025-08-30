@@ -17,7 +17,7 @@ import fi.iki.elonen.NanoHTTPD;
 public class BizHttpServer extends NanoHTTPD {
 
 
-    private static final String TAG = "BizHttpServer";
+    private final String TAG = getClass().getSimpleName();
     private Context mContext;
 
     public BizHttpServer(int port, Context context) {

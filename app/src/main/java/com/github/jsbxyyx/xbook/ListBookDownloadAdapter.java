@@ -4,10 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
@@ -23,25 +25,105 @@ import java.util.List;
  * @author jsbxyyx
  * @since 1.0
  */
-public class ListBookDownloadAdapter extends BaseAdapter {
+public class ListBookDownloadAdapter extends RecyclerView.Adapter<ListBookDownloadAdapter.ViewHolder> {
 
-    private ViewHolder holder;
+    private final String TAG = getClass().getSimpleName();
     private Context context;
-    private ListItemClickListener listItemClickListener;
+    private ListItemActionClickListener listItemActionClickListener;
+    private OnItemClickListener onItemClickListener;
     private List<Book> dataList;
     private boolean imageShow;
 
-    private String TAG = "xbook";
+    public interface OnItemClickListener {
+        void onItemClick(Book book, int position);
+    }
 
     public ListBookDownloadAdapter(Context context, List<Book> dataList, boolean imageShow,
-                                   ListItemClickListener listItemClickListener) {
+                                   ListItemActionClickListener listItemActionClickListener) {
         this.context = context;
         this.dataList = (dataList == null) ? new ArrayList<>() : dataList;
         this.imageShow = imageShow;
-        this.listItemClickListener = listItemClickListener;
+        this.listItemActionClickListener = listItemActionClickListener;
     }
 
-    private static class ViewHolder {
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.book_reader_item, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Book book = dataList.get(position);
+        holder.bind(book, imageShow);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                LogUtil.d(TAG, "onClick item : %d", position);
+                onItemClickListener.onItemClick(book, position);
+            }
+        });
+
+        holder.book_reader_btn_del.setTag(position);
+        holder.book_reader_btn_del.setOnClickListener(v -> {
+            if (listItemActionClickListener != null) {
+                int position1 = (int) v.getTag();
+                LogUtil.d(TAG, "onClick btn delete : %d", position1);
+                listItemActionClickListener.onClick(v, Common.action_delete, position1);
+            }
+        });
+
+        holder.book_reader_btn_download_meta.setTag(position);
+        holder.book_reader_btn_download_meta.setOnClickListener(v -> {
+            if (listItemActionClickListener != null) {
+                int position2 = (int) v.getTag();
+                LogUtil.d(TAG, "onClick btn download_meta : %d", position2);
+                listItemActionClickListener.onClick(v, Common.action_download_meta, position2);
+            }
+        });
+
+        holder.book_reader_btn_upload.setTag(position);
+        holder.book_reader_btn_upload.setOnClickListener(v -> {
+            if (listItemActionClickListener != null) {
+                int position3 = (int) v.getTag();
+                LogUtil.d(TAG, "onClick btn upload : %d", position3);
+                listItemActionClickListener.onClick(v, Common.action_upload, position3);
+            }
+        });
+
+
+        boolean exists = new File(book.extractFilePath()).exists();
+        holder.book_reader_btn_file_download.setTag(position);
+        holder.book_reader_btn_file_download.setVisibility(exists ? View.GONE : View.VISIBLE);
+        holder.book_reader_btn_file_download.setOnClickListener(v -> {
+            if (listItemActionClickListener != null) {
+                int position4 = (int) v.getTag();
+                LogUtil.d(TAG, "onClick btn file download : %d", position4);
+                listItemActionClickListener.onClick(v, Common.action_file_download, position4);
+            }
+        });
+
+        holder.book_reader_image_hide.setTag(position);
+        holder.book_reader_image_hide.setOnClickListener(v -> {
+            if (listItemActionClickListener != null) {
+                int position5 = (int) v.getTag();
+                LogUtil.d(TAG, "onClick image view hide : %d", position5);
+                listItemActionClickListener.onClick(v, Common.action_image_hide, position5);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return dataList.size();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView book_image;
         public TextView book_title;
         public TextView book_author;
@@ -52,127 +134,45 @@ public class ListBookDownloadAdapter extends BaseAdapter {
         public Button book_reader_btn_download_meta;
         public Button book_reader_btn_file_download;
         public ImageView book_reader_image_hide;
-    }
 
-    @Override
-    public int getCount() {
-        return dataList.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return dataList.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    // 注意原本getView方法中的int position变量是非final的，现在改为final
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = LayoutInflater.from(context).inflate(R.layout.book_reader_item, null);
-            holder.book_image = convertView.findViewById(R.id.book_reader_image);
-            holder.book_title = convertView.findViewById(R.id.book_reader_title);
-            holder.book_author = convertView.findViewById(R.id.book_reader_author);
-            holder.book_file = convertView.findViewById(R.id.book_reader_file);
-            holder.book_reader_pages_total = convertView.findViewById(R.id.book_reader_pages_total);
-            holder.book_reader_btn_del = convertView.findViewById(R.id.book_reader_btn_del);
-            holder.book_reader_btn_upload = convertView.findViewById(R.id.book_reader_btn_upload);
-            holder.book_reader_btn_download_meta = convertView.findViewById(R.id.book_reader_btn_download_meta);
-            holder.book_reader_btn_file_download = convertView.findViewById(R.id.book_reader_btn_file_download);
-            holder.book_reader_image_hide = convertView.findViewById(R.id.book_reader_image_hide);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-        Book book = dataList.get(position);
-        BookReader bookReader = book.getBookReader();
-
-        Picasso.get().load(book.getCoverImage()).into(holder.book_image);
-        holder.book_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        if (!imageShow) {
-            holder.book_image.setVisibility(View.GONE);
-        }
-        holder.book_title.setText(book.getTitle());
-        holder.book_author.setText(book.getAuthors());
-        holder.book_file.setText(book.getFile());
-        if (bookReader != null) {
-            double percent = Integer.parseInt(bookReader.getCur()) * 1.0 / Integer.parseInt(bookReader.getPages());
-            holder.book_reader_pages_total.setText(
-                    String.format("%s / %s / %.0f%%", bookReader.getCur(), bookReader.getPages(), Math.max(1, percent * 100))
-            );
-        } else {
-            holder.book_reader_pages_total.setText("-- / -- / --");
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            book_image = itemView.findViewById(R.id.book_reader_image);
+            book_title = itemView.findViewById(R.id.book_reader_title);
+            book_author = itemView.findViewById(R.id.book_reader_author);
+            book_file = itemView.findViewById(R.id.book_reader_file);
+            book_reader_pages_total = itemView.findViewById(R.id.book_reader_pages_total);
+            book_reader_btn_del = itemView.findViewById(R.id.book_reader_btn_del);
+            book_reader_btn_upload = itemView.findViewById(R.id.book_reader_btn_upload);
+            book_reader_btn_download_meta = itemView.findViewById(R.id.book_reader_btn_download_meta);
+            book_reader_btn_file_download = itemView.findViewById(R.id.book_reader_btn_file_download);
+            book_reader_image_hide = itemView.findViewById(R.id.book_reader_image_hide);
         }
 
-        holder.book_reader_btn_del.setTag(position);
-        holder.book_reader_btn_del.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listItemClickListener != null) {
-                    int position = (int) v.getTag();
-                    LogUtil.d(TAG, "onClick btn delete : %d", position);
-                    listItemClickListener.onClick(v, Common.action_delete, position);
-                }
+        public void bind(Book book, boolean imageShow) {
+            Picasso.get()
+                    .load(book.getCoverImage())
+                    .placeholder(R.drawable.baseline_menu_book_24)
+                    .error(R.drawable.baseline_menu_book_24)
+                    .into(book_image);
+            book_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            if (!imageShow) {
+                book_image.setVisibility(View.GONE);
             }
-        });
+            book_title.setText(book.getTitle());
+            book_author.setText(book.getAuthors());
+            book_file.setText(book.getFile());
 
-        holder.book_reader_btn_download_meta.setTag(position);
-        holder.book_reader_btn_download_meta.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listItemClickListener != null) {
-                    int position = (int) v.getTag();
-                    LogUtil.d(TAG, "onClick btn download_meta : %d", position);
-                    listItemClickListener.onClick(v, Common.action_download_meta, position);
-                }
+            BookReader bookReader = book.getBookReader();
+            if (bookReader != null) {
+                double percent = Integer.parseInt(bookReader.getCur()) * 1.0 / Integer.parseInt(bookReader.getPages());
+                book_reader_pages_total.setText(
+                        String.format("%s / %s / %.0f%%", bookReader.getCur(), bookReader.getPages(), Math.max(1, percent * 100))
+                );
+            } else {
+                book_reader_pages_total.setText("-- / -- / --");
             }
-        });
-
-        holder.book_reader_btn_upload.setTag(position);
-        holder.book_reader_btn_upload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listItemClickListener != null) {
-                    int position = (int) v.getTag();
-                    LogUtil.d(TAG, "onClick btn upload : %d", position);
-                    listItemClickListener.onClick(v, Common.action_upload, position);
-                }
-            }
-        });
-
-
-        boolean exists = new File(book.extractFilePath()).exists();
-        holder.book_reader_btn_file_download.setTag(position);
-        holder.book_reader_btn_file_download.setVisibility(exists ? View.GONE : View.VISIBLE);
-        holder.book_reader_btn_file_download.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listItemClickListener != null) {
-                    int position = (int) v.getTag();
-                    LogUtil.d(TAG, "onClick btn file download : %d", position);
-                    listItemClickListener.onClick(v, Common.action_file_download, position);
-                }
-            }
-        });
-
-        holder.book_reader_image_hide.setTag(position);
-        holder.book_reader_image_hide.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listItemClickListener != null) {
-                    int position = (int) v.getTag();
-                    LogUtil.d(TAG, "onClick image view hide : %d", position);
-                    listItemClickListener.onClick(v, Common.action_image_hide, position);
-                }
-            }
-        });
-
-        return convertView;
+        }
     }
 
     public List<Book> getDataList() {

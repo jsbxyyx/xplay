@@ -28,7 +28,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private String TAG = "xbook";
+    private final String TAG = getClass().getSimpleName();
 
     private BottomNavigationView bottomNavigationView;
     private FragmentManager fm;

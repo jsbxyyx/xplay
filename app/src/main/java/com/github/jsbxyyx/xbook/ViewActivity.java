@@ -39,6 +39,7 @@ import java.util.Map;
  */
 public class ViewActivity extends AppCompatActivity {
 
+    private final String TAG = getClass().getSimpleName();
     private FileHttpServer mHttpd;
     private WebView webView;
     private String bookId;
@@ -56,7 +57,7 @@ public class ViewActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_view);
 
-        LogUtil.d(getClass().getSimpleName(), "onCreate");
+        LogUtil.d(TAG, "onCreate");
 
         bookDbHelper = BookDbHelper.getInstance();
         bookNetHelper = new BookNetHelper();
@@ -85,7 +86,7 @@ public class ViewActivity extends AppCompatActivity {
         try {
             mHttpd.start();
         } catch (IOException e) {
-            LogUtil.e(getClass().getSimpleName(), "onCreate: %s", LogUtil.getStackTraceString(e));
+            LogUtil.e(TAG, "onCreate: %s", LogUtil.getStackTraceString(e));
             UiUtils.showToast("阅读器打开失败");
         }
 
@@ -132,7 +133,7 @@ public class ViewActivity extends AppCompatActivity {
             } else {
                 htmlUrl = fileUrl + "/" + www + "/" + html;
             }
-            LogUtil.d(getClass().getSimpleName(), "html : %s", htmlUrl);
+            LogUtil.d(TAG, "html : %s", htmlUrl);
             String param = String.format(
                     "cur=%s&pages=%s&book_id=%s&name=%s&t=%s&navh=%s&file_url=%s&online=%s",
                     cur, pages, bookId, name, System.currentTimeMillis(), navH,
@@ -143,7 +144,7 @@ public class ViewActivity extends AppCompatActivity {
                     .replace("${param}", param);
             webView.loadUrl(url);
         } catch (IOException e) {
-            LogUtil.e(getClass().getSimpleName(), "onCreate: %s", LogUtil.getStackTraceString(e));
+            LogUtil.e(TAG, "onCreate: %s", LogUtil.getStackTraceString(e));
             UiUtils.showToast("未开启文件管理权限，前往APP设置-打开文件管理权限");
         }
     }
@@ -152,7 +153,7 @@ public class ViewActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         startTime = SystemClock.elapsedRealtime();
-        LogUtil.d(getClass().getSimpleName(), "startTime:%s", startTime);
+        LogUtil.d(TAG, "startTime:%s", startTime);
     }
 
     @Override
@@ -160,7 +161,7 @@ public class ViewActivity extends AppCompatActivity {
         super.onPause();
         long endTime = SystemClock.elapsedRealtime();
         long stayTime = endTime - startTime;
-        LogUtil.d(getClass().getSimpleName(), "endTime:%s - startTime:%s = stayTime:%s", endTime, startTime, stayTime);
+        LogUtil.d(TAG, "endTime:%s - startTime:%s = stayTime:%s", endTime, startTime, stayTime);
 
         ViewTime viewTime = new ViewTime();
         viewTime.setId(IdUtil.nextId());
@@ -178,7 +179,7 @@ public class ViewActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LogUtil.d(getClass().getSimpleName(), "onDestroy");
+        LogUtil.d(TAG, "onDestroy");
         if (mHttpd != null) {
             mHttpd.stop();
         }
@@ -193,13 +194,13 @@ public class ViewActivity extends AppCompatActivity {
                     @Override
                     public void call(JsonNode o, Throwable err) {
                         if (err != null) {
-                            LogUtil.e(getClass().getSimpleName(), "view sync meta err. %s", LogUtil.getStackTraceString(err));
+                            LogUtil.e(TAG, "view sync meta err. %s", LogUtil.getStackTraceString(err));
                             runOnUiThread(() -> {
                                 UiUtils.showToast("同步书籍失败:" + err.getMessage());
                             });
                             return;
                         }
-                        LogUtil.d(getClass().getSimpleName(), "view sync meta: %s : %s", book.getId(), book.getTitle());
+                        LogUtil.d(TAG, "view sync meta: %s : %s", book.getId(), book.getTitle());
                         String sha = o.get("data").get("sha").asText();
                         book.fillSha(sha);
                         bookDbHelper.updateBook(book);

@@ -23,6 +23,7 @@
 //@Deprecated
 //public class VideoViewActivity extends AppCompatActivity {
 //
+//    private final String TAG = getClass().getSimpleName();
 //    private WebView webView;
 //
 //    @Override
@@ -52,7 +53,7 @@
 //
 //        webView.setWebViewClient(new WebViewClient() {
 //            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-//                LogUtil.d(getClass().getSimpleName(), "url: %s", url);
+//                LogUtil.d(TAG, "url: %s", url);
 //                view.loadUrl(url);
 //                return true;
 //            }
@@ -64,7 +65,7 @@
 //                } catch (MalformedURLException e) {
 //                    e.printStackTrace();
 //                }
-//                LogUtil.e(getClass().getSimpleName(), request + "");
+//                LogUtil.e(TAG, request + "");
 //                return super.shouldInterceptRequest(view, request);
 //            }
 //        });

@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class ContributionView extends View {
 
-    private static final String TAG = "ContributionView";
+    private final String TAG = getClass().getSimpleName();
 
     private OnItemClickListener listener;
     private ContributionConfig config;

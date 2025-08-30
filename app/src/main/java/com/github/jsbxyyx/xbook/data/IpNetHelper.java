@@ -26,7 +26,7 @@ import okhttp3.Response;
 
 public class IpNetHelper {
 
-    private static final String TAG = "IpNetHelper";
+    private final String TAG = getClass().getSimpleName();
 
     public void fetchIP(DataCallback<List<Ip>> dataCallback) {
         final String reqUrl = "/ip";

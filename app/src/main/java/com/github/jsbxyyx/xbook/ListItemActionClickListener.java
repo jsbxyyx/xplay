@@ -5,7 +5,7 @@ import android.view.View;
 /**
  * @author jsbxyyx
  */
-public interface ListItemClickListener {
+public interface ListItemActionClickListener {
 
     void onClick(View view, String type, int position);
 

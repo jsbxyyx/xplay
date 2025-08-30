@@ -1,6 +1,8 @@
 package com.github.jsbxyyx.xbook.data.bean;
 
-public class Comment {
+public class Comment implements java.io.Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String id;
     private String object; //评论对象
@@ -12,7 +14,9 @@ public class Comment {
     private String dateRelative; // 相对日期
     private CommentUser user = new CommentUser(); // 用户
 
-    public static class CommentUser {
+    public static class CommentUser implements java.io.Serializable {
+        private static final long serialVersionUID = 1L;
+
         private String name;
         private String avatar;
 

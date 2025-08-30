@@ -14,6 +14,7 @@ import java.util.Hashtable;
  */
 public class AutoLinearLayout extends LinearLayout {
 
+    private final String TAG = getClass().getSimpleName();
     int mLeft, mRight, mTop, mBottom;
     Hashtable map = new Hashtable();
 
@@ -81,7 +82,6 @@ public class AutoLinearLayout extends LinearLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
@@ -89,7 +89,7 @@ public class AutoLinearLayout extends LinearLayout {
             if (pos != null) {
                 child.layout(pos.left, pos.top, pos.right, pos.bottom);
             } else {
-                LogUtil.i(getClass().getSimpleName(), "error");
+                LogUtil.i(TAG, "error");
             }
         }
     }

@@ -20,6 +20,7 @@ import java.util.Map;
  */
 public class IssuesActivity extends AppCompatActivity {
 
+    private final String TAG = getClass().getSimpleName();
     private BookNetHelper bookNetHelper;
 
     @Override

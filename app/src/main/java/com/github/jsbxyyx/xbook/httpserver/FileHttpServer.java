@@ -22,7 +22,7 @@ import fi.iki.elonen.NanoHTTPD;
  */
 
 public class FileHttpServer extends NanoHTTPD {
-    private static final String TAG = "FileHttpServer";
+    private final String TAG = getClass().getSimpleName();
     private MediaTypeFactory mediaTypeFactory;
 
     class ResourceResponse extends Response {

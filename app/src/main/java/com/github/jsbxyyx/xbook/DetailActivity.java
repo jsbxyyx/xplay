@@ -1,14 +1,14 @@
 package com.github.jsbxyyx.xbook;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
@@ -33,14 +33,14 @@ import java.util.List;
  */
 public class DetailActivity extends AppCompatActivity {
 
-    private static final String TAG = "xbook";
+    private final String TAG = getClass().getSimpleName();
     private BookNetHelper bookNetHelper;
     private BookDbHelper bookDbHelper;
 
-    private ListView lv_detail_suggest;
-    private ListBookAdapter lvListAdapter;
+    private RecyclerView rv_detail_suggest;
+    private ListBookAdapter listBookAdapter;
 
-    private ListView lv_detail_comments;
+    private RecyclerView rv_detail_comments;
     private ListCommentAdapter listCommentAdapter;
 
     private String detailUrl;
@@ -55,8 +55,6 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-
-        Activity that = this;
 
         bookDbHelper = BookDbHelper.getInstance();
 
@@ -103,17 +101,21 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-        lv_detail_suggest = findViewById(R.id.lv_detail_suggest);
-        lvListAdapter = new ListBookAdapter(this, null);
-        lv_detail_suggest.setAdapter(lvListAdapter);
-        lv_detail_suggest.setOnItemClickListener((parent, view1, position, id) -> {
-            Book t = (Book) lv_detail_suggest.getAdapter().getItem(position);
-            LogUtil.d(TAG, "lv_detail_suggest: setOnItemClickListener: %s", t);
+        rv_detail_suggest = findViewById(R.id.rv_detail_suggest);
+        LinearLayoutManager suggestLayoutManager = new LinearLayoutManager(this);
+        rv_detail_suggest.setLayoutManager(suggestLayoutManager);
+        rv_detail_suggest.setHasFixedSize(true);
+
+        listBookAdapter = new ListBookAdapter(this, null);
+        listBookAdapter.setOnItemClickListener((book, position) -> {
+            LogUtil.d(TAG, "rv_detail_suggest: setOnItemClickListener: %s", book);
             Intent intent = new Intent(this, DetailActivity.class);
-            intent.putExtra("detailUrl", t.getDetailUrl());
-            intent.putExtra("bid", t.getBid());
+            intent.putExtra("detailUrl", book.getDetailUrl());
+            intent.putExtra("bid", book.getBid());
             startActivity(intent);
         });
+        rv_detail_suggest.setAdapter(listBookAdapter);
+
         bookNetHelper.detailSuggest(detailUrl, new DataCallback<List<Book>>() {
             @Override
             public void call(List<Book> list, Throwable err) {
@@ -123,17 +125,21 @@ public class DetailActivity extends AppCompatActivity {
                         return;
                     }
                     LogUtil.d(TAG, "suggest size : %s", list.size());
-                    lvListAdapter.getDataList().clear();
-                    lvListAdapter.getDataList().addAll(list);
-                    lvListAdapter.notifyDataSetChanged();
-                    UiUtils.setListViewHeightBasedOnChildren(lv_detail_suggest);
+                    listBookAdapter.getDataList().clear();
+                    listBookAdapter.getDataList().addAll(list);
+                    listBookAdapter.notifyDataSetChanged();
                 });
             }
         });
 
-        lv_detail_comments = findViewById(R.id.lv_detail_comments);
+        rv_detail_comments = findViewById(R.id.rv_detail_comments);
+        LinearLayoutManager commentsLayoutManager = new LinearLayoutManager(this);
+        rv_detail_comments.setLayoutManager(commentsLayoutManager);
+        rv_detail_comments.setHasFixedSize(true);
+
         listCommentAdapter = new ListCommentAdapter(this, null);
-        lv_detail_comments.setAdapter(listCommentAdapter);
+        rv_detail_comments.setAdapter(listCommentAdapter);
+
         bookNetHelper.bookComments(bid, new DataCallback<List<Comment>>() {
 
             @Override
@@ -147,7 +153,6 @@ public class DetailActivity extends AppCompatActivity {
                     listCommentAdapter.getDataList().clear();
                     listCommentAdapter.getDataList().addAll(list);
                     listCommentAdapter.notifyDataSetChanged();
-                    UiUtils.setListViewHeightBasedOnChildren(lv_detail_comments);
                 });
             }
         });

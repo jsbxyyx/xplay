@@ -43,7 +43,7 @@ public class BookJavascript {
 
     @JavascriptInterface
     public void report(String bookId, String current, String pages) {
-        LogUtil.d(getClass().getSimpleName(), "report: %s : %s / %s", bookId, current, pages);
+        LogUtil.d(TAG, "report: %s : %s / %s", bookId, current, pages);
         Book book = bookDbHelper.findBookById(bookId);
         BookReader bookReader = bookDbHelper.findBookReaderByBookId(Long.valueOf(bookId));
         if (bookReader == null) {

@@ -8,12 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
@@ -30,11 +31,11 @@ import java.util.List;
  */
 public class VideoListFragment extends Fragment {
 
-    private String TAG = getClass().getSimpleName();
+    private final String TAG = getClass().getSimpleName();
 
     private View mView;
     private Activity mActivity;
-    private ListView lv_video_list;
+    private RecyclerView rv_video_list;
     private ListVideoAdapter listVideoAdapter;
     private VideoNetHelper videoNetHelper;
     private AutoLinearLayout ll_hot_rank;
@@ -59,17 +60,31 @@ public class VideoListFragment extends Fragment {
         mView = view;
         mActivity = getActivity();
 
-        lv_video_list = view.findViewById(R.id.lv_video_list);
-        Button btn_video_search = view.findViewById(R.id.btn_video_search);
-        Button btn_hot_search = view.findViewById(R.id.btn_hot_search);
         ll_hot_rank = view.findViewById(R.id.ll_hot_rank);
 
-        listVideoAdapter = new ListVideoAdapter(mActivity, null, new ListItemClickListener() {
-            @Override
-            public void onClick(View view, String type, int position) {
-                LogUtil.d(TAG, "%s, %d", type, position);
-                QqVideo video = listVideoAdapter.getDataList().get(Integer.parseInt(type));
-                QqVideo.QqPlaylist playlist = video.getPlaylist().get(position);
+        Button btn_video_search = view.findViewById(R.id.btn_video_search);
+        btn_video_search.setOnClickListener(v -> {
+            showListView(true);
+        });
+
+        Button btn_hot_search = view.findViewById(R.id.btn_hot_search);
+        btn_hot_search.setOnClickListener(v -> {
+            hotSearch();
+        });
+
+        rv_video_list = view.findViewById(R.id.rv_video_list);
+        LinearLayoutManager videoLayoutManager = new LinearLayoutManager(mActivity);
+        rv_video_list.setLayoutManager(videoLayoutManager);
+        rv_video_list.setHasFixedSize(true);
+
+        listVideoAdapter = new ListVideoAdapter(mActivity, null);
+        listVideoAdapter.setOnSubItemClickListener((video, subPosition) -> {
+            LogUtil.d(TAG, "%s, %d", video.getName(), subPosition);
+            List<QqVideo.QqPlaylist> videoPlaylist = video.getPlaylist();
+            if (videoPlaylist == null) {
+                UiUtils.showToast("未找到播放视频");
+            } else {
+                QqVideo.QqPlaylist playlist = videoPlaylist.get(subPosition);
                 String playUrl = video.getPlayer() + playlist.getUrl();
                 LogUtil.d(TAG, "%s", playUrl);
                 Intent intent = new Intent(mActivity, GeckoWebViewActivity.class);
@@ -78,15 +93,7 @@ public class VideoListFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        lv_video_list.setAdapter(listVideoAdapter);
-
-        btn_video_search.setOnClickListener(v -> {
-            showListView(true);
-        });
-
-        btn_hot_search.setOnClickListener(v -> {
-            hotSearch();
-        });
+        rv_video_list.setAdapter(listVideoAdapter);
 
         hotSearch();
     }
@@ -102,51 +109,43 @@ public class VideoListFragment extends Fragment {
         mActivity.runOnUiThread(() -> {
             loading.show();
         });
-        videoNetHelper.search(q, new DataCallback<List<QqVideo>>() {
-            @Override
-            public void call(List<QqVideo> list, Throwable err) {
-                LogUtil.d(TAG, "onResponse: video size: %d", list.size());
-                mActivity.runOnUiThread(() -> {
-                    loading.dismiss();
-                    if (err != null) {
-                        UiUtils.showToast("搜索视频失败: " + err.getMessage());
-                        return;
-                    }
-                    if (clear) {
-                        listVideoAdapter.getDataList().clear();
-                    }
-                    listVideoAdapter.getDataList().addAll(list);
-                    listVideoAdapter.notifyDataSetChanged();
-                });
-            }
+        videoNetHelper.search(q, (DataCallback<List<QqVideo>>) (list, err) -> {
+            LogUtil.d(TAG, "onResponse: video size: %d", list.size());
+            mActivity.runOnUiThread(() -> {
+                loading.dismiss();
+                if (err != null) {
+                    UiUtils.showToast("搜索视频失败: " + err.getMessage());
+                    return;
+                }
+                if (clear) {
+                    listVideoAdapter.getDataList().clear();
+                }
+                listVideoAdapter.getDataList().addAll(list);
+                listVideoAdapter.notifyDataSetChanged();
+            });
         });
     }
 
     private void hotSearch() {
-        videoNetHelper.hotWord(new DataCallback<List<QqVideoHotWord>>() {
-            @Override
-            public void call(List<QqVideoHotWord> list, Throwable err) {
-                mActivity.runOnUiThread(() -> {
-                    if (err != null) {
-                        UiUtils.showToast("获取热搜失败");
-                    }
-                    ll_hot_rank.removeAllViews();
-                    if (list != null && !list.isEmpty()) {
-                        for (QqVideoHotWord hotWord : list) {
-                            TextView tv = new TextView(mActivity);
-                            tv.setText(hotWord.getSearchWord());
-                            tv.setOnClickListener(v -> {
-                                EditText et_video_keyword = mView.findViewById(R.id.et_video_keyword);
-                                TextView _tv = (TextView) v;
-                                et_video_keyword.setText(_tv.getText());
-                                showListView(true);
-                            });
-                            ll_hot_rank.addView(tv);
-                        }
-                    }
-                });
+        videoNetHelper.hotWord((DataCallback<List<QqVideoHotWord>>) (list, err) -> mActivity.runOnUiThread(() -> {
+            if (err != null) {
+                UiUtils.showToast("获取热搜失败");
             }
-        });
+            ll_hot_rank.removeAllViews();
+            if (list != null && !list.isEmpty()) {
+                for (QqVideoHotWord hotWord : list) {
+                    TextView tv = new TextView(mActivity);
+                    tv.setText(hotWord.getSearchWord());
+                    tv.setOnClickListener(v -> {
+                        EditText et_video_keyword = mView.findViewById(R.id.et_video_keyword);
+                        TextView _tv = (TextView) v;
+                        et_video_keyword.setText(_tv.getText());
+                        showListView(true);
+                    });
+                    ll_hot_rank.addView(tv);
+                }
+            }
+        }));
     }
 
 }

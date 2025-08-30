@@ -67,21 +67,22 @@ public class UiUtils {
     public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null) {
-            // pre-condition
             return;
         }
-
-        int totalHeight = 0;//listView.getPaddingTop() + listView.getPaddingBottom();
-
+        int totalHeight = 0;
         for (int i = 0; i < listAdapter.getCount(); i++) {
             View listItem = listAdapter.getView(i, null, listView);
-            listItem.measure(0, 0);
+            listItem.measure(
+                    View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            );
             totalHeight += listItem.getMeasuredHeight();
         }
-
+        totalHeight += listView.getDividerHeight() * (listAdapter.getCount() - 1);
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        params.height = totalHeight;
         listView.setLayoutParams(params);
+        listView.requestLayout();
     }
 
     public static int dp2px(Context context, int i) {

@@ -42,6 +42,7 @@ import java.util.List;
  */
 public class SettingsActivity extends AppCompatActivity {
 
+    private final String TAG = getClass().getSimpleName();
     private BookNetHelper bookNetHelper;
     private NotificationManager notificationManager;
     private NotificationCompat.Builder builder;
@@ -90,7 +91,7 @@ public class SettingsActivity extends AppCompatActivity {
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             tv_version.setText(packageInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
-            LogUtil.e(getClass().getSimpleName(), "获取版本失败", e);
+            LogUtil.e(TAG, "获取版本失败", e);
             UiUtils.showToast("获取版本失败");
         }
 
@@ -112,7 +113,7 @@ public class SettingsActivity extends AppCompatActivity {
                             });
                             return;
                         }
-                        LogUtil.d(getClass().getSimpleName(), "下载成功，开始安装");
+                        LogUtil.d(TAG, "下载成功，开始安装");
                         runOnUiThread(() -> {
                             UiUtils.showToast("下载成功，开始安装");
                         });
@@ -169,13 +170,13 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void call(JsonNode jsonNode, Throwable err) {
                 if (err != null) {
-                    LogUtil.d(getClass().getSimpleName(), "%s", LogUtil.getStackTraceString(err));
+                    LogUtil.d(TAG, "%s", LogUtil.getStackTraceString(err));
                     UiUtils.showToast("获取版本更新失败:" + err.getMessage());
                     return;
                 }
                 JsonNode data = jsonNode.get("data");
                 if (data.isEmpty()) {
-                    LogUtil.d(getClass().getSimpleName(), "versions empty.");
+                    LogUtil.d(TAG, "versions empty.");
                     return;
                 }
                 try {
@@ -195,7 +196,7 @@ public class SettingsActivity extends AppCompatActivity {
                         });
                     }
                 } catch (Exception e) {
-                    LogUtil.e(getClass().getSimpleName(), "cloud versions exception. %s", LogUtil.getStackTraceString(e));
+                    LogUtil.e(TAG, "cloud versions exception. %s", LogUtil.getStackTraceString(e));
                     UiUtils.showToast("获取版本更新失败:" + err.getMessage());
                 }
             }
@@ -224,7 +225,7 @@ public class SettingsActivity extends AppCompatActivity {
                         data_ = data_.replace(text_ + Common.comma, "");
                         SPUtils.putData(getBaseContext(), Common.search_ext_key, data_);
                     }
-                    LogUtil.d(getClass().getSimpleName(), "ext: %s", SPUtils.getData(getBaseContext(), Common.search_ext_key));
+                    LogUtil.d(TAG, "ext: %s", SPUtils.getData(getBaseContext(), Common.search_ext_key));
                 });
             }
         }
@@ -252,7 +253,7 @@ public class SettingsActivity extends AppCompatActivity {
                         data_ = data_.replace(text_ + Common.comma, "");
                         SPUtils.putData(getBaseContext(), Common.search_language_key, data_);
                     }
-                    LogUtil.d(getClass().getSimpleName(), "language: %s", SPUtils.getData(getBaseContext(), Common.search_language_key));
+                    LogUtil.d(TAG, "language: %s", SPUtils.getData(getBaseContext(), Common.search_language_key));
                 });
             }
         }
@@ -271,7 +272,7 @@ public class SettingsActivity extends AppCompatActivity {
             } else {
                 SPUtils.putData(getBaseContext(), Common.sync_key, Common.unchecked);
             }
-            LogUtil.d(getClass().getSimpleName(), "sync checked : %s", cb.isChecked());
+            LogUtil.d(TAG, "sync checked : %s", cb.isChecked());
         });
 
         String reader_image_show_data = SPUtils.getData(getBaseContext(), Common.reader_image_show_key, Common.checked);
@@ -288,7 +289,7 @@ public class SettingsActivity extends AppCompatActivity {
             } else {
                 SPUtils.putData(getBaseContext(), Common.reader_image_show_key, Common.unchecked);
             }
-            LogUtil.d(getClass().getSimpleName(), "reader image show checked : %s", cb.isChecked());
+            LogUtil.d(TAG, "reader image show checked : %s", cb.isChecked());
         });
 
         String online_read_data = SPUtils.getData(getBaseContext(), Common.online_read_key, Common.unchecked);
@@ -305,7 +306,7 @@ public class SettingsActivity extends AppCompatActivity {
             } else {
                 SPUtils.putData(getBaseContext(), Common.online_read_key, Common.unchecked);
             }
-            LogUtil.d(getClass().getSimpleName(), "online read checked : %s", cb.isChecked());
+            LogUtil.d(TAG, "online read checked : %s", cb.isChecked());
         });
 
         Button btn_clear_settings = findViewById(R.id.btn_clear_settings);
@@ -313,7 +314,7 @@ public class SettingsActivity extends AppCompatActivity {
             for (String key : clearKeys) {
                 SPUtils.putData(this, key, "");
             }
-            LogUtil.i(getClass().getSimpleName(), "clear settings : %s", Arrays.toString(clearKeys));
+            LogUtil.i(TAG, "clear settings : %s", Arrays.toString(clearKeys));
         });
 
         Button btn_open_write = findViewById(R.id.btn_open_write);
@@ -356,7 +357,7 @@ public class SettingsActivity extends AppCompatActivity {
                             }
                         });
             } catch (Exception e) {
-                LogUtil.e(getClass().getSimpleName(), LogUtil.getStackTraceString(e));
+                LogUtil.e(TAG, LogUtil.getStackTraceString(e));
                 UiUtils.showToast("管理文件权限授权失败");
             }
         });

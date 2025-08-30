@@ -9,19 +9,19 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
-import com.github.jsbxyyx.xbook.data.bean.Book;
 
 import java.util.List;
 
@@ -31,13 +31,13 @@ import java.util.List;
  */
 public class ListFragment extends Fragment {
 
-    private String TAG = "xbook";
+    private final String TAG = getClass().getSimpleName();
 
     private View mView;
     private Activity mActivity;
     private Spinner sp_type;
-    private ListView lv_list;
-    private ListBookAdapter lvListAdapter;
+    private RecyclerView rv_list;
+    private ListBookAdapter listBookAdapter;
     private BookNetHelper bookNetHelper;
 
     private int page = 1;
@@ -60,10 +60,6 @@ public class ListFragment extends Fragment {
         mView = view;
         mActivity = getActivity();
 
-        lv_list = view.findViewById(R.id.lv_list);
-        lvListAdapter = new ListBookAdapter(mActivity, null);
-        lv_list.setAdapter(lvListAdapter);
-
         sp_type = view.findViewById(R.id.sp_type);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 mActivity,
@@ -74,14 +70,20 @@ public class ListFragment extends Fragment {
         sp_type.setAdapter(adapter);
         sp_type.setSelection(0);
 
-        lv_list.setOnItemClickListener((parent, view1, position, id) -> {
-            Book t = (Book) lv_list.getAdapter().getItem(position);
-            LogUtil.d(TAG, "lv_list: setOnItemClickListener: %s", t);
+        rv_list = view.findViewById(R.id.rv_list);
+        LinearLayoutManager suggestLayoutManager = new LinearLayoutManager(mActivity);
+        rv_list.setLayoutManager(suggestLayoutManager);
+        rv_list.setHasFixedSize(true);
+
+        listBookAdapter = new ListBookAdapter(mActivity, null);
+        listBookAdapter.setOnItemClickListener((book, position) -> {
+            LogUtil.d(TAG, "rv_list: setOnItemClickListener: %s", book);
             Intent intent = new Intent(mActivity, DetailActivity.class);
-            intent.putExtra("detailUrl", t.getDetailUrl());
-            intent.putExtra("bid", t.getBid());
+            intent.putExtra("detailUrl", book.getDetailUrl());
+            intent.putExtra("bid", book.getBid());
             mActivity.startActivity(intent);
         });
+        rv_list.setAdapter(listBookAdapter);
 
         Button btn_search = view.findViewById(R.id.btn_search);
         btn_search.setOnClickListener(v -> {
@@ -119,15 +121,15 @@ public class ListFragment extends Fragment {
                         return;
                     }
                     if (clear) {
-                        lvListAdapter.getDataList().clear();
+                        listBookAdapter.getDataList().clear();
                     }
                     if (page == 1 && list.isEmpty()) {
                         UiUtils.showToast("未搜索到书籍");
                         btn_more.setVisibility(View.GONE);
                         return;
                     }
-                    lvListAdapter.getDataList().addAll(list);
-                    lvListAdapter.notifyDataSetChanged();
+                    listBookAdapter.getDataList().addAll(list);
+                    listBookAdapter.notifyDataSetChanged();
                     if (!list.isEmpty()) {
                         btn_more.setVisibility(View.VISIBLE);
                     } else {
@@ -148,15 +150,15 @@ public class ListFragment extends Fragment {
                         return;
                     }
                     if (clear) {
-                        lvListAdapter.getDataList().clear();
+                        listBookAdapter.getDataList().clear();
                     }
                     if (page == 1 && list.isEmpty()) {
                         UiUtils.showToast("未搜索到书籍");
                         btn_more.setVisibility(View.GONE);
                         return;
                     }
-                    lvListAdapter.getDataList().addAll(list);
-                    lvListAdapter.notifyDataSetChanged();
+                    listBookAdapter.getDataList().addAll(list);
+                    listBookAdapter.notifyDataSetChanged();
                     if (!list.isEmpty()) {
                         btn_more.setVisibility(View.VISIBLE);
                     } else {

@@ -23,6 +23,7 @@ import fi.iki.elonen.NanoHTTPD;
 
 public class GeckoWebViewActivity extends AppCompatActivity {
 
+    private final String TAG = getClass().getSimpleName();
     private GeckoView webView;
     private String url;
     private static GeckoRuntime runtime;
@@ -45,7 +46,7 @@ public class GeckoWebViewActivity extends AppCompatActivity {
         try {
             mHttpd.start();
         } catch (IOException e) {
-            LogUtil.e(getClass().getSimpleName(), "onCreate: %s", LogUtil.getStackTraceString(e));
+            LogUtil.e(TAG, "onCreate: %s", LogUtil.getStackTraceString(e));
             UiUtils.showToast("服务启动失败");
         }
 
@@ -113,13 +114,13 @@ public class GeckoWebViewActivity extends AppCompatActivity {
             webView.setSession(session);
 
             webView.getSession().getUserAgent().accept((a) -> {
-                LogUtil.d(getClass().getSimpleName(), "ua: %s", a);
+                LogUtil.d(TAG, "ua: %s", a);
             });
 
             session.loadUri(url);
             webProgress.show();
         } catch (Exception e) {
-            LogUtil.e(getClass().getSimpleName(), "onCreate: %s", LogUtil.getStackTraceString(e));
+            LogUtil.e(TAG, "onCreate: %s", LogUtil.getStackTraceString(e));
             UiUtils.showToast("网页打开失败");
         }
     }
@@ -127,7 +128,7 @@ public class GeckoWebViewActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LogUtil.d(getClass().getSimpleName(), "onDestroy");
+        LogUtil.d(TAG, "onDestroy");
         if (mHttpd != null) {
             mHttpd.stop();
         }

@@ -20,6 +20,7 @@ import com.github.jsbxyyx.xbook.data.BookNetHelper;
  */
 public class LoginActivity extends AppCompatActivity {
 
+    private final String TAG = getClass().getSimpleName();
     private BookNetHelper bookNetHelper;
 
     @Override

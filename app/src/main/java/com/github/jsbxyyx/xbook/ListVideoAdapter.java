@@ -5,12 +5,15 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.jsbxyyx.xbook.common.Common;
+import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.data.bean.QqVideo;
 import com.squareup.picasso.Picasso;
 
@@ -20,93 +23,102 @@ import java.util.List;
 /**
  * @author jsbxyyx
  */
-public class ListVideoAdapter extends BaseAdapter {
+public class ListVideoAdapter extends RecyclerView.Adapter<ListVideoAdapter.ViewHolder> {
 
-    private ViewHolder holder;
-    private Context mContext;
+    private final String TAG = getClass().getSimpleName();
+    private Context context;
     private List<QqVideo> dataList;
-    private ListItemClickListener mListener;
+    private OnSubItemClickListener onSubItemClickListener;
 
-    public ListVideoAdapter(Context context, List<QqVideo> list, ListItemClickListener listener) {
-        mContext = context;
-        dataList = list == null ? new ArrayList<>() : list;
-        mListener = listener;
+    public interface OnSubItemClickListener {
+        void onItemClick(QqVideo video, int subPosition);
     }
 
-    @Override
-    public int getCount() {
-        return dataList.size();
+    public ListVideoAdapter(Context context, List<QqVideo> list) {
+        this.context = context;
+        this.dataList = list == null ? new ArrayList<>() : list;
     }
 
-    @Override
-    public Object getItem(int position) {
-        return dataList.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.video_item, null);
-            holder.video_image = convertView.findViewById(R.id.video_image);
-            holder.video_name = convertView.findViewById(R.id.video_name);
-            holder.video_desc = convertView.findViewById(R.id.video_desc);
-            holder.video_playlist = convertView.findViewById(R.id.ll_playlist);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-        QqVideo video = dataList.get(position);
-
-        Picasso.get().load(video.getCoverImage()).into(holder.video_image);
-        holder.video_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        holder.video_name.setText(Common.toString(video.getName()));
-        holder.video_desc.setText(Common.toString(video.getDescText()));
-
-        List<QqVideo.QqPlaylist> playlist = video.getPlaylist();
-        int subPosition = 0;
-        holder.video_playlist.removeAllViews();
-        for (QqVideo.QqPlaylist pl : playlist) {
-            TextView textView = new TextView(mContext);
-            AutoLinearLayout.LayoutParams params = new AutoLinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMargins(20, 20, 10, 0);
-            textView.setLayoutParams(params);
-            textView.setTextSize(23);
-            textView.setText(pl.getTitle());
-            if (!Common.isEmpty(pl.getMarkLabel()) && pl.getMarkLabel().contains("VIP")) {
-                textView.setTextColor(Color.parseColor("#ebd078"));
-            }
-            final int finalSubPosition = subPosition;
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mListener != null) {
-                        mListener.onClick(v, position + "", finalSubPosition);
-                    }
-                }
-            });
-            holder.video_playlist.addView(textView);
-            subPosition++;
-        }
-
-        return convertView;
+    public void setOnSubItemClickListener(OnSubItemClickListener listener) {
+        this.onSubItemClickListener = listener;
     }
 
     public List<QqVideo> getDataList() {
         return dataList;
     }
 
-    private static class ViewHolder {
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.video_item, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        QqVideo video = dataList.get(position);
+        holder.bind(video);
+
+        List<QqVideo.QqPlaylist> playlist = video.getPlaylist();
+        int subPosition = 0;
+        holder.video_playlist.removeAllViews();
+        if (playlist != null) {
+            for (QqVideo.QqPlaylist pl : playlist) {
+                TextView textView = new TextView(context);
+                AutoLinearLayout.LayoutParams params = new AutoLinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(20, 20, 10, 0);
+                textView.setLayoutParams(params);
+                textView.setTextSize(23);
+                textView.setText(pl.getTitle());
+                if (!Common.isEmpty(pl.getMarkLabel()) && pl.getMarkLabel().contains("VIP")) {
+                    textView.setTextColor(Color.parseColor("#ebd078"));
+                }
+                final int finalSubPosition = subPosition;
+                textView.setOnClickListener(v -> {
+                    if (onSubItemClickListener != null) {
+                        LogUtil.d(TAG, "onSubItemClickListener: %d", finalSubPosition);
+                        onSubItemClickListener.onItemClick(video, finalSubPosition);
+                    }
+                });
+                holder.video_playlist.addView(textView);
+                subPosition++;
+            }
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        int count = dataList.size();
+        LogUtil.d(TAG, "getItemCount: " + count);
+        return count;
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView video_image;
         public TextView video_name;
         public TextView video_desc;
         public LinearLayout video_playlist;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            video_image = itemView.findViewById(R.id.video_image);
+            video_name = itemView.findViewById(R.id.video_name);
+            video_desc = itemView.findViewById(R.id.video_desc);
+            video_playlist = itemView.findViewById(R.id.ll_playlist);
+        }
+
+        public void bind(QqVideo video) {
+            Picasso.get()
+                    .load(video.getCoverImage())
+                    .placeholder(R.drawable.baseline_live_tv_24)
+                    .error(R.drawable.baseline_live_tv_24)
+                    .into(video_image);
+            video_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+            video_name.setText(Common.toString(video.getName()));
+            video_desc.setText(Common.toString(video.getDescText()));
+        }
     }
 
 }

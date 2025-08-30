@@ -53,12 +53,12 @@ import okhttp3.Response;
  */
 public class BookNetHelper {
 
+    private final String TAG = getClass().getSimpleName();
+
     private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
     private String content_type_key = "content-type";
     private String cookie_key = "cookie";
-
-    private String TAG = getClass().getSimpleName();
-
+    
     public void search(String keyword, int page, List<String> languages, List<String> extensions, DataCallback<List<Book>> dataCallback) {
         Map<String, Object> object = new HashMap<>();
 

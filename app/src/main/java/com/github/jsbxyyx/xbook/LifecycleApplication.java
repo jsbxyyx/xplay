@@ -1,9 +1,6 @@
 package com.github.jsbxyyx.xbook;
 
 import android.app.Application;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -30,6 +27,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class LifecycleApplication extends Application {
 
+    private final String TAG = getClass().getSimpleName();
     private BookNetHelper bookNetHelper;
     private IpNetHelper ipNetHelper;
 
@@ -72,7 +70,7 @@ public class LifecycleApplication extends Application {
                     return;
                 }
                 Common.setIPS(ips);
-                LogUtil.d(getClass().getSimpleName(), "set ips : %s", Common.getIPS().size());
+                LogUtil.d(TAG, "set ips : %s", Common.getIPS().size());
                 UiUtils.showToast("最优服务器查询成功");
             }
         });
@@ -92,7 +90,7 @@ public class LifecycleApplication extends Application {
                     public void call(Object o, Throwable err) {
                         try {
                             if (err != null) {
-                                LogUtil.e(getClass().getSimpleName(), "异常上报失败. %s", LogUtil.getStackTraceString(err));
+                                LogUtil.e(TAG, "异常上报失败. %s", LogUtil.getStackTraceString(err));
                             } else {
                                 UiUtils.showToast("闪退异常上报成功");
                                 Thread.sleep(2000);

@@ -36,9 +36,9 @@ import okhttp3.Response;
  */
 public class VideoNetHelper {
 
-    private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
+    private final String TAG = getClass().getSimpleName();
 
-    private String TAG = getClass().getSimpleName();
+    private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
 
     public void search(String q, DataCallback dataCallback) {
         Map<String, Object> object = new HashMap<>();

@@ -13,6 +13,7 @@ import android.widget.TextView;
  */
 public class LoadingDialog extends Dialog {
 
+    private final String TAG = getClass().getSimpleName();
     private TextView tvLoading;
     private ImageView ivLoading;
 
