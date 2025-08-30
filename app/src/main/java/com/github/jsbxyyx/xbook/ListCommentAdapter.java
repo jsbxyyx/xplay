@@ -60,11 +60,7 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
         }
 
         public void bind(Comment comment) {
-            Picasso.get()
-                    .load(comment.getUser().getAvatar())
-                    .placeholder(R.drawable.ic_default_avatar)
-                    .error(R.drawable.ic_default_avatar)
-                    .into(user_avatar);
+            Picasso.get().load(comment.getUser().getAvatar()).error(R.drawable.ic_default_avatar).into(user_avatar);
             user_avatar.setScaleType(ImageView.ScaleType.FIT_CENTER);
             user_name.setText(Common.toString(comment.getUser().getName()));
             comment_date.setText(Common.toString(comment.getDateRelative()));

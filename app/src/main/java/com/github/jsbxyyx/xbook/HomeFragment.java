@@ -367,7 +367,7 @@ public class HomeFragment extends Fragment {
                         if (parent != null) {
                             ImageView iv = parent.findViewById(R.id.book_reader_image);
                             if (iv.getVisibility() == View.GONE) {
-                                Picasso.get().load(book.getCoverImage()).into(iv);
+                                Picasso.get().load(book.getCoverImage()).error(R.drawable.baseline_menu_book_24).into(iv);
                                 iv.setVisibility(View.VISIBLE);
                             } else {
                                 iv.setVisibility(View.GONE);

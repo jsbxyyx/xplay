@@ -61,11 +61,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
         }
 
         public void bind(Book book) {
-            Picasso.get()
-                    .load(book.getCoverImage())
-                    .placeholder(R.drawable.baseline_menu_book_24)
-                    .error(R.drawable.baseline_menu_book_24)
-                    .into(book_image);
+            Picasso.get().load(book.getCoverImage()).error(R.drawable.baseline_menu_book_24).into(book_image);
             book_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
             book_title.setText(Common.toString(book.getTitle()));
             book_publish.setText(Common.toString(book.getPublisher()));

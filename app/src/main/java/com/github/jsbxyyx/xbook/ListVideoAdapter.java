@@ -109,11 +109,7 @@ public class ListVideoAdapter extends RecyclerView.Adapter<ListVideoAdapter.View
         }
 
         public void bind(QqVideo video) {
-            Picasso.get()
-                    .load(video.getCoverImage())
-                    .placeholder(R.drawable.baseline_live_tv_24)
-                    .error(R.drawable.baseline_live_tv_24)
-                    .into(video_image);
+            Picasso.get().load(video.getCoverImage()).error(R.drawable.baseline_live_tv_24).into(video_image);
             video_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
             video_name.setText(Common.toString(video.getName()));

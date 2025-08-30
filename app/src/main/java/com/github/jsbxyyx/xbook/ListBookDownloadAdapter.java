@@ -143,11 +143,7 @@ public class ListBookDownloadAdapter extends RecyclerView.Adapter<ListBookDownlo
         }
 
         public void bind(Book book, boolean imageShow) {
-            Picasso.get()
-                    .load(book.getCoverImage())
-                    .placeholder(R.drawable.baseline_menu_book_24)
-                    .error(R.drawable.baseline_menu_book_24)
-                    .into(book_image);
+            Picasso.get().load(book.getCoverImage()).error(R.drawable.baseline_menu_book_24).into(book_image);
             book_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
             if (!imageShow) {
                 book_image.setVisibility(View.GONE);

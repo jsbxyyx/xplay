@@ -91,7 +91,7 @@ public class DetailActivity extends AppCompatActivity {
                 mBook.setDetailUrl(detailUrl);
                 runOnUiThread(() -> {
                     tv_detail_title.setText(mBook.getTitle());
-                    Picasso.get().load(mBook.getCoverImage()).into(iv_detail_img);
+                    Picasso.get().load(mBook.getCoverImage()).error(R.drawable.baseline_menu_book_24).into(iv_detail_img);
                     tv_detail_year.setText(mBook.getYear());
                     tv_detail_publish.setText(mBook.getPublisher());
                     tv_detail_language.setText(mBook.getLanguage());
