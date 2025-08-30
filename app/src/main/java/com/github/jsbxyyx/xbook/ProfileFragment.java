@@ -233,15 +233,12 @@ public class ProfileFragment extends Fragment {
                 for (int i = 0; i < data.size(); i++) {
                     nodeList.add(data.get(i));
                 }
-                nodeList.sort(new Comparator<JsonNode>() {
-                    @Override
-                    public int compare(JsonNode o1, JsonNode o2) {
-                        String name1 = o1.get("name").asText();
-                        String name2 = o2.get("name").asText();
-                        boolean b1 = name1.endsWith(Common.book_metadata_suffix);
-                        boolean b2 = name2.endsWith(Common.book_metadata_suffix);
-                        return b1 && b2 ? name1.compareTo(name2) : b1 ? -1 : b2 ? 1 : 0;
-                    }
+                nodeList.sort((o1, o2) -> {
+                    String name1 = o1.get("name").asText();
+                    String name2 = o2.get("name").asText();
+                    boolean b1 = name1.endsWith(Common.book_metadata_suffix);
+                    boolean b2 = name2.endsWith(Common.book_metadata_suffix);
+                    return b1 && b2 ? name1.compareTo(name2) : b1 ? -1 : b2 ? 1 : 0;
                 });
                 for (int i = 0; i < nodeList.size(); i++) {
                     JsonNode item = nodeList.get(i);
@@ -376,172 +373,6 @@ public class ProfileFragment extends Fragment {
         int baseLineY = (int) (rect.centerY() - top / 2 - bottom / 2);//基线中间点的y轴计算公式
         canvas.drawText(name, rect.centerX(), baseLineY, textPaint);
         return bitmap;
-    }
-
-    private void showDownloadBook() {
-        String readerImageShow = SPUtils.getData(mActivity, Common.reader_image_show_key, "1");
-        List<Book> dataList = bookDbHelper.findAllBook();
-        dataList.sort((t1, t2) -> {
-            if (t1 == null && t2 == null) {
-                return 0;
-            }
-            if (t1 == null) {
-                return 1;
-            }
-            if (t2 == null) {
-                return -1;
-            }
-            BookReader reader1 = t1.getBookReader();
-            BookReader reader2 = t2.getBookReader();
-            if (reader1 == null && reader2 == null) {
-                return 0;
-            }
-            if (reader1 == null) {
-                return 1;
-            }
-            if (reader2 == null) {
-                return -1;
-            }
-            String updated1 = reader1.getUpdated();
-            String updated2 = reader2.getUpdated();
-            if (updated1 == null && updated2 == null) {
-                return 0;
-            }
-            if (updated1 == null) {
-                return 1;
-            }
-            if (updated2 == null) {
-                return -1;
-            }
-            return updated2.compareTo(updated1);
-        });
-        rv_download_book = mView.findViewById(R.id.rv_download_book);
-        LinearLayoutManager downloadLayoutManager = new LinearLayoutManager(mActivity);
-        rv_download_book.setLayoutManager(downloadLayoutManager);
-        rv_download_book.setHasFixedSize(true);
-
-        listBookDownloadAdapter = new ListBookDownloadAdapter(mActivity, dataList,
-                Common.checked.equals(readerImageShow), (view, type, position) -> {
-                    if (Common.action_delete.equals(type)) {
-                        Book book = listBookDownloadAdapter.getDataList().get(position);
-                        String file_path = book.extractFilePath();
-
-                        new AlertDialog.Builder(mActivity)
-                                .setTitle("提示")
-                                .setMessage("确认删除?")
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                                    bookDbHelper.deleteBook(book.getId());
-                                    boolean delete = new File(file_path).delete();
-                                    LogUtil.d(TAG, "onClick: delete [%s] : %s", file_path, delete);
-                                    onResume();
-                                })
-                                .setNegativeButton(android.R.string.no, null).show();
-                    } else if (Common.action_upload.equals(type)) {
-                        Book book = listBookDownloadAdapter.getDataList().get(position);
-                        bookNetHelper.cloudSync(book, (DataCallback<JsonNode>) (o, err) -> {
-                            if (err != null) {
-                                LogUtil.d(TAG, "书籍同步失败: %s", book.getTitle());
-                                return;
-                            }
-                            String name = o.get("data").get("name").asText();
-                            String sha = o.get("data").get("sha").asText();
-                            Book book_db = bookDbHelper.findBookById(book.getId() + "");
-                            book_db.fillSha(sha);
-                            bookDbHelper.updateBook(book_db);
-                            LogUtil.d(TAG, "upload 2: %s", name);
-                            mActivity.runOnUiThread(() -> {
-                                UiUtils.showToast("同步成功《" + book.getTitle() + "》");
-                            });
-                        });
-                    } else if (Common.action_download_meta.equals(type)) {
-                        Book book = listBookDownloadAdapter.getDataList().get(position);
-                        bookNetHelper.cloudGetMeta(book, (DataCallback<JsonNode>) (o, err) -> {
-                            if (err != null) {
-                                mActivity.runOnUiThread(() -> {
-                                    UiUtils.showToast("同步阅读进度失败：" + err.getMessage());
-                                });
-                                return;
-                            }
-                            if (o.get("data").has("content")) {
-                                String content = o.get("data").get("content").asText().replace("\n", "");
-                                String sha = o.get("data").get("sha").asText();
-                                JsonNode tree = JsonUtil.readTree(new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8));
-                                Book book1 = JsonUtil.convertValue(tree, new TypeReference<Book>() {
-                                });
-                                Book book_db = bookDbHelper.findBookById(book1.getId() + "");
-                                if (book_db != null) {
-                                    book_db.fillSha(sha);
-                                    bookDbHelper.updateBook(book_db);
-                                    if (book1.getBookReader() != null) {
-                                        bookDbHelper.updateBookReaderByBookId(book1.getBookReader());
-                                    }
-                                    LogUtil.d(TAG, "call: update book: %s", book_db.getTitle());
-                                } else {
-                                    bookDbHelper.insertBook(book1);
-                                    if (book1.getBookReader() != null) {
-                                        bookDbHelper.insertBookReader(book1.getBookReader());
-                                    }
-                                    LogUtil.d(TAG, "call: insert book: %s", book1.getTitle());
-                                }
-                                mActivity.runOnUiThread(() -> {
-                                    UiUtils.showToast("同步阅读进度成功");
-                                });
-                            }
-                        });
-                    } else if (Common.action_file_download.equals(type)) {
-                        Book book = listBookDownloadAdapter.getDataList().get(position);
-                        if (!new File(book.extractFilePath()).exists()) {
-                            View parent = (View) view.getParent();
-                            TextView tv_text = parent.findViewById(R.id.tv_text);
-                            bookNetHelper.downloadWithMagic(book.getDownloadUrl(), Common.xbook_dir, book.getBid(), new DataCallback<File>() {
-                                @Override
-                                public void call(File f, Throwable err) {
-                                    String file_path = book.extractFilePath();
-                                    if (!Common.isBlank(file_path) && !file_path.equals(f.getAbsolutePath())) {
-                                        book.fillFilePath(f.getAbsolutePath());
-                                        bookDbHelper.updateBook(book);
-                                        LogUtil.i(TAG, "update " + book.getBid() + "/" + book.getTitle() + " file path.");
-                                    }
-                                }
-                            }, (bytesRead, total) -> {
-                                double percent = bytesRead * 1.0 / total * 100;
-                                LogUtil.d(TAG, "下载进度：%.1f%%", percent);
-                                mActivity.runOnUiThread(() -> {
-                                    tv_text.setVisibility(View.VISIBLE);
-                                    tv_text.setText(String.format("进度条：%.1f%%", percent));
-                                });
-                            }, Common.MAGIC);
-                        }
-                    } else if (Common.action_image_hide.equals(type)) {
-                        Book book = listBookDownloadAdapter.getDataList().get(position);
-                        View parent = (View) view.getParent();
-                        ImageView iv = parent.findViewById(R.id.book_reader_image);
-                        if (iv.getVisibility() == View.GONE) {
-                            Picasso.get().load(book.getCoverImage()).into(iv);
-                            iv.setVisibility(View.VISIBLE);
-                        } else {
-                            iv.setVisibility(View.GONE);
-                        }
-                    }
-                });
-        listBookDownloadAdapter.setOnItemClickListener((book, position) -> {
-            String file_path = book.extractFilePath();
-            Intent intent = new Intent(mActivity, ViewActivity.class);
-            intent.putExtra("file_path", file_path);
-            intent.putExtra("book_id", book.getId() + "");
-            intent.putExtra("book_title", book.getTitle());
-            BookReader bookReader = book.getBookReader();
-            if (bookReader == null) {
-                intent.putExtra("cur", "");
-                intent.putExtra("pages", "");
-            } else {
-                intent.putExtra("cur", bookReader.getCur());
-                intent.putExtra("pages", bookReader.getPages());
-            }
-            startActivity(intent);
-        });
-        rv_download_book.setAdapter(listBookDownloadAdapter);
     }
 
 }

@@ -29,7 +29,7 @@ public class ListBookDownloadAdapter extends RecyclerView.Adapter<ListBookDownlo
 
     private final String TAG = getClass().getSimpleName();
     private Context context;
-    private ListItemActionClickListener listItemActionClickListener;
+    private OnItemActionClickListener onItemActionClickListener;
     private OnItemClickListener onItemClickListener;
     private List<Book> dataList;
     private boolean imageShow;
@@ -38,12 +38,16 @@ public class ListBookDownloadAdapter extends RecyclerView.Adapter<ListBookDownlo
         void onItemClick(Book book, int position);
     }
 
+    public interface OnItemActionClickListener {
+        void onItemActionClick(Book book, String type, int position);
+    }
+
     public ListBookDownloadAdapter(Context context, List<Book> dataList, boolean imageShow,
-                                   ListItemActionClickListener listItemActionClickListener) {
+                                   OnItemActionClickListener listener) {
         this.context = context;
         this.dataList = (dataList == null) ? new ArrayList<>() : dataList;
         this.imageShow = imageShow;
-        this.listItemActionClickListener = listItemActionClickListener;
+        this.onItemActionClickListener = listener;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -69,51 +73,40 @@ public class ListBookDownloadAdapter extends RecyclerView.Adapter<ListBookDownlo
             }
         });
 
-        holder.book_reader_btn_del.setTag(position);
         holder.book_reader_btn_del.setOnClickListener(v -> {
-            if (listItemActionClickListener != null) {
-                int position1 = (int) v.getTag();
-                LogUtil.d(TAG, "onClick btn delete : %d", position1);
-                listItemActionClickListener.onClick(v, Common.action_delete, position1);
+            if (onItemActionClickListener != null) {
+                LogUtil.d(TAG, "onClick btn delete : %d", position);
+                onItemActionClickListener.onItemActionClick(book, Common.action_delete, position);
             }
         });
 
-        holder.book_reader_btn_download_meta.setTag(position);
         holder.book_reader_btn_download_meta.setOnClickListener(v -> {
-            if (listItemActionClickListener != null) {
-                int position2 = (int) v.getTag();
-                LogUtil.d(TAG, "onClick btn download_meta : %d", position2);
-                listItemActionClickListener.onClick(v, Common.action_download_meta, position2);
+            if (onItemActionClickListener != null) {
+                LogUtil.d(TAG, "onClick btn download_meta : %d", position);
+                onItemActionClickListener.onItemActionClick(book, Common.action_download_meta, position);
             }
         });
 
-        holder.book_reader_btn_upload.setTag(position);
         holder.book_reader_btn_upload.setOnClickListener(v -> {
-            if (listItemActionClickListener != null) {
-                int position3 = (int) v.getTag();
-                LogUtil.d(TAG, "onClick btn upload : %d", position3);
-                listItemActionClickListener.onClick(v, Common.action_upload, position3);
+            if (onItemActionClickListener != null) {
+                LogUtil.d(TAG, "onClick btn upload : %d", position);
+                onItemActionClickListener.onItemActionClick(book, Common.action_upload, position);
             }
         });
-
 
         boolean exists = new File(book.extractFilePath()).exists();
-        holder.book_reader_btn_file_download.setTag(position);
         holder.book_reader_btn_file_download.setVisibility(exists ? View.GONE : View.VISIBLE);
         holder.book_reader_btn_file_download.setOnClickListener(v -> {
-            if (listItemActionClickListener != null) {
-                int position4 = (int) v.getTag();
-                LogUtil.d(TAG, "onClick btn file download : %d", position4);
-                listItemActionClickListener.onClick(v, Common.action_file_download, position4);
+            if (onItemActionClickListener != null) {
+                LogUtil.d(TAG, "onClick btn file download : %d", position);
+                onItemActionClickListener.onItemActionClick(book, Common.action_file_download, position);
             }
         });
 
-        holder.book_reader_image_hide.setTag(position);
         holder.book_reader_image_hide.setOnClickListener(v -> {
-            if (listItemActionClickListener != null) {
-                int position5 = (int) v.getTag();
-                LogUtil.d(TAG, "onClick image view hide : %d", position5);
-                listItemActionClickListener.onClick(v, Common.action_image_hide, position5);
+            if (onItemActionClickListener != null) {
+                LogUtil.d(TAG, "onClick image view hide : %d", position);
+                onItemActionClickListener.onItemActionClick(book, Common.action_image_hide, position);
             }
         });
     }
