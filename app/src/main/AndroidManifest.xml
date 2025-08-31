@@ -10,6 +10,7 @@
     <uses-permission
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".LifecycleApplication"
@@ -29,7 +30,8 @@
         <service
             android:name=".DownloadBookService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false"
+            android:foregroundServiceType="dataSync"></service>
 
         <meta-data
             android:name="ScopedStorage"
