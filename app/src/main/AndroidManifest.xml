@@ -26,9 +26,14 @@
         android:theme="@style/Theme.Xbook"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <service
+            android:name=".DownloadBookService"
+            android:enabled="true"
+            android:exported="false"></service>
 
         <meta-data
-            android:name="ScopedStorage" android:value="true" />
+            android:name="ScopedStorage"
+            android:value="true" />
 
         <activity
             android:name=".GeckoWebViewActivity"

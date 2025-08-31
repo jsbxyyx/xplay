@@ -328,11 +328,16 @@ public class BookNetHelper {
 
     public void downloadWithMagic(String downloadUrl, String destDir, String uid,
                                   DataCallback dataCallback, ProgressListener listener, long magic) {
-        downloadWithCookie(downloadUrl, destDir, uid, SessionManager.getSession(), dataCallback, listener, magic);
+        downloadWithCookie(downloadUrl, destDir, uid, SessionManager.getSession(), dataCallback, listener, magic, false);
+    }
+
+    public void downloadWithMagicSync(String downloadUrl, String destDir, String uid,
+                                  DataCallback dataCallback, ProgressListener listener, long magic) {
+        downloadWithCookie(downloadUrl, destDir, uid, SessionManager.getSession(), dataCallback, listener, magic, true);
     }
 
     public void downloadWithCookie(String downloadUrl, String destDir, String uid, String cookie,
-                                   DataCallback dataCallback, ProgressListener listener, long magic) {
+                                   DataCallback dataCallback, ProgressListener listener, long magic, boolean sync) {
         Map<String, Object> object = new HashMap<>();
         String reqUrl = downloadUrl;
         object.put("method", "GET");
@@ -353,76 +358,92 @@ public class BookNetHelper {
                 .url(getXurl())
                 .post(RequestBody.create(s, MediaType.parse("application/json")));
         setCommonHeader(builder);
-        HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
+
+        if (sync) {
+            try {
+                Response response = HttpHelper.getSyncClient().newCall(builder.build()).execute();
+                handleDownloadResponse(reqUrl, destDir, uid, dataCallback, listener, magic, response);
+            } catch (IOException e) {
+                LogUtil.e(TAG, "sync downloadWithCookie failed. %s", LogUtil.getStackTraceString(e));
                 dataCallback.call(null, e);
             }
+        } else {
+            HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
+                    dataCallback.call(null, e);
+                }
 
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    LogUtil.d(TAG, "onResponse: %s", response.code());
-                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
-                    return;
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    handleDownloadResponse(reqUrl, destDir, uid, dataCallback, listener, magic, response);
                 }
-                File dir = new File(destDir);
-                if (!dir.exists()) {
-                    boolean mkdirs = dir.mkdirs();
-                    LogUtil.d(TAG, "mkdirs: %s", mkdirs);
-                }
-                String contentDisposition = response.headers().get("Content-Disposition");
-                LogUtil.d(TAG, "contentDisposition: %s", contentDisposition);
+            });
+        }
+    }
 
-                String filename = "";
-                if (Common.isBlank(contentDisposition)) {
-                    int idx = reqUrl.lastIndexOf("/");
-                    if (idx > -1) {
-                        filename = reqUrl.substring(idx + 1);
-                    }
-                } else {
-                    filename = ContentDispositionParser.parse(contentDisposition);
-                }
-                filename = Common.isBlank(filename) ? "tmp-" + UUID.randomUUID().toString() : filename;
+    private void handleDownloadResponse(String reqUrl, String destDir, String uid,
+                                        DataCallback dataCallback, ProgressListener listener, long magic, Response response) {
+        if (!response.isSuccessful()) {
+            LogUtil.d(TAG, "onResponse: %s", response.code());
+            dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
+            return;
+        }
+        File dir = new File(destDir);
+        if (!dir.exists()) {
+            boolean mkdirs = dir.mkdirs();
+            LogUtil.d(TAG, "mkdirs: %s", mkdirs);
+        }
+        String contentDisposition = response.headers().get("Content-Disposition");
+        LogUtil.d(TAG, "contentDisposition: %s", contentDisposition);
 
-                File f = new File(destDir, Common.isEmpty(uid) ? filename : uid + "-" + filename);
-                long total = response.body().contentLength();
-                try (InputStream input = response.body().byteStream();
-                     FileOutputStream output = new FileOutputStream(f)) {
-                    if (magic > 0) {
-                        long m = magic ^ Common.MG_XOR;
-                        ByteBuffer buf = ByteBuffer.allocate(8);
-                        buf.putLong(m);
-                        buf.flip();
-                        byte[] bytes = buf.array();
-                        output.write(bytes);
-                    }
-                    byte[] buffer = new byte[1024 * 8];
-                    long count = 0;
-                    int n;
-                    while (-1 != (n = input.read(buffer))) {
-                        if (magic > 0) {
-                            output.write(Common.xor(buffer, n, Common.MG_XOR), 0, n);
-                        } else {
-                            output.write(buffer, 0, n);
-                        }
-                        count += n;
-                        output.flush();
-                        if (listener != null) {
-                            listener.onProgress(count, total);
-                        }
-                    }
-                    output.flush();
-                    if (listener != null) {
-                        listener.onProgress(count, total);
-                    }
-                } catch (IOException e) {
-                    UiUtils.showToast("存储失败, 请打开权限");
-                }
-                dataCallback.call(f, null);
+        String filename = "";
+        if (Common.isBlank(contentDisposition)) {
+            int idx = reqUrl.lastIndexOf("/");
+            if (idx > -1) {
+                filename = reqUrl.substring(idx + 1);
             }
-        });
+        } else {
+            filename = ContentDispositionParser.parse(contentDisposition);
+        }
+        filename = Common.isBlank(filename) ? "tmp-" + UUID.randomUUID().toString() : filename;
+
+        File f = new File(destDir, Common.isEmpty(uid) ? filename : uid + "-" + filename);
+        long total = response.body().contentLength();
+        try (InputStream input = response.body().byteStream();
+             FileOutputStream output = new FileOutputStream(f)) {
+            if (magic > 0) {
+                long m = magic ^ Common.MG_XOR;
+                ByteBuffer buf = ByteBuffer.allocate(8);
+                buf.putLong(m);
+                buf.flip();
+                byte[] bytes = buf.array();
+                output.write(bytes);
+            }
+            byte[] buffer = new byte[1024 * 8];
+            long count = 0;
+            int n;
+            while (-1 != (n = input.read(buffer))) {
+                if (magic > 0) {
+                    output.write(Common.xor(buffer, n, Common.MG_XOR), 0, n);
+                } else {
+                    output.write(buffer, 0, n);
+                }
+                count += n;
+                output.flush();
+                if (listener != null) {
+                    listener.onProgress(count, total);
+                }
+            }
+            output.flush();
+            if (listener != null) {
+                listener.onProgress(count, total);
+            }
+        } catch (IOException e) {
+            UiUtils.showToast("存储失败, 请打开权限");
+        }
+        dataCallback.call(f, null);
     }
 
     public void downloadApk(String downloadUrl, DataCallback dataCallback, ProgressListener listener) {

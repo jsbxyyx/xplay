@@ -11,13 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
-import com.github.jsbxyyx.xbook.common.IdUtil;
+import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
-import com.github.jsbxyyx.xbook.common.ProgressListener;
-import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
@@ -164,65 +161,13 @@ public class DetailActivity extends AppCompatActivity {
                 UiUtils.showToast("下载地址为空，请登录");
                 return;
             }
-            tv_download_progress.setVisibility(View.VISIBLE);
-            tv_download_progress.setText("开始下载...");
-            bookNetHelper.downloadWithMagic(mBook.getDownloadUrl(), Common.xbook_dir, mBook.getBid(), new DataCallback<File>() {
-                @Override
-                public void call(File file, Throwable err) {
-                    if (err != null) {
-                        runOnUiThread(() -> {
-                            UiUtils.showToast("书籍下载失败:" + err.getMessage());
-                        });
-                        return;
-                    }
-                    LogUtil.d(TAG, "call: file: %s : %s", file.getAbsolutePath(), file.length());
-                    mBook.fillFilePath(file.getAbsolutePath());
-                    mBook.setUser(SPUtils.getData(getBaseContext(), Common.profile_email_key));
-                    Book by = bookDbHelper.findBookByBid(mBook.getBid());
-                    if (by == null) {
-                        mBook.setId(IdUtil.nextId());
-                        bookDbHelper.insertBook(mBook);
-                        String sync_data = SPUtils.getData(getBaseContext(), Common.sync_key);
-                        if (Common.checked.equals(sync_data)) {
-                            bookNetHelper.cloudSync(bookDbHelper.findBookByBid(mBook.getBid()), new DataCallback<JsonNode>() {
-                                @Override
-                                public void call(JsonNode o, Throwable err) {
-                                    if (err != null) {
-                                        runOnUiThread(() -> {
-                                            UiUtils.showToast("同步失败:" + err.getMessage());
-                                        });
-                                        return;
-                                    }
-
-                                    String sha = o.get("data").get("sha").asText();
-                                    Book book_db = bookDbHelper.findBookById(mBook.getId() + "");
-                                    if (book_db != null) {
-                                        book_db.fillSha(sha);
-                                        bookDbHelper.updateBook(book_db);
-                                    }
-
-                                    runOnUiThread(() -> {
-                                        if (book_db != null) {
-                                            UiUtils.showToast("同步成功");
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    }
-                    runOnUiThread(() -> {
-                        UiUtils.showToast("下载成功");
-                    });
-                }
-            }, new ProgressListener() {
-                @Override
-                public void onProgress(long bytesRead, long contentLength) {
-                    runOnUiThread(() -> {
-                        tv_download_progress.setVisibility(View.VISIBLE);
-                        tv_download_progress.setText(String.format("下载进度：%.1f%%", bytesRead * 1.0 / contentLength * 100));
-                    });
-                }
-            }, Common.MAGIC);
+            UiUtils.showToast("开始下载...");
+            Intent intent = new Intent(this, DownloadBookService.class);
+            intent.setAction(DownloadBookService.ACTION_START_DOWNLOAD);
+            intent.putExtra(DownloadBookService.EXTRA_URL, mBook.getDownloadUrl());
+            intent.putExtra(DownloadBookService.EXTRA_DIR, Common.xbook_dir);
+            intent.putExtra(DownloadBookService.EXTRA_BOOK, JsonUtil.toJson(mBook));
+            startService(intent);
         });
     }
 }
