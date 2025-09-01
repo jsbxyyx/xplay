@@ -240,8 +240,13 @@ public class DownloadBookService extends Service {
                         PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.stat_sys_download)
+        NotificationCompat.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        } else {
+            builder = new NotificationCompat.Builder(this);
+        }
+        builder.setSmallIcon(android.R.drawable.stat_sys_download)
                 .setContentTitle("下载文件")
                 .setContentText(title + " - " + status)
                 .setContentIntent(pendingIntent);
