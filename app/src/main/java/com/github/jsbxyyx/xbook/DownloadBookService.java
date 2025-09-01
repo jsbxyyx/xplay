@@ -184,6 +184,7 @@ public class DownloadBookService extends Service {
                         }
                     }
                 } else {
+                    LogUtil.e(TAG, "不支持的类型:%s", type);
                     UiUtils.showToast("不支持的类型:" + type);
                 }
                 downloadTasks.remove(task.downloadId);
