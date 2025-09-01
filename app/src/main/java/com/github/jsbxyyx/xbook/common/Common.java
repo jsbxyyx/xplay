@@ -69,6 +69,8 @@ public class Common {
     public static final String serv_userkey = "remix_userkey";
     public static final String TYPE_BL = "BL";
     public static final String TYPE_B = "B";
+    public static final String downloaded = "downloaded";
+    public static final String not_downloaded = "not_downloaded";
 
     public static boolean statusSuccessful(int status) {
         return status >= 200 && status <= 299;

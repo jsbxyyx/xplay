@@ -31,6 +31,7 @@ public class DownloadBookService extends Service {
     public static final String EXTRA_URL = "download_url";
     public static final String EXTRA_DIR = "download_dir";
     public static final String EXTRA_UID = "download_uid";
+    public static final String EXTRA_TYPE = "download_type";
     public static final String EXTRA_BOOK = "download_book";
     public static final String CHANNEL_ID = "download_book_channel";
     public static final int NOTIFY_ID = 1001;
@@ -57,11 +58,12 @@ public class DownloadBookService extends Service {
             final String url = intent.getStringExtra(EXTRA_URL);
             final String dir = intent.getStringExtra(EXTRA_DIR);
             final String uid = intent.getStringExtra(EXTRA_UID);
+            final String type = intent.getStringExtra(EXTRA_TYPE);
             final String bookJSON = intent.getStringExtra(EXTRA_BOOK);
             if (!isDownloading && url != null && dir != null) {
                 isDownloading = true;
                 startForeground(NOTIFY_ID, buildNotification("下载开始...", 0));
-                new Thread(() -> downloadBook(url, dir, uid, bookJSON)).start();
+                new Thread(() -> downloadBook(url, dir, uid, type, bookJSON)).start();
             }
         }
         return START_STICKY;
@@ -72,7 +74,7 @@ public class DownloadBookService extends Service {
         return null;
     }
 
-    private void downloadBook(String url, String dir, String uid, String bookJSON) {
+    private void downloadBook(String url, String dir, String uid, String type, String bookJSON) {
         bookNetHelper.downloadWithMagicSync(url, dir, uid, new DataCallback<File>() {
             @Override
             public void call(File file, Throwable err) {
@@ -86,34 +88,46 @@ public class DownloadBookService extends Service {
                 }
                 updateNotification("下载完成", 100);
                 LogUtil.d(TAG, "call: file: %s : %s", file.getAbsolutePath(), file.length());
+
                 Book mBook = JsonUtil.fromJson(bookJSON, Book.class);
-                mBook.fillFilePath(file.getAbsolutePath());
-                mBook.setUser(SPUtils.getData(getBaseContext(), Common.profile_email_key));
-                Book by = bookDbHelper.findBookByBid(mBook.getBid());
-                if (by == null) {
-                    mBook.setId(IdUtil.nextId());
-                    bookDbHelper.insertBook(mBook);
-                    String sync_data = SPUtils.getData(getBaseContext(), Common.sync_key);
-                    if (Common.checked.equals(sync_data)) {
-                        bookNetHelper.cloudSync(bookDbHelper.findBookByBid(mBook.getBid()), new DataCallback<JsonNode>() {
-                            @Override
-                            public void call(JsonNode o, Throwable err) {
-                                if (err != null) {
-                                    UiUtils.showToast("同步失败:" + err.getMessage());
-                                    return;
-                                }
-                                String sha = o.get("data").get("sha").asText();
-                                Book book_db = bookDbHelper.findBookById(mBook.getId() + "");
-                                if (book_db != null) {
-                                    book_db.fillSha(sha);
-                                    bookDbHelper.updateBook(book_db);
-                                }
-                                if (book_db != null) {
-                                    UiUtils.showToast("同步成功");
-                                }
-                            }
-                        });
+                if (Common.downloaded.equalsIgnoreCase(type)) {
+                    String file_path = mBook.extractFilePath();
+                    if (!Common.isBlank(file_path) && !file_path.equals(file.getAbsolutePath())) {
+                        mBook.fillFilePath(file.getAbsolutePath());
+                        bookDbHelper.updateBook(mBook);
+                        LogUtil.i(TAG, "update " + mBook.getBid() + "/" + mBook.getTitle() + " file path.");
                     }
+                } else if (Common.not_downloaded.equals(type)) {
+                    mBook.fillFilePath(file.getAbsolutePath());
+                    mBook.setUser(SPUtils.getData(getBaseContext(), Common.profile_email_key));
+                    Book by = bookDbHelper.findBookByBid(mBook.getBid());
+                    if (by == null) {
+                        mBook.setId(IdUtil.nextId());
+                        bookDbHelper.insertBook(mBook);
+                        String sync_data = SPUtils.getData(getBaseContext(), Common.sync_key);
+                        if (Common.checked.equals(sync_data)) {
+                            bookNetHelper.cloudSync(bookDbHelper.findBookByBid(mBook.getBid()), true, new DataCallback<JsonNode>() {
+                                @Override
+                                public void call(JsonNode o, Throwable err) {
+                                    if (err != null) {
+                                        UiUtils.showToast("同步失败:" + err.getMessage());
+                                        return;
+                                    }
+                                    String sha = o.get("data").get("sha").asText();
+                                    Book book_db = bookDbHelper.findBookById(mBook.getId() + "");
+                                    if (book_db != null) {
+                                        book_db.fillSha(sha);
+                                        bookDbHelper.updateBook(book_db);
+                                    }
+                                    if (book_db != null) {
+                                        UiUtils.showToast("同步成功");
+                                    }
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    UiUtils.showToast("不支持的类型:" + type);
                 }
                 UiUtils.showToast("下载成功");
                 stopForeground(false);

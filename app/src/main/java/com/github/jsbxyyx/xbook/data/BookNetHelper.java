@@ -784,9 +784,11 @@ public class BookNetHelper {
         });
     }
 
-    public void cloudSync(Book book, DataCallback dataCallback) {
+    public void cloudSync(Book book, boolean syncRaw, DataCallback dataCallback) {
         cloudSyncMeta(book, dataCallback);
-        cloudSyncRaw(book, dataCallback);
+        if (syncRaw) {
+            cloudSyncRaw(book, dataCallback);
+        }
     }
 
     public void cloudSyncMeta(Book book, DataCallback dataCallback) {

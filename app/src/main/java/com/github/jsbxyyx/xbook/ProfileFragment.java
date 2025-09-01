@@ -187,7 +187,7 @@ public class ProfileFragment extends Fragment {
         List<Book> allBook = bookDbHelper.findAllBook();
         for (Book book : allBook) {
             CountDownLatch latch = new CountDownLatch(1);
-            bookNetHelper.cloudSync(book, new DataCallback<JsonNode>() {
+            bookNetHelper.cloudSync(book, true, new DataCallback<JsonNode>() {
                 @Override
                 public void call(JsonNode o, Throwable err) {
                     latch.countDown();

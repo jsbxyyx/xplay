@@ -166,6 +166,8 @@ public class DetailActivity extends AppCompatActivity {
             intent.setAction(DownloadBookService.ACTION_START_DOWNLOAD);
             intent.putExtra(DownloadBookService.EXTRA_URL, mBook.getDownloadUrl());
             intent.putExtra(DownloadBookService.EXTRA_DIR, Common.xbook_dir);
+            intent.putExtra(DownloadBookService.EXTRA_UID, mBook.getBid());
+            intent.putExtra(DownloadBookService.EXTRA_TYPE, Common.not_downloaded);
             intent.putExtra(DownloadBookService.EXTRA_BOOK, JsonUtil.toJson(mBook));
             startService(intent);
         });
