@@ -3,7 +3,9 @@ package com.github.jsbxyyx.xbook;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
@@ -23,6 +25,9 @@ import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 
 import java.io.File;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DownloadBookService extends Service {
 
@@ -33,10 +38,13 @@ public class DownloadBookService extends Service {
     public static final String EXTRA_UID = "download_uid";
     public static final String EXTRA_TYPE = "download_type";
     public static final String EXTRA_BOOK = "download_book";
-    public static final String CHANNEL_ID = "download_book_channel";
-    public static final int NOTIFY_ID = 1001;
 
-    private volatile boolean isDownloading = false;
+    public static final String CHANNEL_ID = "download_book_channel";
+    private static final int FOREGROUND_NOTIFICATION_ID = 1000;
+    private NotificationManager notificationManager;
+    private final ConcurrentHashMap<String, DownloadTask> downloadTasks = new ConcurrentHashMap<>();
+    private final AtomicInteger notificationIdGenerator = new AtomicInteger(FOREGROUND_NOTIFICATION_ID + 1);
+    private volatile boolean isForegroundStarted = false;
 
     private BookNetHelper bookNetHelper;
     private BookDbHelper bookDbHelper;
@@ -47,9 +55,11 @@ public class DownloadBookService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        createNotificationChannel();
         bookNetHelper = new BookNetHelper();
         bookDbHelper = BookDbHelper.getInstance();
+
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        createNotificationChannel();
     }
 
     @Override
@@ -60,10 +70,8 @@ public class DownloadBookService extends Service {
             final String uid = intent.getStringExtra(EXTRA_UID);
             final String type = intent.getStringExtra(EXTRA_TYPE);
             final String bookJSON = intent.getStringExtra(EXTRA_BOOK);
-            if (!isDownloading && url != null && dir != null) {
-                isDownloading = true;
-                startForeground(NOTIFY_ID, buildNotification("下载开始...", 0));
-                new Thread(() -> downloadBook(url, dir, uid, type, bookJSON)).start();
+            if (url != null && dir != null && bookJSON != null) {
+                startDownload(url, dir, uid, type, bookJSON);
             }
         }
         return START_STICKY;
@@ -74,22 +82,71 @@ public class DownloadBookService extends Service {
         return null;
     }
 
-    private void downloadBook(String url, String dir, String uid, String type, String bookJSON) {
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (DownloadTask task : downloadTasks.values()) {
+            notificationManager.cancel(task.notificationId);
+        }
+        downloadTasks.clear();
+        isForegroundStarted = false;
+    }
+
+    private void startDownload(String url, String dir, String uid, String type, String bookJSON) {
+        Book mBook = JsonUtil.fromJson(bookJSON, Book.class);
+
+        String title = mBook.getTitle();
+        String downloadId = url.hashCode() + "";
+        int notificationId = notificationIdGenerator.getAndIncrement();
+
+        if (downloadTasks.containsKey(downloadId)) {
+            LogUtil.w(TAG, "文件已在下载中: %s" + title);
+            return;
+        }
+        DownloadTask task = new DownloadTask(downloadId, notificationId, System.currentTimeMillis(), title, Common.newMap(
+                "url", url,
+                "dir", dir,
+                "uid", uid,
+                "type", type,
+                "book", mBook
+        ));
+        downloadTasks.put(downloadId, task);
+
+        Notification notification = createDownloadNotification(task.title, 0, "开始下载...", notificationId);
+        // 第一个下载任务启动前台服务，使用下载通知
+        if (!isForegroundStarted) {
+            startForeground(notificationId, notification);
+            isForegroundStarted = true;
+        } else {
+            notificationManager.notify(notificationId, notification);
+        }
+        new Thread(() -> downloadBook(task)).start();
+    }
+
+    private void downloadBook(DownloadTask task) {
+        Map<String, Object> params = task.params;
+        String url = (String) params.get("url");
+        String dir = (String) params.get("dir");
+        String uid = (String) params.getOrDefault("uid", "");
+        String type = (String) params.get("type");
+        Book mBook = (Book) params.get("book");
         bookNetHelper.downloadWithMagicSync(url, dir, uid, new DataCallback<File>() {
             @Override
             public void call(File file, Throwable err) {
                 if (err != null) {
                     UiUtils.showToast("书籍下载失败:" + err.getMessage());
-                    updateNotification("下载失败", 0);
-                    stopForeground(true);
-                    isDownloading = false;
-                    stopSelf();
+
+                    downloadTasks.remove(task.downloadId);
+                    updateDownloadNotification(task.title, 0, "下载失败", task.notificationId);
+                    if (downloadTasks.isEmpty()) {
+                        stopForeground(true);
+                        stopSelf();
+                    }
                     return;
                 }
-                updateNotification("下载完成", 100);
+                UiUtils.showToast("下载成功");
                 LogUtil.d(TAG, "call: file: %s : %s", file.getAbsolutePath(), file.length());
 
-                Book mBook = JsonUtil.fromJson(bookJSON, Book.class);
                 if (Common.downloaded.equalsIgnoreCase(type)) {
                     String file_path = mBook.extractFilePath();
                     if (!Common.isBlank(file_path) && !file_path.equals(file.getAbsolutePath())) {
@@ -129,15 +186,20 @@ public class DownloadBookService extends Service {
                 } else {
                     UiUtils.showToast("不支持的类型:" + type);
                 }
-                UiUtils.showToast("下载成功");
-                stopForeground(false);
-                showFinishNotification(mBook.getTitle(), file.getAbsolutePath());
-                isDownloading = false;
-                stopSelf();
+                downloadTasks.remove(task.downloadId);
+                updateDownloadNotification(task.title, 100, "下载完成", task.notificationId);
+                if (downloadTasks.isEmpty()) {
+                    stopForeground(true);
+                    stopSelf();
+                }
             }
         }, (bytesRead, total) -> {
-            int progress = (int)(bytesRead * 1.0 / total * 100);
-            updateNotification("正在下载..." + progress + "%", progress);
+            int progress = (int) (bytesRead * 1.0 / total * 100);
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - task.lastUpdateTime > 1000) {
+                task.lastUpdateTime = currentTime;
+                updateDownloadNotification(task.title, progress, "下载中...", task.notificationId);
+            }
         }, Common.MAGIC);
     }
 
@@ -154,38 +216,80 @@ public class DownloadBookService extends Service {
         }
     }
 
-    private Notification buildNotification(String text, int progress) {
-        NotificationCompat.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder = new NotificationCompat.Builder(this, CHANNEL_ID);
-        } else {
-            builder = new NotificationCompat.Builder(this);
-        }
-        builder.setContentTitle("下载服务")
-                .setContentText(text)
+    private Notification createForegroundNotification() {
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this, 0, intent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
+                        PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT
+        );
+        return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setOnlyAlertOnce(true)
-                .setProgress(100, progress, false);
+                .setContentTitle("下载服务")
+                .setContentText("下载服务运行中")
+                .setContentIntent(pendingIntent)
+                .setOngoing(true)
+                .build();
+    }
+
+    private Notification createDownloadNotification(String title, int progress, String status, int notificationId) {
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this, notificationId, intent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
+                        PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(android.R.drawable.stat_sys_download)
+                .setContentTitle("下载文件")
+                .setContentText(title + " - " + status)
+                .setContentIntent(pendingIntent);
+
+        if (status.contains("下载中") || status.contains("开始下载")) {
+            builder.setOngoing(true)  // 下载中时设置为持续通知，不能滑动删除
+                    .setAutoCancel(false);
+            if (progress > 0) {
+                builder.setProgress(100, progress, false)
+                        .setSubText(progress + "%");
+            } else {
+                builder.setProgress(100, 0, true);
+            }
+        } else {
+            builder.setOngoing(false)
+                    .setAutoCancel(true);
+            if (status.contains("下载完成")) {
+                builder.setSmallIcon(android.R.drawable.stat_sys_download_done)
+                        .setProgress(100, 100, false)
+                        .setSubText("100%");
+            } else if (status.contains("下载失败")) {
+                builder.setSmallIcon(android.R.drawable.stat_notify_error)
+                        .setProgress(0, 0, false);
+            }
+        }
+
         return builder.build();
     }
 
-    private void updateNotification(String text, int progress) {
-        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        Notification notification = buildNotification(text, progress);
-        manager.notify(NOTIFY_ID, notification);
+    private void updateDownloadNotification(String title, int progress, String status, int notificationId) {
+        Notification notification = createDownloadNotification(title, progress, status, notificationId);
+        notificationManager.notify(notificationId, notification);
     }
 
-    private void showFinishNotification(String filename, String filePath) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("下载完成")
-                .setContentText(filename)
-                .setSmallIcon(android.R.drawable.stat_sys_download_done)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
-        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        manager.notify(NOTIFY_ID + 1, builder.build());
-    }
+    private static class DownloadTask {
+        public final String downloadId;
+        public final int notificationId;
+        public long lastUpdateTime;
+        public final String title;
+        public final Map<String, Object> params;
 
+        public DownloadTask(String downloadId, int notificationId, long lastUpdateTime, String title, Map<String, Object> params) {
+            this.downloadId = downloadId;
+            this.notificationId = notificationId;
+            this.lastUpdateTime = lastUpdateTime;
+            this.title = title;
+            this.params = params;
+        }
+    }
 
 }
