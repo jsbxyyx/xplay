@@ -19,13 +19,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.FileProvider;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
-import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
@@ -33,7 +31,6 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -97,72 +94,13 @@ public class SettingsActivity extends AppCompatActivity {
 
         Button btn_update = findViewById(R.id.btn_update);
         btn_update.setOnClickListener((v) -> {
-            runOnUiThread(() -> {
-                notificationManager.notify(0, builder.build());
-                UiUtils.showToast("开始下载");
-            });
             if (Common.isEmpty(downloadUrl)) {
                 UiUtils.showToast("已经是最新版本");
             } else {
-                bookNetHelper.downloadApk(downloadUrl, new DataCallback<File>() {
-                    @Override
-                    public void call(File file, Throwable err) {
-                        if (err != null) {
-                            runOnUiThread(() -> {
-                                UiUtils.showToast("下载失败:" + err.getMessage());
-                            });
-                            return;
-                        }
-                        LogUtil.d(TAG, "下载成功，开始安装");
-                        runOnUiThread(() -> {
-                            UiUtils.showToast("下载成功，开始安装");
-                        });
-                        Common.sleep(3000);
-                        Intent install = new Intent(Intent.ACTION_VIEW);
-                        install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        Uri uri;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            uri = FileProvider.getUriForFile(
-                                    context,
-                                    context.getPackageName() + ".fileProvider",
-                                    file
-                            );
-                            install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            install.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        } else {
-                            uri = Uri.fromFile(file);
-                        }
-                        install.setDataAndType(uri, "application/vnd.android.package-archive");
-                        List<ResolveInfo> resInfoList = context.getPackageManager()
-                                .queryIntentActivities(
-                                        install,
-                                        PackageManager.MATCH_DEFAULT_ONLY
-                                );
-                        for (ResolveInfo resolveInfo : resInfoList) {
-                            String packageName = resolveInfo.activityInfo.packageName;
-                            int modeFlags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION;
-                            getApplicationContext().grantUriPermission(
-                                    packageName,
-                                    uri,
-                                    modeFlags
-                            );
-                        }
-                        getApplicationContext().startActivity(install);
-                    }
-                }, new ProgressListener() {
-                    @Override
-                    public void onProgress(long bytesRead, long total) {
-                        runOnUiThread(() -> {
-                            int percent = Integer.parseInt(String.format("%.0f", bytesRead * 1.0 / total * 100));
-                            if (percent == 100) {
-                                notificationManager.cancel(0);
-                            } else {
-                                builder.setContentInfo(percent + "%").setProgress(100, percent, false);
-                                notificationManager.notify(0, builder.build());
-                            }
-                        });
-                    }
-                });
+                Intent intent = new Intent(this, DownloadApkService.class);
+                intent.setAction(DownloadApkService.ACTION_START_DOWNLOAD);
+                intent.putExtra(DownloadApkService.EXTRA_URL, downloadUrl);
+                startService(intent);
             }
         });
 

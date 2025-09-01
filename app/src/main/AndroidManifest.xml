@@ -28,10 +28,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <service
+            android:name=".DownloadApkService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <service
             android:name=".DownloadBookService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="dataSync"></service>
+            android:foregroundServiceType="dataSync" />
 
         <meta-data
             android:name="ScopedStorage"
