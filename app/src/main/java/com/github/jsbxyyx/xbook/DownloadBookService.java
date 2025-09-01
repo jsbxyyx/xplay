@@ -122,7 +122,8 @@ public class DownloadBookService extends Service {
                 stopSelf();
             }
         }, (bytesRead, contentLength) -> {
-            updateNotification("正在下载...", (int)(bytesRead * 1.0 / contentLength * 100));
+            int progress = (int)(bytesRead * 1.0 / contentLength * 100);
+            updateNotification("正在下载..." + progress + "%", progress);
         }, Common.MAGIC);
     }
 
