@@ -139,19 +139,21 @@ public class HomeFragment extends Fragment {
                 double cloudName = Double.parseDouble(update.get("name").asText().trim());
                 if (cloudName > localName) {
                     String message = "有新版本啦，前往 我的-设置 进行版本更新";
-                    mActivity.runOnUiThread(() -> {
-                        new AlertDialog.Builder(mActivity)
-                                .setTitle("提示")
-                                .setMessage(message)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        Intent localIntent = new Intent(mActivity, SettingsActivity.class);
-                                        startActivity(localIntent);
-                                    }
-                                }).setNegativeButton(android.R.string.no, null)
-                                .setCancelable(false)
-                                .show();
+                    UiUtils.post(() -> {
+                        new DialogConfirm(mActivity, "提示", message, "",
+                                "确定", "取消",
+                                new DialogConfirm.OnConfirmListener() {
+                            @Override
+                            public void onConfirm(boolean extraChecked) {
+                                Intent localIntent = new Intent(mActivity, SettingsActivity.class);
+                                startActivity(localIntent);
+                            }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
+                        }).show();
                     });
                 }
             }

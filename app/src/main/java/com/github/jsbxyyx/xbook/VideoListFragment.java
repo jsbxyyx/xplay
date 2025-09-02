@@ -105,13 +105,13 @@ public class VideoListFragment extends Fragment {
             q = et_video_keyword.getHint().toString();
             et_video_keyword.setText(q);
         }
-        LoadingDialog loading = new LoadingDialog(mActivity);
-        mActivity.runOnUiThread(() -> {
+        DialogLoading loading = new DialogLoading(mActivity);
+        UiUtils.post(() -> {
             loading.show();
         });
         videoNetHelper.search(q, (DataCallback<List<QqVideo>>) (list, err) -> {
             LogUtil.d(TAG, "onResponse: video size: %d", list.size());
-            mActivity.runOnUiThread(() -> {
+            UiUtils.post(() -> {
                 loading.dismiss();
                 if (err != null) {
                     UiUtils.showToast("搜索视频失败: " + err.getMessage());
@@ -127,25 +127,30 @@ public class VideoListFragment extends Fragment {
     }
 
     private void hotSearch() {
-        videoNetHelper.hotWord((DataCallback<List<QqVideoHotWord>>) (list, err) -> mActivity.runOnUiThread(() -> {
-            if (err != null) {
-                UiUtils.showToast("获取热搜失败");
-            }
-            ll_hot_rank.removeAllViews();
-            if (list != null && !list.isEmpty()) {
-                for (QqVideoHotWord hotWord : list) {
-                    TextView tv = new TextView(mActivity);
-                    tv.setText(hotWord.getSearchWord());
-                    tv.setOnClickListener(v -> {
-                        EditText et_video_keyword = mView.findViewById(R.id.et_video_keyword);
-                        TextView _tv = (TextView) v;
-                        et_video_keyword.setText(_tv.getText());
-                        showListView(true);
-                    });
-                    ll_hot_rank.addView(tv);
+        videoNetHelper.hotWord(new DataCallback<List<QqVideoHotWord>>() {
+            @Override
+            public void call(List<QqVideoHotWord> list, Throwable err) {
+                if (err != null) {
+                    UiUtils.showToast("获取热搜失败");
                 }
+                UiUtils.post(() -> {
+                    ll_hot_rank.removeAllViews();
+                    if (list != null && !list.isEmpty()) {
+                        for (QqVideoHotWord hotWord : list) {
+                            TextView tv = new TextView(mActivity);
+                            tv.setText(hotWord.getSearchWord());
+                            tv.setOnClickListener(v -> {
+                                EditText et_video_keyword = mView.findViewById(R.id.et_video_keyword);
+                                TextView _tv = (TextView) v;
+                                et_video_keyword.setText(_tv.getText());
+                                VideoListFragment.this.showListView(true);
+                            });
+                            ll_hot_rank.addView(tv);
+                        }
+                    }
+                });
             }
-        }));
+        });
     }
 
 }

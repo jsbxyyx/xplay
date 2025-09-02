@@ -3,7 +3,6 @@ package com.github.jsbxyyx.xbook;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -39,28 +38,28 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.btn_login).setOnClickListener((v) -> {
             String user = et_login_user.getText().toString();
             String password = et_login_password.getText().toString();
-            LoadingDialog loading = new LoadingDialog(this);
+            DialogLoading loading = new DialogLoading(this);
             loading.show();
             bookNetHelper.login(user, password, new DataCallback<String>() {
                 @Override
                 public void call(String str, Throwable err) {
-                    runOnUiThread(() -> {
+                    UiUtils.post(() -> {
                         loading.dismiss();
-                        if (err != null) {
-                            UiUtils.showToast("登录失败 : " + err.getMessage());
-                            return;
-                        }
-                        SessionManager.setSession(str);
-                        SPUtils.putData(getBaseContext(), Common.login_key, str);
-                        Intent goIntent = new Intent();
-                        if (!Common.isEmpty(className)) {
-                            goIntent.setClassName(getPackageName(), className);
-                        } else {
-                            goIntent.setClassName(getPackageName(), MainActivity.class.getName());
-                        }
-                        goIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(goIntent);
                     });
+                    if (err != null) {
+                        UiUtils.showToast("登录失败 : " + err.getMessage());
+                        return;
+                    }
+                    SessionManager.setSession(str);
+                    SPUtils.putData(getBaseContext(), Common.login_key, str);
+                    Intent goIntent = new Intent();
+                    if (!Common.isEmpty(className)) {
+                        goIntent.setClassName(getPackageName(), className);
+                    } else {
+                        goIntent.setClassName(getPackageName(), MainActivity.class.getName());
+                    }
+                    goIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(goIntent);
                 }
             });
         });

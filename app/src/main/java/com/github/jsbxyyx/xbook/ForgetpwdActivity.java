@@ -37,18 +37,16 @@ public class ForgetpwdActivity extends AppCompatActivity {
             bookNetHelper.sendCodePasswordRecovery(user, new DataCallback<JsonNode>() {
                 @Override
                 public void call(JsonNode dataObject, Throwable err) {
-                    ForgetpwdActivity.this.runOnUiThread(() -> {
-                        if (err != null) {
-                            UiUtils.showToast("发送重置验证码:" + err.getMessage());
-                            return;
-                        }
-                        int success = dataObject.get("success").asInt();
-                        if (success == 1) {
-                            UiUtils.showToast("发送成功");
-                        } else {
-                            UiUtils.showToast(dataObject.get("err").asText());
-                        }
-                    });
+                    if (err != null) {
+                        UiUtils.showToast("发送重置验证码:" + err.getMessage());
+                        return;
+                    }
+                    int success = dataObject.get("success").asInt();
+                    if (success == 1) {
+                        UiUtils.showToast("发送成功");
+                    } else {
+                        UiUtils.showToast(dataObject.get("err").asText());
+                    }
                 }
             });
         });
@@ -60,17 +58,15 @@ public class ForgetpwdActivity extends AppCompatActivity {
             bookNetHelper.resetpwd(user, password, code, new DataCallback<JsonNode>() {
                 @Override
                 public void call(JsonNode respData, Throwable err) {
-                    ForgetpwdActivity.this.runOnUiThread(() -> {
-                        if (err != null) {
-                            UiUtils.showToast("重置密码失败:" + err.getMessage());
-                            return;
-                        }
-                        if (respData.get("success").asInt() == 1) {
-                            UiUtils.showToast("重置成功");
-                        } else {
-                            UiUtils.showToast(respData.get("message").asText(""));
-                        }
-                    });
+                    if (err != null) {
+                        UiUtils.showToast("重置密码失败:" + err.getMessage());
+                        return;
+                    }
+                    if (respData.get("success").asInt() == 1) {
+                        UiUtils.showToast("重置成功");
+                    } else {
+                        UiUtils.showToast(respData.get("message").asText(""));
+                    }
                 }
             });
         });

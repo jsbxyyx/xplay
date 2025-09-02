@@ -48,18 +48,16 @@ public class RegistrationActivity extends AppCompatActivity {
             bookNetHelper.sendCode(user, password, nickname, new DataCallback<JsonNode>() {
                 @Override
                 public void call(JsonNode dataObject, Throwable err) {
-                    runOnUiThread(() -> {
-                        if (err != null) {
-                            UiUtils.showToast("发送验证码:" + err.getMessage());
-                            return;
-                        }
-                        int success = dataObject.get("success").asInt();
-                        if (success == 1) {
-                            UiUtils.showToast("发送成功");
-                        } else {
-                            UiUtils.showToast(dataObject.get("err").asText(""));
-                        }
-                    });
+                    if (err != null) {
+                        UiUtils.showToast("发送验证码:" + err.getMessage());
+                        return;
+                    }
+                    int success = dataObject.get("success").asInt();
+                    if (success == 1) {
+                        UiUtils.showToast("发送成功");
+                    } else {
+                        UiUtils.showToast(dataObject.get("err").asText(""));
+                    }
                 }
             });
         });
@@ -69,22 +67,22 @@ public class RegistrationActivity extends AppCompatActivity {
             String password = et_login_password.getText().toString();
             String code = et_login_code.getText().toString();
             String nickname = et_nickname.getText().toString();
-            LoadingDialog loading = new LoadingDialog(this);
+            DialogLoading loading = new DialogLoading(this);
             loading.show();
             bookNetHelper.registration(user, password, code, nickname, new DataCallback<String>() {
                 @Override
                 public void call(String str, Throwable err) {
-                    runOnUiThread(() -> {
+                    UiUtils.post(() -> {
                         loading.dismiss();
-                        if (err != null) {
-                            UiUtils.showToast("注册失败:" + err.getMessage());
-                            return;
-                        }
-                        SessionManager.setSession(str);
-                        SPUtils.putData(getBaseContext(), Common.login_key, str);
-                        Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                        startActivity(intent);
                     });
+                    if (err != null) {
+                        UiUtils.showToast("注册失败:" + err.getMessage());
+                        return;
+                    }
+                    SessionManager.setSession(str);
+                    SPUtils.putData(getBaseContext(), Common.login_key, str);
+                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    startActivity(intent);
                 }
             });
         });

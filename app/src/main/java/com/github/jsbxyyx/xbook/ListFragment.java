@@ -109,8 +109,8 @@ public class ListFragment extends Fragment {
         }
         String type = sp_types.getAdapter().getItem(sp_types.getSelectedItemPosition()).toString();
 
-        LoadingDialog loading = new LoadingDialog(mActivity);
-        mActivity.runOnUiThread(() -> {
+        DialogLoading loading = new DialogLoading(mActivity);
+        UiUtils.post(() -> {
             loading.show();
         });
 
@@ -118,7 +118,7 @@ public class ListFragment extends Fragment {
             bookNetHelper.searchBooklists(keyword, page, new DataCallback<List<Book>>() {
                 @Override
                 public void call(List<Book> list, Throwable err) {
-                    mActivity.runOnUiThread(() -> {
+                    UiUtils.post(() -> {
                         loading.dismiss();
                         if (err != null) {
                             UiUtils.showToast("书籍搜索失败: " + err.getMessage());
@@ -150,7 +150,7 @@ public class ListFragment extends Fragment {
                 @Override
                 public void call(List<Book> list, Throwable err) {
                     LogUtil.d(TAG, "onResponse: book size: %d", list.size());
-                    mActivity.runOnUiThread(() -> {
+                    UiUtils.post(() -> {
                         loading.dismiss();
                         if (err != null) {
                             UiUtils.showToast("书籍搜索失败: " + err.getMessage());

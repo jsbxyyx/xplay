@@ -48,19 +48,19 @@ public class IssuesActivity extends AppCompatActivity {
             body += ("\n\n用户 : [" + userid + "]" +
                     "\n\n来源 : [" + android.os.Build.MODEL + " | " + android.os.Build.VERSION.RELEASE + "]" +
                     "\n\n[APP : " + UiUtils.getVersionName() + "]");
-            LoadingDialog loading = new LoadingDialog(mActivity, "疯狂提交中...");
+            DialogLoading loading = new DialogLoading(mActivity, "疯狂提交中...");
             loading.show();
             bookNetHelper.cloudIssues(title, body, new DataCallback() {
                 @Override
                 public void call(Object o, Throwable err) {
-                    runOnUiThread(() -> {
+                    UiUtils.post(() -> {
                         loading.dismiss();
-                        if (err != null) {
-                            UiUtils.showToast("提交反馈失败：" + err.getMessage());
-                            return;
-                        }
-                        UiUtils.showToast("提交成功");
                     });
+                    if (err != null) {
+                        UiUtils.showToast("提交反馈失败：" + err.getMessage());
+                        return;
+                    }
+                    UiUtils.showToast("提交成功");
                 }
             });
         });

@@ -11,25 +11,25 @@ import android.widget.TextView;
 /**
  * @author jsbxyyx
  */
-public class LoadingDialog extends Dialog {
+public class DialogLoading extends Dialog {
 
     private final String TAG = getClass().getSimpleName();
     private TextView tvLoading;
     private ImageView ivLoading;
 
-    public LoadingDialog(Context context) {
-        this(context, R.style.loading_dialog, "玩命加载中...");
+    public DialogLoading(Context context) {
+        this(context, R.style.dialog_loading, "玩命加载中...");
 
     }
 
-    public LoadingDialog(Context context, String string) {
-        this(context, R.style.loading_dialog, string);
+    public DialogLoading(Context context, String string) {
+        this(context, R.style.dialog_loading, string);
     }
 
-    protected LoadingDialog(Context context, int theme, String string) {
+    protected DialogLoading(Context context, int theme, String string) {
         super(context, theme);
         setCanceledOnTouchOutside(true);//点击其他区域时   true  关闭弹窗  false  不关闭弹窗
-        setContentView(R.layout.loading_dialog);//加载布局
+        setContentView(R.layout.dialog_loading);//加载布局
         tvLoading = findViewById(R.id.tv_loading_tx);
         tvLoading.setText(string);
         ivLoading = findViewById(R.id.iv_loading);

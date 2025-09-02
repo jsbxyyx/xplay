@@ -129,7 +129,7 @@ public class SettingsActivity extends AppCompatActivity {
                     String size = update.get("assets").get("name").asText();
                     if (cloudName > localName) {
                         setDownloadUrl(downloadUrl);
-                        runOnUiThread(() -> {
+                        UiUtils.post(() -> {
                             btn_update.setVisibility(View.VISIBLE);
                             btn_update.setText(cloudName + "");
                         });

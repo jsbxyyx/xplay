@@ -2,7 +2,6 @@ package com.github.jsbxyyx.xbook;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,7 +21,6 @@ import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.Comment;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -73,22 +71,20 @@ public class DetailActivity extends AppCompatActivity {
         TextView tv_detail_file = findViewById(R.id.tv_detail_file);
         TextView tv_download_progress = findViewById(R.id.tv_download_progress);
 
-        LoadingDialog loading = new LoadingDialog(this);
+        DialogLoading loading = new DialogLoading(this);
         loading.show();
         bookNetHelper.detail(detailUrl, new DataCallback<Book>() {
             @Override
             public void call(Book book, Throwable err) {
                 if (err != null) {
-                    runOnUiThread(() -> {
-                        UiUtils.showToast("获取书籍详情失败:" + err.getMessage());
-                    });
+                    UiUtils.showToast("获取书籍详情失败:" + err.getMessage());
                     return;
                 }
                 loading.dismiss();
                 LogUtil.d(TAG, "call: %s", book);
                 mBook = book;
                 mBook.setDetailUrl(detailUrl);
-                runOnUiThread(() -> {
+                UiUtils.post(() -> {
                     tv_detail_title.setText(mBook.getTitle());
                     Picasso.get().load(mBook.getCoverImage()).error(R.drawable.baseline_menu_book_24).into(iv_detail_img);
                     tv_detail_year.setText(mBook.getYear());
@@ -118,11 +114,11 @@ public class DetailActivity extends AppCompatActivity {
         bookNetHelper.detailSuggest(detailUrl, new DataCallback<List<Book>>() {
             @Override
             public void call(List<Book> list, Throwable err) {
-                runOnUiThread(() -> {
-                    if (err != null) {
-                        UiUtils.showToast("获取推荐书籍失败:" + err.getMessage());
-                        return;
-                    }
+                if (err != null) {
+                    UiUtils.showToast("获取推荐书籍失败:" + err.getMessage());
+                    return;
+                }
+                UiUtils.post(() -> {
                     LogUtil.d(TAG, "suggest size : %s", list.size());
                     listBookAdapter.getDataList().clear();
                     listBookAdapter.getDataList().addAll(list);
@@ -143,11 +139,11 @@ public class DetailActivity extends AppCompatActivity {
 
             @Override
             public void call(List<Comment> list, Throwable err) {
-                runOnUiThread(() -> {
-                    if (err != null) {
-                        UiUtils.showToast("获取推荐书籍评论失败:" + err.getMessage());
-                        return;
-                    }
+                if (err != null) {
+                    UiUtils.showToast("获取推荐书籍评论失败:" + err.getMessage());
+                    return;
+                }
+                UiUtils.post(() -> {
                     LogUtil.d(TAG, "comments size : %s", list.size());
                     listCommentAdapter.getDataList().clear();
                     listCommentAdapter.getDataList().addAll(list);

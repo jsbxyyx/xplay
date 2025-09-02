@@ -1,9 +1,7 @@
 package com.github.jsbxyyx.xbook;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -22,7 +20,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -37,16 +34,12 @@ import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
-import com.github.jsbxyyx.xbook.data.bean.BookReader;
 import com.github.jsbxyyx.xbook.data.bean.Profile;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -137,11 +130,11 @@ public class ProfileFragment extends Fragment {
                 bookNetHelper.profile(new DataCallback<Profile>() {
                     @Override
                     public void call(Profile profile, Throwable err) {
-                        mActivity.runOnUiThread(() -> {
-                            if (err != null) {
-                                UiUtils.showToast("获取个人资料失败:" + err.getMessage());
-                                return;
-                            }
+                        if (err != null) {
+                            UiUtils.showToast("获取个人资料失败:" + err.getMessage());
+                            return;
+                        }
+                        UiUtils.post(() -> {
                             tv_profile_nickname.setText(profile.getNickname());
                             tv_profile_email.setText(profile.getEmail());
                             iv_profile_avatar.setImageBitmap(headBitmap(profile.getEmail(), 128, "#6750a4"));
@@ -213,18 +206,18 @@ public class ProfileFragment extends Fragment {
     }
 
     private void downAllBook() {
-        LoadingDialog loading = new LoadingDialog(mActivity);
-        mActivity.runOnUiThread(() -> {
+        DialogLoading loading = new DialogLoading(mActivity);
+        UiUtils.post(() -> {
             loading.show();
         });
         bookNetHelper.cloudList(new DataCallback<JsonNode>() {
             @Override
             public void call(JsonNode o, Throwable err) {
                 if (err != null) {
-                    mActivity.runOnUiThread(() -> {
+                    UiUtils.post(() -> {
                         loading.dismiss();
-                        UiUtils.showToast("云同步失败:" + err.getMessage());
                     });
+                    UiUtils.showToast("云同步失败:" + err.getMessage());
                     return;
                 }
                 LogUtil.d(TAG, "call: 1 : %s", o);
@@ -314,11 +307,10 @@ public class ProfileFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
-                mActivity.runOnUiThread(() -> {
+                UiUtils.post(() -> {
                     loading.dismiss();
-                    UiUtils.showToast("云同步到本地完成");
                 });
-
+                UiUtils.showToast("云同步到本地完成");
             }
         });
     }
@@ -342,7 +334,7 @@ public class ProfileFragment extends Fragment {
 
     private void test() {
         LogUtil.d(TAG, "test: ");
-        LoadingDialog loading = new LoadingDialog(mActivity);
+        DialogLoading loading = new DialogLoading(mActivity);
         loading.show();
     }
 

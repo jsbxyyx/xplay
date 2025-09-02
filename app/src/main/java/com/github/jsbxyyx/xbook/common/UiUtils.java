@@ -23,7 +23,7 @@ public class UiUtils {
 
     private static Context mContext;
 
-    private static Handler mHandler = new Handler(Looper.getMainLooper());
+    private static final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public static void initContext(Context context) {
         mContext = context;
@@ -59,9 +59,13 @@ public class UiUtils {
     }
 
     public static void showToast(CharSequence text) {
-        mHandler.post(() -> {
+        mainHandler.post(() -> {
             Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
         });
+    }
+
+    public static void post(Runnable runnable) {
+        mainHandler.post(runnable);
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {

@@ -7,7 +7,7 @@
 
     <style name="Theme.Xbook" parent="Base.Theme.Xbook" />
 
-    <style name="loading_dialog" parent="android:style/Theme.Dialog">
+    <style name="dialog_loading" parent="android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@drawable/shape_bg</item>

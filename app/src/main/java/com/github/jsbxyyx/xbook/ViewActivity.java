@@ -195,9 +195,7 @@ public class ViewActivity extends AppCompatActivity {
                     public void call(JsonNode o, Throwable err) {
                         if (err != null) {
                             LogUtil.e(TAG, "view sync meta err. %s", LogUtil.getStackTraceString(err));
-                            runOnUiThread(() -> {
-                                UiUtils.showToast("同步书籍失败:" + err.getMessage());
-                            });
+                            UiUtils.showToast("同步书籍失败:" + err.getMessage());
                             return;
                         }
                         LogUtil.d(TAG, "view sync meta: %s : %s", book.getId(), book.getTitle());
