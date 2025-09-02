@@ -161,6 +161,11 @@ public class DetailActivity extends AppCompatActivity {
                 UiUtils.showToast("下载地址为空，请登录");
                 return;
             }
+            Book dbBook = bookDbHelper.findBookByBid(mBook.getBid());
+            if (dbBook != null) {
+                UiUtils.showToast("阅读列表存在《" + mBook.getTitle() + "》");
+                return;
+            }
             UiUtils.showToast("开始下载...");
             Intent intent = new Intent(this, DownloadBookService.class);
             intent.setAction(DownloadBookService.ACTION_START_DOWNLOAD);

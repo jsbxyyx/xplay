@@ -97,6 +97,7 @@ public class SettingsActivity extends AppCompatActivity {
             if (Common.isEmpty(downloadUrl)) {
                 UiUtils.showToast("已经是最新版本");
             } else {
+                UiUtils.showToast("开始下载...");
                 Intent intent = new Intent(this, DownloadApkService.class);
                 intent.setAction(DownloadApkService.ACTION_START_DOWNLOAD);
                 intent.putExtra(DownloadApkService.EXTRA_URL, downloadUrl);
