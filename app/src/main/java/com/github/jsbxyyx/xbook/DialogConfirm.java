@@ -12,9 +12,9 @@ import android.widget.TextView;
 
 import com.github.jsbxyyx.xbook.common.Common;
 
-public class ConfirmDialog extends Dialog {
+public class DialogConfirm extends Dialog {
 
-    public ConfirmDialog(Context context,
+    public DialogConfirm(Context context,
                          String title,
                          String content,
                          String extraText,
@@ -22,7 +22,7 @@ public class ConfirmDialog extends Dialog {
         this(context, title, content, extraText, "OK", "CANCEL", listener);
     }
 
-    public ConfirmDialog(Context context,
+    public DialogConfirm(Context context,
                          String title,
                          String content,
                          String extraText,

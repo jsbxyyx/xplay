@@ -27,7 +27,6 @@ import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.DateUtils;
 import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
-import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.ThreadUtils;
@@ -272,15 +271,31 @@ public class HomeFragment extends Fragment {
         listBookDownloadAdapter = new ListBookDownloadAdapter(mActivity, dataList,
                 Common.checked.equals(readerImageShow), (book, type, position) -> {
             if (Common.action_delete.equals(type)) {
-                ConfirmDialog dialog = new ConfirmDialog(mActivity, "提示", "确认删除", "",
+                DialogConfirm dialog = new DialogConfirm(mActivity, "提示", "确认删除", "同步删除云端",
                         "确认", "取消",
-                        new ConfirmDialog.OnConfirmListener() {
+                        new DialogConfirm.OnConfirmListener() {
                             @Override
                             public void onConfirm(boolean extraChecked) {
                                 String file_path = book.extractFilePath();
                                 bookDbHelper.deleteBook(book.getId());
                                 boolean delete = new File(file_path).delete();
                                 LogUtil.d(TAG, "onClick: delete [%s] : %s", file_path, delete);
+                                if (extraChecked) {
+                                    String title = bookNetHelper.getCloudTitle(book, "");
+                                    String ext = book.extractFilePath();
+                                    bookNetHelper.cloudDelete(title, ext, new DataCallback<>() {
+
+                                        @Override
+                                        public void call(Object o, Throwable err) {
+                                            if (err != null) {
+                                                LogUtil.e(TAG, "delete cloud failed. %s", LogUtil.getStackTraceString(err));
+                                                UiUtils.showToast("同步删除云端失败");
+                                                return;
+                                            }
+                                            UiUtils.showToast("同步删除云端成功");
+                                        }
+                                    });
+                                }
                                 onResume();
                             }
 
@@ -291,9 +306,9 @@ public class HomeFragment extends Fragment {
                         });
                 dialog.show();
             } else if (Common.action_upload.equals(type)) {
-                ConfirmDialog dialog = new ConfirmDialog(mActivity, "提示", "你确定要同步阅读进度吗？",
+                DialogConfirm dialog = new DialogConfirm(mActivity, "提示", "你确定要同步阅读进度吗？",
                         "同时上传文件到云端", "确定", "取消",
-                        new ConfirmDialog.OnConfirmListener() {
+                        new DialogConfirm.OnConfirmListener() {
                             @Override
                             public void onConfirm(boolean extraChecked) {
                                 bookNetHelper.cloudSync(book, extraChecked, new DataCallback<JsonNode>() {
@@ -321,9 +336,9 @@ public class HomeFragment extends Fragment {
                         });
                 dialog.show();
             } else if (Common.action_download_meta.equals(type)) {
-                ConfirmDialog dialog = new ConfirmDialog(mActivity, "提示",
+                DialogConfirm dialog = new DialogConfirm(mActivity, "提示",
                         "下载云端阅读进度？", "", "确定", "取消",
-                        new ConfirmDialog.OnConfirmListener() {
+                        new DialogConfirm.OnConfirmListener() {
                             @Override
                             public void onConfirm(boolean extraChecked) {
                                 bookNetHelper.cloudGetMeta(book, new DataCallback<JsonNode>() {

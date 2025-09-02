@@ -812,7 +812,7 @@ public class BookNetHelper {
                 object.put("headers", headers);
 
                 Map<String, Object> data = new HashMap<>();
-                data.put("title", encodeURIComponent(book.getId() + "-" + book.getTitle() + Common.book_metadata_suffix));
+                data.put("title", encodeURIComponent(getCloudTitle(book, Common.book_metadata_suffix)));
                 data.put("raw", Base64.getEncoder().encodeToString(JsonUtil.toJson(book).getBytes(StandardCharsets.UTF_8)));
                 data.put("sha", book.extractSha());
                 object.put("data", data);
@@ -870,7 +870,7 @@ public class BookNetHelper {
             byte[] bytes = Files.readAllBytes(new File(file_path).toPath());
 
             Map<String, Object> data = new HashMap<>();
-            data.put("title", encodeURIComponent(book.getId() + "-" + book.getTitle() + "." + MediaTypeFactory.getFilenameExtension(file_path)));
+            data.put("title", encodeURIComponent(getCloudTitle(book, "." + MediaTypeFactory.getFilenameExtension(file_path))));
             data.put("raw", Base64.getEncoder().encodeToString(bytes));
             object.put("data", data);
 
@@ -1070,7 +1070,7 @@ public class BookNetHelper {
         object.put("headers", headers);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("title", encodeURIComponent(book.getId() + "-" + book.getTitle() + Common.book_metadata_suffix));
+        data.put("title", encodeURIComponent(getCloudTitle(book, Common.book_metadata_suffix)));
         data.put("raw", "");
         object.put("data", data);
 
@@ -1097,6 +1097,57 @@ public class BookNetHelper {
                 }
                 String string = response.body().string();
                 LogUtil.d(TAG, "cloud get meta response: %s", string);
+                JsonNode jsonObject = JsonUtil.readTree(string);
+                int status = jsonObject.get("status").asInt();
+                if (!Common.statusSuccessful(status)) {
+                    LogUtil.d(TAG, "onResponse: %s", status);
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
+                    return;
+                }
+                dataCallback.call(jsonObject, null);
+            }
+        });
+    }
+
+    public void cloudDelete(String title, String ext, DataCallback dataCallback) {
+        Map<String, Object> object = new HashMap<>();
+        String reqUrl = "/gh_b_delete";
+        object.put("method", "POST");
+        object.put("url", reqUrl);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("User-Agent", userAgent);
+        headers.put(cookie_key, SessionManager.getSession());
+        object.put("headers", headers);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("title", encodeURIComponent(title));
+        data.put("ext", encodeURIComponent(ext));
+        object.put("data", data);
+
+        String s = JsonUtil.toJson(object);
+        LogUtil.d(TAG, "cloud b delete request: %s : %s", reqUrl, s);
+
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getSyncClient().newCall(builder.build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                LogUtil.d(TAG, "onFailure: %s", e);
+                dataCallback.call(null, e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    LogUtil.d(TAG, "onResponse: %s", response.code());
+                    dataCallback.call(null, new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
+                    return;
+                }
+                String string = response.body().string();
+                LogUtil.d(TAG, "cloud b delete response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -1384,6 +1435,10 @@ public class BookNetHelper {
                 .header(Common.header_vn, UiUtils.getVersionName())
                 .header(Common.header_platform, Common.platform_android)
                 .header(Common.header_sv, android.os.Build.VERSION.RELEASE);
+    }
+
+    public String getCloudTitle(Book book, String suffix) {
+        return book.getId() + "-" + book.getTitle() + suffix;
     }
 
 }
