@@ -1,6 +1,7 @@
 package com.github.jsbxyyx.xbook;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +29,14 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
     private Context context;
     private List<Book> dataList;
     private OnItemClickListener onItemClickListener;
+    private OnSubItemClickListener onSubItemClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(Book book, int position);
+    }
+
+    public interface OnSubItemClickListener {
+        void onSubItemClick(Book book, String type, int position);
     }
 
     public ListBookAdapter(Context context, List<Book> dataList) {
@@ -38,8 +44,14 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
         this.dataList = (dataList == null) ? new ArrayList<>() : dataList;
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
+    public ListBookAdapter setOnItemClickListener(OnItemClickListener listener) {
         this.onItemClickListener = listener;
+        return this;
+    }
+
+    public ListBookAdapter setOnSubItemClickListener(OnSubItemClickListener listener) {
+        this.onSubItemClickListener = listener;
+        return this;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -89,6 +101,15 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
                 onItemClickListener.onItemClick(book, position);
             }
         });
+
+        if (Book.content_type_booklist.equals(book.getContent_type())) {
+            holder.book_publish.setTextColor(Color.parseColor("#03A9F4"));
+            holder.book_publish.setOnClickListener(v -> {
+                if (onSubItemClickListener != null) {
+                    onSubItemClickListener.onSubItemClick(book, Book.publisher_key, position);
+                }
+            });
+        }
     }
 
     @Override

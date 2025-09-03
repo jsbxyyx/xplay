@@ -43,6 +43,9 @@
             android:value="true" />
 
         <activity
+            android:name=".DetailBooklistActivity"
+            android:exported="false" />
+        <activity
             android:name=".GeckoWebViewActivity"
             android:exported="false" />
         <activity

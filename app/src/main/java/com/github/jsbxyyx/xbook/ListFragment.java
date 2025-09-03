@@ -17,8 +17,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
+import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.UiUtils;
@@ -84,6 +86,21 @@ public class ListFragment extends Fragment {
             intent.putExtra("detailUrl", book.getDetailUrl());
             intent.putExtra("bid", book.getBid());
             mActivity.startActivity(intent);
+        }).setOnSubItemClickListener((book, type, position) -> {
+            String extra = book.getExtra();
+            if (!Common.isBlank(extra)) {
+                try {
+                    JsonNode tree = JsonUtil.readTree(extra);
+                    String booklist_id = tree.get("booklist_id").asText();
+                    String title = tree.get("title").asText();
+                    Intent intent = new Intent(mActivity, DetailBooklistActivity.class);
+                    intent.putExtra("booklist_id", booklist_id);
+                    intent.putExtra("title", title);
+                    mActivity.startActivity(intent);
+                } catch (Exception e) {
+                    UiUtils.showToast("书籍集合参数错误");
+                }
+            }
         });
         rv_list.setAdapter(listBookAdapter);
 
@@ -115,7 +132,7 @@ public class ListFragment extends Fragment {
         });
 
         if (Common.TYPE_BL.equals(type)) {
-            bookNetHelper.searchBooklists(keyword, page, new DataCallback<List<Book>>() {
+            bookNetHelper.searchBooklist(keyword, page, new DataCallback<List<Book>>() {
                 @Override
                 public void call(List<Book> list, Throwable err) {
                     UiUtils.post(() -> {

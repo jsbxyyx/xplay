@@ -12,33 +12,36 @@ import com.github.jsbxyyx.xbook.common.JsonUtil;
 public class Book implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
+    public static final String publisher_key = "publisher";
+    public static String content_type_booklist = "booklist";
+    public static String content_type_book = "book";
 
-    private Long id;
+    // net
     private String bid;
     private String isbn;
-    private String coverImage;
-    private String title;
-    private String publisher;
     private String authors;
-    private String file;
-    private String language;
-    private String year;
+    private String title;
+    private String description;
+    private String coverImage;
     private String detailUrl;
+    private String year;
+    private String publisher;
+    private String language;
+    private String file;
     private String downloadUrl;
+    private String content_type;
+    private String extra;
+    // net end
+
+    // db
+    private Long id;
     private String remark;
     private String created;
     private String user;
+    // db end
 
     // ext
     private BookReader bookReader;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getBid() {
         return bid;
@@ -56,12 +59,12 @@ public class Book implements java.io.Serializable {
         this.isbn = isbn;
     }
 
-    public String getCoverImage() {
-        return coverImage;
+    public String getAuthors() {
+        return authors;
     }
 
-    public void setCoverImage(String coverImage) {
-        this.coverImage = coverImage;
+    public void setAuthors(String authors) {
+        this.authors = authors;
     }
 
     public String getTitle() {
@@ -72,44 +75,20 @@ public class Book implements java.io.Serializable {
         this.title = title;
     }
 
-    public String getPublisher() {
-        return publisher;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getAuthors() {
-        return authors;
+    public String getCoverImage() {
+        return coverImage;
     }
 
-    public void setAuthors(String authors) {
-        this.authors = authors;
-    }
-
-    public String getFile() {
-        return file;
-    }
-
-    public void setFile(String file) {
-        this.file = file;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
     }
 
     public String getDetailUrl() {
@@ -120,12 +99,68 @@ public class Book implements java.io.Serializable {
         this.detailUrl = detailUrl;
     }
 
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
     public String getDownloadUrl() {
         return downloadUrl;
     }
 
     public void setDownloadUrl(String downloadUrl) {
         this.downloadUrl = downloadUrl;
+    }
+
+    public String getContent_type() {
+        return content_type;
+    }
+
+    public void setContent_type(String content_type) {
+        this.content_type = content_type;
+    }
+
+    public String getExtra() {
+        return extra;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getRemark() {
@@ -201,21 +236,25 @@ public class Book implements java.io.Serializable {
     @Override
     public String toString() {
         return "Book{" +
-                "id=" + id +
-                ", bid='" + bid + '\'' +
+                "bid='" + bid + '\'' +
                 ", isbn='" + isbn + '\'' +
-                ", coverImage='" + coverImage + '\'' +
-                ", title='" + title + '\'' +
-                ", publisher='" + publisher + '\'' +
                 ", authors='" + authors + '\'' +
-                ", file='" + file + '\'' +
-                ", language='" + language + '\'' +
-                ", year='" + year + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", coverImage='" + coverImage + '\'' +
                 ", detailUrl='" + detailUrl + '\'' +
+                ", year='" + year + '\'' +
+                ", publisher='" + publisher + '\'' +
+                ", language='" + language + '\'' +
+                ", file='" + file + '\'' +
                 ", downloadUrl='" + downloadUrl + '\'' +
+                ", content_type='" + content_type + '\'' +
+                ", extra='" + extra + '\'' +
+                ", id=" + id +
                 ", remark='" + remark + '\'' +
                 ", created='" + created + '\'' +
                 ", user='" + user + '\'' +
+                ", bookReader=" + bookReader +
                 '}';
     }
 }

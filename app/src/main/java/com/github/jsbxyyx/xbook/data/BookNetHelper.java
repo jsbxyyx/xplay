@@ -134,7 +134,7 @@ public class BookNetHelper {
         });
     }
 
-    public void searchBooklists(String keyword, int page, DataCallback<List<Book>> dataCallback) {
+    public void searchBooklist(String keyword, int page, DataCallback<List<Book>> dataCallback) {
         Map<String, Object> object = new HashMap<>();
 
         String reqUrl = zurl + "/zlib_booklists";
@@ -247,6 +247,69 @@ public class BookNetHelper {
                     dataCallback.call(book, null);
                 } catch (Exception e) {
                     dataCallback.call(null, e);
+                }
+            }
+        });
+    }
+
+    public void booklistDetail(String booklistId, int page, DataCallback dataCallback) {
+        Map<String, Object> object = new HashMap<>();
+
+        String reqUrl = zurl + "/zlib_booklists_detail";
+        object.put("method", "POST");
+        object.put("url", reqUrl);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("User-Agent", userAgent);
+        headers.put(cookie_key, SessionManager.getSession());
+        object.put("headers", headers);
+
+        List<Object> params = new ArrayList<>();
+        List<String> p0 = new ArrayList<>();
+        p0.add("page");
+        p0.add(page + "");
+        params.add(p0);
+        List<String> p1 = new ArrayList<>();
+        p1.add("booklist_id");
+        p1.add(booklistId);
+        params.add(p1);
+        object.put("params", params);
+
+        String s = JsonUtil.toJson(object);
+        LogUtil.d(TAG, "booklists detail request: %s : %s", reqUrl, s);
+        Request.Builder builder = new Request.Builder()
+                .url(getXburl())
+                .post(RequestBody.create(s, MediaType.parse("application/json")));
+        setCommonHeader(builder);
+        HttpHelper.getClient().newCall(builder.build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                LogUtil.d(TAG, "onFailure: %s", LogUtil.getStackTraceString(e));
+                dataCallback.call(new ArrayList<>(), e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), response.code(), reqUrl));
+                    return;
+                }
+                String string = response.body().string();
+                LogUtil.d(TAG, "booklists detail response: %s", string);
+                try {
+                    JsonNode jsonObject = JsonUtil.readTree(string);
+                    int status = jsonObject.get("status").asInt();
+                    if (!Common.statusSuccessful(status)) {
+                        dataCallback.call(new ArrayList<>(), new HttpStatusException(decodeURIComponent(response.header(x_message)), status, reqUrl));
+                        return;
+                    }
+                    JsonNode data = jsonObject.get("data");
+                    LogUtil.d(TAG, "total: %s", data.get("total").asText());
+                    List<Book> list = JsonUtil.convertValue(data.get("list"), new TypeReference<List<Book>>() {
+                    });
+                    dataCallback.call(list, null);
+                } catch (Exception e) {
+                    dataCallback.call(new ArrayList<>(), e);
                 }
             }
         });

@@ -18,7 +18,6 @@
             android:layout_height="wrap_content">
         </Spinner>
 
-
         <EditText
             android:id="@+id/et_keyword"
             android:layout_width="0dp"

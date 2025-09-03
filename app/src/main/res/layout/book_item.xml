@@ -24,13 +24,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="title"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/book_publish"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="publish"/>
+            android:text="publish"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/book_author"
