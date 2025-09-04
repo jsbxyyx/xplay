@@ -67,6 +67,7 @@ public class LifecycleApplication extends Application {
             public void call(List<Ip> ips, Throwable err) {
                 if (err != null) {
                     UiUtils.showToast("最优服务器查询失败");
+                    LogUtil.d(TAG, "best server query failed");
                     return;
                 }
                 Common.setIPS(ips);

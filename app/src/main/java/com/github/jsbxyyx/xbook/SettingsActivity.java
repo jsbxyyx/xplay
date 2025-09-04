@@ -96,8 +96,10 @@ public class SettingsActivity extends AppCompatActivity {
         btn_update.setOnClickListener((v) -> {
             if (Common.isEmpty(downloadUrl)) {
                 UiUtils.showToast("已经是最新版本");
+                LogUtil.d(TAG, "local version is latest.");
             } else {
                 UiUtils.showToast("开始下载...");
+                LogUtil.d(TAG, "start download apk...");
                 Intent intent = new Intent(this, DownloadApkService.class);
                 intent.setAction(DownloadApkService.ACTION_START_DOWNLOAD);
                 intent.putExtra(DownloadApkService.EXTRA_URL, downloadUrl);
@@ -278,19 +280,23 @@ public class SettingsActivity extends AppCompatActivity {
                             @Override
                             public void onGranted(@NonNull List<String> permissions, boolean allGranted) {
                                 if (!allGranted) {
+                                    LogUtil.d(TAG, "获取部分权限成功，但部分权限未正常授予");
                                     UiUtils.showToast("获取部分权限成功，但部分权限未正常授予");
                                     return;
                                 }
+                                LogUtil.d(TAG, "获取管理文件权限成功");
                                 UiUtils.showToast("获取管理文件权限成功");
                             }
 
                             @Override
                             public void onDenied(@NonNull List<String> permissions, boolean doNotAskAgain) {
                                 if (doNotAskAgain) {
+                                    LogUtil.d(TAG, "被永久拒绝授权，请手动授予管理文件权限");
                                     UiUtils.showToast("被永久拒绝授权，请手动授予管理文件权限");
                                     // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                     XXPermissions.startPermissionActivity(context, permissions);
                                 } else {
+                                    LogUtil.d(TAG, "获取管理文件权限失败");
                                     UiUtils.showToast("获取管理文件权限失败");
                                 }
                             }

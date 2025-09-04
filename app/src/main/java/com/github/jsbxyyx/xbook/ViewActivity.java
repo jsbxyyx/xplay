@@ -77,6 +77,7 @@ public class ViewActivity extends AppCompatActivity {
         }
 
         if (!new File(file_path).exists()) {
+            LogUtil.d(TAG, "book not exists, please re-download");
             UiUtils.showToast("书籍不存在，请重新下载");
             return;
         }
@@ -122,6 +123,7 @@ public class ViewActivity extends AppCompatActivity {
                 html = "pdf.html";
             }
             if (Common.isEmpty(html)) {
+                LogUtil.d(TAG, "not support format. extension:%s", extension);
                 UiUtils.showToast("不支持的文件格式:" + extension);
                 return;
             }

@@ -131,6 +131,7 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void call(Profile profile, Throwable err) {
                         if (err != null) {
+                            LogUtil.d(TAG, "get profile failed. %s", LogUtil.getStackTraceString(err));
                             UiUtils.showToast("获取个人资料失败:" + err.getMessage());
                             return;
                         }
@@ -193,6 +194,7 @@ public class ProfileFragment extends Fragment {
                     Book book_db = bookDbHelper.findBookById(book.getId() + "");
                     book_db.fillSha(sha);
                     bookDbHelper.updateBook(book_db);
+                    LogUtil.d(TAG, "sync success. %s", book.getTitle());
                     UiUtils.showToast("同步成功《" + book.getTitle() + "》");
                 }
             });
@@ -202,6 +204,7 @@ public class ProfileFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+        LogUtil.d(TAG, "local sync cloud success.");
         UiUtils.showToast("本地同步到云成功");
     }
 
@@ -217,6 +220,7 @@ public class ProfileFragment extends Fragment {
                     UiUtils.post(() -> {
                         loading.dismiss();
                     });
+                    LogUtil.d(TAG, "sync cloud failed. %s", LogUtil.getStackTraceString(err));
                     UiUtils.showToast("云同步失败:" + err.getMessage());
                     return;
                 }
@@ -311,6 +315,7 @@ public class ProfileFragment extends Fragment {
                     loading.dismiss();
                 });
                 UiUtils.showToast("云同步到本地完成");
+                LogUtil.d(TAG, "cloud sync local success.");
             }
         });
     }

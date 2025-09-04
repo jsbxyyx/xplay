@@ -70,14 +70,15 @@ public class DownloadApkService extends Service {
             @Override
             public void call(File file, Throwable err) {
                 if (err != null) {
+                    LogUtil.d(TAG, "download failed. %s", LogUtil.getStackTraceString(err));
                     UiUtils.showToast("下载失败:" + err.getMessage());
                     stopForeground(true);
                     isDownloading = false;
                     stopSelf();
                     return;
                 }
-                LogUtil.d(TAG, "下载成功，开始安装");
                 UiUtils.showToast("下载成功，开始安装");
+                LogUtil.d(TAG, "download success. start install apk");
                 Common.sleep(3000);
                 Intent install = new Intent(Intent.ACTION_VIEW);
                 install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
+import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
@@ -40,6 +41,7 @@ public class IssuesActivity extends AppCompatActivity {
             String title = et_issues_title.getText().toString();
             String body = et_issues_body.getText().toString();
             if (Common.isEmpty(title) || Common.isEmpty(body)) {
+                LogUtil.d(TAG, "issues title and content is empty.");
                 UiUtils.showToast("标题或内容不能为空");
                 return;
             }
@@ -58,9 +60,11 @@ public class IssuesActivity extends AppCompatActivity {
                     });
                     if (err != null) {
                         UiUtils.showToast("提交反馈失败：" + err.getMessage());
+                        LogUtil.d(TAG, "submit issues failed. %s", LogUtil.getStackTraceString(err));
                         return;
                     }
                     UiUtils.showToast("提交成功");
+                    LogUtil.d(TAG, "submit issues success. %s", title);
                 }
             });
         });

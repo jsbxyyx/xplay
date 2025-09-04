@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
+import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.UiUtils;
@@ -49,14 +50,18 @@ public class RegistrationActivity extends AppCompatActivity {
                 @Override
                 public void call(JsonNode dataObject, Throwable err) {
                     if (err != null) {
+                        LogUtil.d(TAG, "send code failed. %s", LogUtil.getStackTraceString(err));
                         UiUtils.showToast("发送验证码:" + err.getMessage());
                         return;
                     }
                     int success = dataObject.get("success").asInt();
                     if (success == 1) {
                         UiUtils.showToast("发送成功");
+                        LogUtil.d(TAG, "send code success.");
                     } else {
-                        UiUtils.showToast(dataObject.get("err").asText(""));
+                        String errText = dataObject.get("err").asText("");
+                        UiUtils.showToast(errText);
+                        LogUtil.d(TAG, "send code failed. %s", errText);
                     }
                 }
             });
@@ -76,6 +81,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         loading.dismiss();
                     });
                     if (err != null) {
+                        LogUtil.d(TAG, "registration failed. %s", LogUtil.getStackTraceString(err));
                         UiUtils.showToast("注册失败:" + err.getMessage());
                         return;
                     }

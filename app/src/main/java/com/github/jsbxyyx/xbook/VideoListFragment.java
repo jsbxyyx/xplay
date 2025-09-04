@@ -82,6 +82,7 @@ public class VideoListFragment extends Fragment {
             LogUtil.d(TAG, "%s, %d", video.getName(), subPosition);
             List<QqVideo.QqPlaylist> videoPlaylist = video.getPlaylist();
             if (videoPlaylist == null) {
+                LogUtil.d(TAG, "not found play video.");
                 UiUtils.showToast("未找到播放视频");
             } else {
                 QqVideo.QqPlaylist playlist = videoPlaylist.get(subPosition);
@@ -114,6 +115,7 @@ public class VideoListFragment extends Fragment {
             UiUtils.post(() -> {
                 loading.dismiss();
                 if (err != null) {
+                    LogUtil.w(TAG, "search video failed. %s", LogUtil.getStackTraceString(err));
                     UiUtils.showToast("搜索视频失败: " + err.getMessage());
                     return;
                 }
@@ -131,6 +133,7 @@ public class VideoListFragment extends Fragment {
             @Override
             public void call(List<QqVideoHotWord> list, Throwable err) {
                 if (err != null) {
+                    LogUtil.w(TAG, "get hot search failed.");
                     UiUtils.showToast("获取热搜失败");
                 }
                 UiUtils.post(() -> {

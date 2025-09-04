@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.DataCallback;
+import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 
@@ -38,14 +39,18 @@ public class ForgetpwdActivity extends AppCompatActivity {
                 @Override
                 public void call(JsonNode dataObject, Throwable err) {
                     if (err != null) {
+                        LogUtil.d(TAG, "send reset code failed. %s", LogUtil.getStackTraceString(err));
                         UiUtils.showToast("发送重置验证码:" + err.getMessage());
                         return;
                     }
                     int success = dataObject.get("success").asInt();
                     if (success == 1) {
+                        LogUtil.d(TAG, "send reset code success.");
                         UiUtils.showToast("发送成功");
                     } else {
-                        UiUtils.showToast(dataObject.get("err").asText());
+                        String errText = dataObject.get("err").asText();
+                        LogUtil.d(TAG, "send reset code failed. %s", errText);
+                        UiUtils.showToast(errText);
                     }
                 }
             });
@@ -59,13 +64,17 @@ public class ForgetpwdActivity extends AppCompatActivity {
                 @Override
                 public void call(JsonNode respData, Throwable err) {
                     if (err != null) {
+                        LogUtil.d(TAG, "reset password failed. %s", LogUtil.getStackTraceString(err));
                         UiUtils.showToast("重置密码失败:" + err.getMessage());
                         return;
                     }
                     if (respData.get("success").asInt() == 1) {
+                        LogUtil.d(TAG, "reset password success.");
                         UiUtils.showToast("重置成功");
                     } else {
-                        UiUtils.showToast(respData.get("message").asText(""));
+                        String errText = respData.get("message").asText("");
+                        UiUtils.showToast(errText);
+                        LogUtil.d(TAG, "reset password failed. %s", errText);
                     }
                 }
             });

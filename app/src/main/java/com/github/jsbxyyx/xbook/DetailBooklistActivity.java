@@ -41,6 +41,7 @@ public class DetailBooklistActivity extends AppCompatActivity {
 
         booklistId = getIntent().getStringExtra("booklist_id");
         if (Common.isBlank(booklistId)) {
+            LogUtil.d(TAG, "booklist id invalid.");
             UiUtils.showToast("书籍集合ID无效");
             return;
         }
@@ -80,6 +81,7 @@ public class DetailBooklistActivity extends AppCompatActivity {
                         intent.putExtra("booklist_id", booklist_id);
                         startActivity(intent);
                     } catch (Exception e) {
+                        LogUtil.e(TAG, "book list params error. %s", LogUtil.getStackTraceString(e));
                         UiUtils.showToast("书籍集合参数错误");
                     }
                 }
@@ -108,10 +110,12 @@ public class DetailBooklistActivity extends AppCompatActivity {
                 UiUtils.post(() -> {
                     loading.dismiss();
                     if (err != null) {
+                        LogUtil.d(TAG, "book list search failed. %s", LogUtil.getStackTraceString(err));
                         UiUtils.showToast("书籍集合查询失败: " + err.getMessage());
                         return;
                     }
                     if (page == 1 && list.isEmpty()) {
+                        LogUtil.d("not search book list. %s, %s", booklistId, page);
                         UiUtils.showToast("未查询到书籍集合");
                         btn_more.setVisibility(View.GONE);
                         return;

@@ -38,7 +38,8 @@ public class GeckoWebViewActivity extends AppCompatActivity {
         url = getIntent().getStringExtra("url");
 
         if (Common.isBlank(url)) {
-            UiUtils.showToast("没有地址");
+            LogUtil.d(TAG, "not web url");
+            UiUtils.showToast("没有网页地址");
             return;
         }
 

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
+import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.UiUtils;
@@ -47,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
                         loading.dismiss();
                     });
                     if (err != null) {
+                        LogUtil.d(TAG, "login failed. %s", LogUtil.getStackTraceString(err));
                         UiUtils.showToast("登录失败 : " + err.getMessage());
                         return;
                     }

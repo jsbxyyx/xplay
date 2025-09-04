@@ -57,6 +57,7 @@ public class DetailActivity extends AppCompatActivity {
 
         detailUrl = getIntent().getStringExtra("detailUrl");
         if (Common.isEmpty(detailUrl)) {
+            LogUtil.d(TAG, "book detailUrl is empty.");
             UiUtils.showToast("书籍地址为空");
             return;
         }
@@ -76,11 +77,14 @@ public class DetailActivity extends AppCompatActivity {
         bookNetHelper.detail(detailUrl, new DataCallback<Book>() {
             @Override
             public void call(Book book, Throwable err) {
+                UiUtils.post(() -> {
+                    loading.dismiss();
+                });
                 if (err != null) {
+                    LogUtil.e(TAG, "get book detail failed. [%s]. [%s]", detailUrl, LogUtil.getStackTraceString(err));
                     UiUtils.showToast("获取书籍详情失败:" + err.getMessage());
                     return;
                 }
-                loading.dismiss();
                 LogUtil.d(TAG, "call: %s", book);
                 mBook = book;
                 mBook.setDetailUrl(detailUrl);
@@ -115,6 +119,7 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void call(List<Book> list, Throwable err) {
                 if (err != null) {
+                    LogUtil.d(TAG, "get recommend book failed. %s", LogUtil.getStackTraceString(err));
                     UiUtils.showToast("获取推荐书籍失败:" + err.getMessage());
                     return;
                 }
@@ -140,6 +145,7 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void call(List<Comment> list, Throwable err) {
                 if (err != null) {
+                    LogUtil.d(TAG, "get recommend book comment failed. %s", LogUtil.getStackTraceString(err));
                     UiUtils.showToast("获取推荐书籍评论失败:" + err.getMessage());
                     return;
                 }
@@ -154,15 +160,18 @@ public class DetailActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_detail_download).setOnClickListener(v -> {
             if (mBook == null || Common.isEmpty(mBook.getDownloadUrl())) {
+                LogUtil.d(TAG, "book download url is empty, please login.");
                 UiUtils.showToast("下载地址为空，请登录");
                 return;
             }
             Book dbBook = bookDbHelper.findBookByBid(mBook.getBid());
             if (dbBook != null) {
+                LogUtil.d(TAG, "reading book list exists the book : %s", mBook.getTitle());
                 UiUtils.showToast("阅读列表存在《" + mBook.getTitle() + "》");
                 return;
             }
             UiUtils.showToast("开始下载...");
+            LogUtil.d(TAG, "begin download book... %s. %s", mBook.getTitle(), mBook.getDownloadUrl());
             Intent intent = new Intent(this, DownloadBookService.class);
             intent.setAction(DownloadBookService.ACTION_START_DOWNLOAD);
             intent.putExtra(DownloadBookService.EXTRA_URL, mBook.getDownloadUrl());

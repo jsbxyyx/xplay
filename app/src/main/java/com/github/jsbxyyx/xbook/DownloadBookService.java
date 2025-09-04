@@ -134,6 +134,7 @@ public class DownloadBookService extends Service {
             @Override
             public void call(File file, Throwable err) {
                 if (err != null) {
+                    LogUtil.d(TAG, "book download failed. %s", LogUtil.getStackTraceString(err));
                     UiUtils.showToast("书籍下载失败:" + err.getMessage());
 
                     downloadTasks.remove(task.downloadId);
@@ -167,6 +168,7 @@ public class DownloadBookService extends Service {
                                 @Override
                                 public void call(JsonNode o, Throwable err) {
                                     if (err != null) {
+                                        LogUtil.d(TAG, "sync failed. %s", LogUtil.getStackTraceString(err));
                                         UiUtils.showToast("同步失败:" + err.getMessage());
                                         return;
                                     }
@@ -178,13 +180,14 @@ public class DownloadBookService extends Service {
                                     }
                                     if (book_db != null) {
                                         UiUtils.showToast("同步成功");
+                                        LogUtil.d(TAG, "sync book success. %s, %s", book_db.getBid(), book_db.getTitle());
                                     }
                                 }
                             });
                         }
                     }
                 } else {
-                    LogUtil.e(TAG, "不支持的类型:%s", type);
+                    LogUtil.e(TAG, "not support type : %s", type);
                     UiUtils.showToast("不支持的类型:" + type);
                 }
                 downloadTasks.remove(task.downloadId);

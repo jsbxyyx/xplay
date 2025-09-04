@@ -98,6 +98,7 @@ public class ListFragment extends Fragment {
                     intent.putExtra("title", title);
                     mActivity.startActivity(intent);
                 } catch (Exception e) {
+                    LogUtil.e(TAG, "book list params error. %s", LogUtil.getStackTraceString(e));
                     UiUtils.showToast("书籍集合参数错误");
                 }
             }
@@ -138,6 +139,7 @@ public class ListFragment extends Fragment {
                     UiUtils.post(() -> {
                         loading.dismiss();
                         if (err != null) {
+                            LogUtil.d(TAG, "book search failed. %s", LogUtil.getStackTraceString(err));
                             UiUtils.showToast("书籍搜索失败: " + err.getMessage());
                             return;
                         }
@@ -145,6 +147,7 @@ public class ListFragment extends Fragment {
                             listBookAdapter.getDataList().clear();
                         }
                         if (page == 1 && list.isEmpty()) {
+                            LogUtil.d(TAG, "not search book. page:%s", page);
                             UiUtils.showToast("未搜索到书籍");
                             btn_more.setVisibility(View.GONE);
                             return;
@@ -170,6 +173,7 @@ public class ListFragment extends Fragment {
                     UiUtils.post(() -> {
                         loading.dismiss();
                         if (err != null) {
+                            LogUtil.d(TAG, "book search failed. %s", LogUtil.getStackTraceString(err));
                             UiUtils.showToast("书籍搜索失败: " + err.getMessage());
                             return;
                         }
@@ -177,6 +181,7 @@ public class ListFragment extends Fragment {
                             listBookAdapter.getDataList().clear();
                         }
                         if (page == 1 && list.isEmpty()) {
+                            LogUtil.d(TAG, "not search book. page:%s", page);
                             UiUtils.showToast("未搜索到书籍");
                             btn_more.setVisibility(View.GONE);
                             return;

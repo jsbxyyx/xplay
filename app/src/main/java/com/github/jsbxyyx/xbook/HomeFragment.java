@@ -116,6 +116,7 @@ public class HomeFragment extends Fragment {
                     contribution_view_text.setTextColor(Color.GRAY);
                 }
                 UiUtils.showToast(builder.toString());
+                LogUtil.d(TAG, "contribution text : %s", builder.toString());
                 //contribution_view_text.setText(builder.toString());
             }
         });
@@ -124,7 +125,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void call(JsonNode o, Throwable err) {
                 if (err != null) {
-                    LogUtil.d(TAG, "%s", LogUtil.getStackTraceString(err));
+                    LogUtil.d(TAG, "get version update failed. %s", LogUtil.getStackTraceString(err));
                     UiUtils.showToast("获取版本更新失败:" + err.getMessage());
                     return;
                 }
@@ -290,11 +291,12 @@ public class HomeFragment extends Fragment {
                                         @Override
                                         public void call(Object o, Throwable err) {
                                             if (err != null) {
-                                                LogUtil.e(TAG, "delete cloud failed. %s", LogUtil.getStackTraceString(err));
+                                                LogUtil.e(TAG, "delete cloud failed. %s, %s", title, LogUtil.getStackTraceString(err));
                                                 UiUtils.showToast("同步删除云端失败");
                                                 return;
                                             }
                                             UiUtils.showToast("同步删除云端成功");
+                                            LogUtil.d(TAG, "sync delete cloud success. %s", title);
                                         }
                                     });
                                 }
@@ -347,6 +349,7 @@ public class HomeFragment extends Fragment {
                                     @Override
                                     public void call(JsonNode o, Throwable err) {
                                         if (err != null) {
+                                            LogUtil.d(TAG, "sync read progress failed. %s", LogUtil.getStackTraceString(err));
                                             UiUtils.showToast("同步阅读进度失败：" + err.getMessage());
                                             return;
                                         }
@@ -372,6 +375,7 @@ public class HomeFragment extends Fragment {
                                                 LogUtil.d(TAG, "call: insert book: %s", book1.getTitle());
                                             }
                                             UiUtils.showToast("同步阅读进度成功");
+                                            LogUtil.d(TAG, "sync read progress success. %s", book1.getTitle());
                                         }
                                     }
                                 });

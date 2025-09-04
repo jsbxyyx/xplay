@@ -93,8 +93,10 @@ public class BookJavascript {
             if (fr.code != 0) {
                 try {
                     String errorMessage = JsonUtil.readTree(fr.message).get("error").get("message").asText();
+                    LogUtil.w(TAG, "tts client audio by text failed. %s", errorMessage);
                     UiUtils.showToast(errorMessage);
                 } catch (Exception e) {
+                    LogUtil.e(TAG, "unknown error. %s", LogUtil.getStackTraceString(e));
                     UiUtils.showToast("unknown error");
                 }
                 return "-1";
