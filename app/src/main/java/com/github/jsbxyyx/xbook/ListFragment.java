@@ -87,19 +87,24 @@ public class ListFragment extends Fragment {
             intent.putExtra("bid", book.getBid());
             mActivity.startActivity(intent);
         }).setOnSubItemClickListener((book, type, position) -> {
-            String extra = book.getExtra();
-            if (!Common.isBlank(extra)) {
-                try {
-                    JsonNode tree = JsonUtil.readTree(extra);
-                    String booklist_id = tree.get("booklist_id").asText();
-                    String title = tree.get("title").asText();
-                    Intent intent = new Intent(mActivity, DetailBooklistActivity.class);
-                    intent.putExtra("booklist_id", booklist_id);
-                    intent.putExtra("title", title);
-                    mActivity.startActivity(intent);
-                } catch (Exception e) {
-                    LogUtil.e(TAG, "book list params error. %s", LogUtil.getStackTraceString(e));
-                    UiUtils.showToast("书籍集合参数错误");
+            if (
+                    Book.content_type_booklist.equals(book.getContent_type()) &&
+                            Book.publisher_key.equals(type)
+            ) {
+                String extra = book.getExtra();
+                if (!Common.isBlank(extra)) {
+                    try {
+                        JsonNode tree = JsonUtil.readTree(extra);
+                        String booklist_id = tree.get("booklist_id").asText();
+                        String title = tree.get("title").asText();
+                        Intent intent = new Intent(mActivity, DetailBooklistActivity.class);
+                        intent.putExtra("booklist_id", booklist_id);
+                        intent.putExtra("title", title);
+                        mActivity.startActivity(intent);
+                    } catch (Exception e) {
+                        LogUtil.e(TAG, "book list params error. %s", LogUtil.getStackTraceString(e));
+                        UiUtils.showToast("书籍集合参数错误");
+                    }
                 }
             }
         });
