@@ -188,7 +188,8 @@
     [hidden] {
       display: none;
     }
-
+  </style>
+  <style>
     #area {
       margin-bottom: 40px;
     }
@@ -202,26 +203,13 @@
       z-index: 1000;
     }
 
-    .next {
-      width: 40%;
-    }
-
-    .prev {
-      width: 40%;
-    }
-
-    .focus {
-      width: 10%;
-      /* width: 50px; */
-    }
-
-    #epub-outline {
+    #b-outline {
       position: fixed;
       overflow-x: hidden;
       overflow-y: auto;
     }
 
-    #epub-dialog {
+    #b-dialog {
       position: fixed;
       overflow-x: hidden;
       overflow-y: auto;
@@ -239,28 +227,83 @@
       border-radius: 10px;
       background-color: white;
     }
+
+    .square30 {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    .square20 {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .square15 {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .margin-center {
+      margin: 0 auto;
+    }
   </style>
-  <script src="zepto.min.js"></script>
+  <script src="jquery.min.js"></script>
 </head>
 
 <body>
   <div id="epub-tool" style="display: block; height: 1.5rem; margin: 0.5rem 0.2rem 0rem 0.2rem;">
-    <div onclick="outlineClick(this)" style="width: 1rem; cursor: pointer; float: left;">三</div>
-    <div onclick="fontClick(this)" style="width: 1rem; cursor: pointer; float: left; margin-left: 10px;">Aa</div>
-    <div onclick="playClick(this)" style="width: 1rem; cursor: pointer; float: left; margin-left: 10px;">▷</div>
+    <!-- menu -->
+    <div onclick="outlineClick(this)" style="width: 1.2rem; cursor: pointer; float: left;">
+      <div class="square20 margin-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#B197FC" d="M96 160C96 142.3 110.3 128 128 128L512 128C529.7 128 544 142.3 544 160C544 177.7 529.7 192 512 192L128 192C110.3 192 96 177.7 96 160zM96 320C96 302.3 110.3 288 128 288L512 288C529.7 288 544 302.3 544 320C544 337.7 529.7 352 512 352L128 352C110.3 352 96 337.7 96 320zM544 480C544 497.7 529.7 512 512 512L128 512C110.3 512 96 497.7 96 480C96 462.3 110.3 448 128 448L512 448C529.7 448 544 462.3 544 480z"/></svg>
+      </div>
+    </div>
+    <!-- font -->
+    <div onclick="fontClick(this)" style="width: 1.2rem; cursor: pointer; float: left; margin-left: 10px;">
+      <div class="square20 margin-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#B197FC" d="M349.1 114.7C343.9 103.3 332.5 96 320 96C307.5 96 296.1 103.3 290.9 114.7L123.5 480L112 480C94.3 480 80 494.3 80 512C80 529.7 94.3 544 112 544L200 544C217.7 544 232 529.7 232 512C232 494.3 217.7 480 200 480L193.9 480L215.9 432L424.2 432L446.2 480L440.1 480C422.4 480 408.1 494.3 408.1 512C408.1 529.7 422.4 544 440.1 544L528.1 544C545.8 544 560.1 529.7 560.1 512C560.1 494.3 545.8 480 528.1 480L516.6 480L349.2 114.7zM394.8 368L245.2 368L320 204.8L394.8 368z"/></svg>
+      </div>
+    </div>
+    <!-- play -->
+    <div onclick="playClick(this)" style="width: 1.2rem; cursor: pointer; float: left; margin-left: 10px;">
+      <div class="square20 margin-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#B197FC" d="M187.2 100.9C174.8 94.1 159.8 94.4 147.6 101.6C135.4 108.8 128 121.9 128 136L128 504C128 518.1 135.5 531.2 147.6 538.4C159.7 545.6 174.8 545.9 187.2 539.1L523.2 355.1C536 348.1 544 334.6 544 320C544 305.4 536 291.9 523.2 284.9L187.2 100.9z"/></svg>
+      </div>
+    </div>
     <div style="float: right;">
       <input id="curPage" type="number" value="" style="max-width: 3rem" onkeydown="clickGoPage(event)">
       &nbsp;/&nbsp;
       <span id="totalPages"></span>
     </div>
   </div>
-  <div style="display: none;" id="epub-outline"></div>
-  <div style="display: none;" id="epub-dialog"></div>
+  <div style="display: none;" id="b-outline"></div>
+  <div style="display: none;" id="b-dialog"></div>
   <div id="epub-container"></div>
   <div class="page-tool" id="page-tool">
-    <button onclick="next()" class="next">下一页</button>
-    <button onclick="prev()" class="prev">上一页</button>
-    <button onclick="focusMode()" class="focus">〇</button>
+    <!-- next -->
+    <div onclick="next()" id="next" style="width: 30%; float: left; margin-right: 10px;">
+      <div class="square30 margin-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#B197FC" d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM361 417C351.6 426.4 336.4 426.4 327.1 417C317.8 407.6 317.7 392.4 327.1 383.1L366.1 344.1L216 344.1C202.7 344.1 192 333.4 192 320.1C192 306.8 202.7 296.1 216 296.1L366.1 296.1L327.1 257.1C317.7 247.7 317.7 232.5 327.1 223.2C336.5 213.9 351.7 213.8 361 223.2L441 303.2C450.4 312.6 450.4 327.8 441 337.1L361 417.1z"/></svg>
+      </div>
+    </div>
+    <!-- exchange -->
+    <div onclick="exchange(this)" id="exchange" style="width: 5%; float: left; margin-right: 10px;">
+      <div class="square30 margin-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#B197FC" d="M566.6 214.6L470.6 310.6C461.4 319.8 447.7 322.5 435.7 317.5C423.7 312.5 416 300.9 416 288L416 224L96 224C78.3 224 64 209.7 64 192C64 174.3 78.3 160 96 160L416 160L416 96C416 83.1 423.8 71.4 435.8 66.4C447.8 61.4 461.5 64.2 470.7 73.3L566.7 169.3C579.2 181.8 579.2 202.1 566.7 214.6zM169.3 566.6L73.3 470.6C60.8 458.1 60.8 437.8 73.3 425.3L169.3 329.3C178.5 320.1 192.2 317.4 204.2 322.4C216.2 327.4 224 339.1 224 352L224 416L544 416C561.7 416 576 430.3 576 448C576 465.7 561.7 480 544 480L224 480L224 544C224 556.9 216.2 568.6 204.2 573.6C192.2 578.6 178.5 575.8 169.3 566.7z"/></svg>
+      </div>
+    </div>
+    <!-- prev -->
+    <div onclick="prev()" id="prev" style="width: 30%; float: left; margin-right: 10px;">
+      <div class="square30 margin-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#B197FC" d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM199 303L279 223C288.4 213.6 303.6 213.6 312.9 223C322.2 232.4 322.3 247.6 312.9 256.9L273.9 295.9L424 295.9C437.3 295.9 448 306.6 448 319.9C448 333.2 437.3 343.9 424 343.9L273.9 343.9L312.9 382.9C322.3 392.3 322.3 407.5 312.9 416.8C303.5 426.1 288.3 426.2 279 416.8L199 336.8C189.6 327.4 189.6 312.2 199 302.9z"/></svg>
+      </div>
+    </div>
+    <!-- focus -->
+    <div onclick="focusMode()" id="focus" style="width: 5%; float: left; margin-right: 10px;">
+      <div class="square30 margin-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#B197FC" d="M286.7 96.1C291.7 113 282.1 130.9 265.2 135.9C185.9 159.5 128.1 233 128.1 320C128.1 426 214.1 512 320.1 512C426.1 512 512.1 426 512.1 320C512.1 233.1 454.3 159.6 375 135.9C358.1 130.9 348.4 113 353.5 96.1C358.6 79.2 376.4 69.5 393.3 74.6C498.9 106.1 576 204 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320C64 204 141.1 106.1 246.9 74.6C263.8 69.6 281.7 79.2 286.7 96.1z"/></svg>
+      </div>
+    </div>
   </div>
 
   <script src="jszip.min.js"></script>
@@ -482,7 +525,14 @@
         //console.log('goto: ' + cur + ' / ' + pages + ' / ' + percent);
         //var cfi = book.locations.cfiFromPercentage(percent);
         //rendition.display(cfi);
-        goPage(cur, pages);
+        try {
+          goPage(cur, pages);
+        } catch (e) {
+        }
+        setTimeout(function() {
+          epub_toast('跳转到进度: ' + cur + ' 页');
+          goPage(cur, pages);
+        }, 1500);
       }
 
       displayed.then(() => {
@@ -490,8 +540,8 @@
           console.log(view);
           var pathname = new URL(window.location.href).pathname;
           var prefix = pathname.substring(0, pathname.lastIndexOf('/'));
-          view.contents.addScript(prefix + '/zepto.min.js').then(() => {
-            console.log('add zepto.js');
+          view.contents.addScript(prefix + '/jquery.min.js').then(() => {
+            console.log('add jquery.min.js');
             //$(fontEle).css('font-size', "clamp(12px, 2vw, 24px) !important");
             hooked(view);
           });
@@ -507,7 +557,9 @@
         evt.preventDefault();
         var curPage = document.getElementById('curPage');
         var totalPages = document.getElementById('totalPages');
-        goPage(curPage.value, totalPages.innerText);
+        setTimeout(function() {
+          goPage(curPage.value, totalPages.innerText);
+        }, 500);
       }
     }
 
@@ -542,11 +594,17 @@
         rendition.next();
       }
     }
+    function exchange(n) {
+      var n1 = $(n).prev();
+      var n2 = $(n).next();
+      $(n).before(n2);
+      $(n).after(n1);
+    }
 
     function createToc(navigation) {
-      var epub_outline_ele = document.getElementById('epub-outline');
+      var epub_outline_ele = document.getElementById('b-outline');
       var html = outlineGenerate(navigation.toc);
-      html += '<div class="close" onclick="outlineClose(\'epub-outline\')">关闭</div>';
+      html += '<div class="close" onclick="outlineClose(\'b-outline\')">关闭</div>';
       epub_outline_ele.innerHTML = html;
       var outline_ul_ele = document.getElementById('outline-ul');
       outline_ul_ele.style.marginBottom = '100px';
@@ -572,10 +630,10 @@
     function outlineGo(obj) {
       var href = obj.getAttribute('data-href');
       rendition.display(href);
-      outlineClose('epub-outline')
+      outlineClose('b-outline')
     }
     function outlineClick(obj) {
-      var outline = document.getElementById('epub-outline');
+      var outline = document.getElementById('b-outline');
       if (outline.style.display == 'block') {
         outline.style.display = 'none';
       } else {
@@ -594,15 +652,32 @@
       outline.style.display = 'none';
     }
     function fontClick(obj) {
-      var dialog = document.getElementById('epub-dialog');
+      var dialog = document.getElementById('b-dialog');
 
-      var html = '<div>字体大小:'
-        + '<button onclick="fontSet(this, \'small\')" style="margin-left: 5px;">S</button>'
-        + '<button onclick="fontSet(this, \'medium\')" style="margin-left: 5px;">M</button>'
-        + '<button onclick="fontSet(this, \'large\')" style="margin-left: 5px;">L</button>'
-        + '<button onclick="fontSet(this, \'x-large\')" style="margin-left: 5px;">XL</button>'
+      var html = '<div>'
+        + '<div style="float: left;">字体大小:</div>'
+        + '<div onclick="fontSet(this, \'small\')" style="float: left; margin-left: 5px;">'
+        +   '<div class="square30 margin-center">'
+        +   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#B197FC" d="M160 221.5C160 152.2 216.2 96 285.5 96L432 96C449.7 96 464 110.3 464 128C464 145.7 449.7 160 432 160L285.5 160C251.5 160 224 187.5 224 221.5C224 252.5 247.1 278.7 277.9 282.5L370.1 294C432.9 301.9 480 355.2 480 418.5C480 487.8 423.8 544 354.5 544L208 544C190.3 544 176 529.7 176 512C176 494.3 190.3 480 208 480L354.5 480C388.5 480 416 452.5 416 418.5C416 387.5 392.9 361.3 362.1 357.5L269.9 346C207.1 338.1 160 284.8 160 221.5z"/></svg>'
+        +   '</div>'
+        + '</div>'
+        + '<div onclick="fontSet(this, \'medium\')" style="float: left; margin-left: 5px;">'
+        +   '<div class="square30 margin-center">'
+        +   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#B197FC" d="M118.7 97.4C132.2 93.3 146.8 98.5 154.6 110.3L320 358.3L485.4 110.3C493.2 98.6 507.8 93.3 521.3 97.4C534.8 101.5 544 113.9 544 128L544 512C544 529.7 529.7 544 512 544C494.3 544 480 529.7 480 512L480 233.7L346.6 433.8C340.7 442.7 330.7 448 320 448C309.3 448 299.3 442.7 293.4 433.8L160 233.7L160 512C160 529.7 145.7 544 128 544C110.3 544 96 529.7 96 512L96 128C96 113.9 105.2 101.5 118.7 97.4z"/></svg>'
+        +   '</div>'
+        + '</div>'
+        + '<div onclick="fontSet(this, \'large\')" style="float: left; margin-left: 5px;">'
+        +   '<div class="square30 margin-center">'
+        +   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#B197FC" d="M224 96C241.7 96 256 110.3 256 128L256 480L448 480C465.7 480 480 494.3 480 512C480 529.7 465.7 544 448 544L224 544C206.3 544 192 529.7 192 512L192 128C192 110.3 206.3 96 224 96z"/></svg>'
+        +   '</div>'
+        + '</div>'
+        + '<div onclick="fontSet(this, \'x-large\')" style="float: left; margin-left: 5px;">'
+        +   '<div class="square30 margin-center">'
+        +   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#B197FC" d="M504.6 148.5C515.9 134.9 514.1 114.7 500.5 103.4C486.9 92.1 466.7 93.9 455.4 107.5L320 270L184.6 107.5C173.3 93.9 153.1 92.1 139.5 103.4C125.9 114.7 124.1 134.9 135.4 148.5L278.3 320L135.4 491.5C124.1 505.1 125.9 525.3 139.5 536.6C153.1 547.9 173.3 546.1 184.6 532.5L320 370L455.4 532.5C466.7 546.1 486.9 547.9 500.5 536.6C514.1 525.3 515.9 505.1 504.6 491.5L361.7 320L504.6 148.5z"/></svg>'
+        +   '</div>'
+        + '</div>'
         + '</div>';
-      html += '<div class="close" onclick="outlineClose(\'epub-dialog\')">关闭</div>';
+      html += '<div class="close" onclick="outlineClose(\'b-dialog\')">关闭</div>';
 
       dialog.innerHTML = html;
 
@@ -623,7 +698,7 @@
       if (rendition != null) {
         rendition.themes.default({ [fontEle]: { "font-size": fontsize + " !important" } });
       }
-      outlineClose('epub-dialog');
+      outlineClose('b-dialog');
     }
     function handleVolumeKey(key) {
       console.log('key:' + key);
@@ -635,9 +710,7 @@
     }
     function playClick(obj) {
       epub_tts_enable = !epub_tts_enable;
-      if (window.xbook && window.xbook.toast) {
-        window.xbook.toast('播放' + (epub_tts_enable ? "开启" : "关闭"));
-      }
+      epub_toast('播放' + (epub_tts_enable ? "开启" : "关闭"));
       console.log("tts enable : " + epub_tts_enable);
       tts();
     }
@@ -684,6 +757,11 @@
             }
           }
         });
+      }
+    }
+    function epub_toast(str) {
+      if (window.xbook && window.xbook.toast) {
+        window.xbook.toast(str);
       }
     }
   </script>
