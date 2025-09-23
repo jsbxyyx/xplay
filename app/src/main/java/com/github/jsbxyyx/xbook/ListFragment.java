@@ -103,7 +103,7 @@ public class ListFragment extends Fragment {
                         mActivity.startActivity(intent);
                     } catch (Exception e) {
                         LogUtil.e(TAG, "book list params error. %s", LogUtil.getStackTraceString(e));
-                        UiUtils.showToast("书籍集合参数错误");
+                        UiUtils.showToast("书单参数错误");
                     }
                 }
             }

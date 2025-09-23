@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.JsonUtil;
 
+import java.util.List;
+
 /**
  * @author jsbxyyx
  * @since 1.0
@@ -31,6 +33,7 @@ public class Book implements java.io.Serializable {
     private String downloadUrl;
     private String content_type;
     private String extra;
+    private List<Book> related_list;
     // net end
 
     // db
@@ -153,6 +156,14 @@ public class Book implements java.io.Serializable {
 
     public void setExtra(String extra) {
         this.extra = extra;
+    }
+
+    public List<Book> getRelated_list() {
+        return related_list;
+    }
+
+    public void setRelated_list(List<Book> related_list) {
+        this.related_list = related_list;
     }
 
     public Long getId() {

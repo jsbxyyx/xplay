@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.JsonUtil;
@@ -35,6 +36,9 @@ public class DetailActivity extends AppCompatActivity {
 
     private RecyclerView rv_detail_suggest;
     private ListBookAdapter listBookAdapter;
+
+    private RecyclerView rv_detail_related;
+    private ListBookAdapter relatedListBookAdapter;
 
     private RecyclerView rv_detail_comments;
     private ListCommentAdapter listCommentAdapter;
@@ -72,6 +76,35 @@ public class DetailActivity extends AppCompatActivity {
         TextView tv_detail_file = findViewById(R.id.tv_detail_file);
         TextView tv_download_progress = findViewById(R.id.tv_download_progress);
 
+        rv_detail_related = findViewById(R.id.rv_detail_related);
+        LinearLayoutManager relatedLayoutManager = new LinearLayoutManager(this);
+        rv_detail_related.setLayoutManager(relatedLayoutManager);
+        rv_detail_related.setHasFixedSize(true);
+        relatedListBookAdapter = new ListBookAdapter(this, null);
+        relatedListBookAdapter.setOnSubItemClickListener((book, type, position) -> {
+            if (
+                    Book.content_type_booklist.equals(book.getContent_type()) &&
+                            Book.publisher_key.equals(type)
+            ) {
+                String extra = book.getExtra();
+                if (!Common.isBlank(extra)) {
+                    try {
+                        JsonNode tree = JsonUtil.readTree(extra);
+                        String booklist_id = tree.get("booklist_id").asText();
+                        String title = tree.get("title").asText();
+                        Intent intent = new Intent(this, DetailBooklistActivity.class);
+                        intent.putExtra("booklist_id", booklist_id);
+                        intent.putExtra("title", title);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        LogUtil.e(TAG, "book list params error. %s", LogUtil.getStackTraceString(e));
+                        UiUtils.showToast("书单参数错误");
+                    }
+                }
+            }
+        });
+        rv_detail_related.setAdapter(relatedListBookAdapter);
+
         DialogLoading loading = new DialogLoading(this);
         loading.show();
         bookNetHelper.detail(detailUrl, new DataCallback<Book>() {
@@ -88,6 +121,7 @@ public class DetailActivity extends AppCompatActivity {
                 LogUtil.d(TAG, "call: %s", book);
                 mBook = book;
                 mBook.setDetailUrl(detailUrl);
+                List<Book> related_list = mBook.getRelated_list();
                 UiUtils.post(() -> {
                     tv_detail_title.setText(mBook.getTitle());
                     Picasso.get().load(mBook.getCoverImage()).error(R.drawable.baseline_menu_book_24).into(iv_detail_img);
@@ -96,6 +130,11 @@ public class DetailActivity extends AppCompatActivity {
                     tv_detail_language.setText(mBook.getLanguage());
                     tv_detail_isbn.setText(mBook.getIsbn());
                     tv_detail_file.setText(mBook.getFile());
+                    if (related_list != null && !related_list.isEmpty()) {
+                        relatedListBookAdapter.getDataList().clear();
+                        relatedListBookAdapter.getDataList().addAll(related_list);
+                        relatedListBookAdapter.notifyDataSetChanged();
+                    }
                 });
             }
         });
