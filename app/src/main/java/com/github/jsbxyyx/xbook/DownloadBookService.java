@@ -100,7 +100,7 @@ public class DownloadBookService extends Service {
         int notificationId = notificationIdGenerator.getAndIncrement();
 
         if (downloadTasks.containsKey(downloadId)) {
-            LogUtil.w(TAG, "文件已在下载中: %s" + title);
+            LogUtil.w(TAG, "文件已在下载中: %s", title);
             return;
         }
         DownloadTask task = new DownloadTask(downloadId, notificationId, System.currentTimeMillis(), title, Common.newMap(
