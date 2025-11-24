@@ -3,8 +3,13 @@ package com.github.jsbxyyx.xbook.httpserver;
 import static com.github.jsbxyyx.xbook.common.UriUtils.encodeURIComponent;
 
 import com.github.jsbxyyx.xbook.common.Common;
+import com.github.jsbxyyx.xbook.common.IdUtil;
+import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.UiUtils;
+import com.github.jsbxyyx.xbook.data.BookDbHelper;
+import com.github.jsbxyyx.xbook.data.bean.Book;
+import com.github.jsbxyyx.xbook.data.bean.BookReader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +32,8 @@ public class FileHttpServer extends NanoHTTPD {
     private final String TAG = getClass().getSimpleName();
     private MediaTypeFactory mediaTypeFactory;
 
+    private BookDbHelper bookDbHelper;
+
     class ResourceResponse extends Response {
         ResourceResponse(String mimeType, InputStream data, long totalBytes) {
             super(Response.Status.OK, mimeType, data, totalBytes);
@@ -34,6 +43,7 @@ public class FileHttpServer extends NanoHTTPD {
     public FileHttpServer(int port, MediaTypeFactory mediaTypeFactory) {
         super(port);
         this.mediaTypeFactory = mediaTypeFactory;
+        bookDbHelper = BookDbHelper.getInstance();
     }
 
     @Override
@@ -43,10 +53,7 @@ public class FileHttpServer extends NanoHTTPD {
         Map<String, String> header = session.getHeaders();
         Map<String, List<String>> params = session.getParameters();
         String answer = "Success!";
-        LogUtil.d(TAG, "uri=%s", uri);
-        LogUtil.d(TAG, "method=%s", method);
-        LogUtil.d(TAG, "header=%s", header);
-        LogUtil.d(TAG, "params=%s", params);
+        LogUtil.d(TAG, "uri=%s | method=%s | header=%s | params=%s", uri, method, header, params);
 
         if (method.equals(Method.OPTIONS)) {
             Response response = newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "");
@@ -127,6 +134,48 @@ public class FileHttpServer extends NanoHTTPD {
                     LogUtil.e(TAG, "%s", LogUtil.getStackTraceString(e));
                 }
                 Response response = newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_HTML, "Not Found");
+                HttpServerUtils.cors(session, response);
+                return response;
+            }
+        } else if (method.equals(Method.POST)) {
+            if ("/reportPage".equals(uri)) {
+                String bookId = "";
+                if (!Common.isEmpty(params.get("bookId"))) {
+                    bookId = params.get("bookId").get(0);
+                }
+                String current = "";
+                if (!Common.isEmpty(params.get("current"))) {
+                    current = params.get("current").get(0);
+                }
+                String pages = "";
+                if (!Common.isEmpty(params.get("pages"))) {
+                    pages = params.get("pages").get(0);
+                }
+
+                Book book = bookDbHelper.findBookById(bookId);
+                BookReader bookReader = bookDbHelper.findBookReaderByBookId(Long.valueOf(bookId));
+                if (bookReader == null) {
+                    bookReader = new BookReader();
+                    bookReader.setId(IdUtil.nextId() + "");
+                    bookReader.setBookId(bookId);
+                    bookReader.setCur(current);
+                    bookReader.setPages(pages);
+                    bookReader.setUser(book.getUser());
+                    bookReader.setRemark("");
+                    bookReader.setUpdated(new Date().getTime() + "");
+                    bookDbHelper.insertBookReader(bookReader);
+                } else {
+                    bookReader.setCur(current);
+                    bookReader.setPages(pages);
+                    bookReader.setUpdated(new Date().getTime() + "");
+                    bookDbHelper.updateBookReaderByBookId(bookReader);
+                }
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("code", "200");
+                String json = JsonUtil.toJson(map);
+
+                Response response = newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, json);
                 HttpServerUtils.cors(session, response);
                 return response;
             }

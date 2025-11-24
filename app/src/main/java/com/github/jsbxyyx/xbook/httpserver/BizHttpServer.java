@@ -32,10 +32,7 @@ public class BizHttpServer extends NanoHTTPD {
         Map<String, String> header = session.getHeaders();
         Map<String, List<String>> params = session.getParameters();
 
-        LogUtil.d(TAG, "uri=%s", uri);
-        LogUtil.d(TAG, "method=%s", method);
-        LogUtil.d(TAG, "header=%s", header);
-        LogUtil.d(TAG, "params=%s", params);
+        LogUtil.d(TAG, "uri=%s | method=%s | header=%s | params=%s", uri, method, header, params);
 
         if (method.equals(Method.OPTIONS)) {
             Response response = newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "{}");

@@ -82,7 +82,7 @@ public class ViewActivity extends AppCompatActivity {
             return;
         }
 
-        int port = 5200;
+        final int port = 5200;
         mHttpd = new FileHttpServer(port, new MediaTypeFactory(getBaseContext()));
         try {
             mHttpd.start();
