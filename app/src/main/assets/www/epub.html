@@ -190,7 +190,10 @@
     }
   </style>
   <style>
-    .dark-mode {
+    html[theme='dark'] {
+      filter: invert(1) hue-rotate(180deg);
+    }
+    html[theme='dark'] img, video {
       filter: invert(1) hue-rotate(180deg);
     }
 
@@ -371,7 +374,15 @@
         'word-break': 'break-word',
         'max-height': '60%',
       },
-    }
+      'html[theme=\'dark\']': {
+        'filter': 'invert(1) hue-rotate(180deg)',
+      },
+      'html[theme=\'dark\'] img, video': {
+        'filter': 'invert(1) hue-rotate(180deg)',
+      },
+    };
+
+    var select_theme = gold_theme;
 
     var file = base + "/" + getUrlParam("name") + "?_=" + new Date().getTime();
     var book_id = getUrlParam("book_id");
@@ -445,16 +456,22 @@
       manager: "continuous",
       allowScriptedContent: true,
     });
+    var epub_iframe_document = null;
 
-    body_ele.style.color = gold_theme['body']['color'];
-    body_ele.style.background = gold_theme['body']['background'];
+    function body_theme() {
+      body_ele.style.color = select_theme['body']['color'];
+      body_ele.style.background = select_theme['body']['background'];
+    }
+    body_theme();
+
+    rendition.themes.register("gold", gold_theme);
     rendition.themes.default(gold_theme);
     rendition.themes.default({ [fontEle]: { "font-size": "clamp(12px, 2vw, 24px) !important" } });
 
     rendition.on('rendered', (rendition, iframe) => {
       console.log('rendition.rendered');
-      var iframeDocument = iframe.document;
-      iframeDocument.addEventListener('keydown', function(event) {
+      epub_iframe_document = iframe.document;
+      epub_iframe_document.addEventListener('keydown', function(event) {
         console.log('key code: ' + event.code);
         if (event.code === 'KeyA' || event.code === 'ArrowLeft' || event.code === 'PageUp') {
           prev();
@@ -525,7 +542,6 @@
       // 目录
       var navigation = book.navigation;
       // console.log('navigation:', navigation);
-      createToc(navigation);
       return book.locations.generate();
     }).then(() => {
       console.log('epub ready 2');
@@ -654,8 +670,8 @@
       outline_ul_ele.style.marginLeft = '5px';
       outline_ul_ele.style.marginRight = '5px';
       outline_ul_ele.style.marginTop = '5px';
-      outline_ul_ele.style.color = gold_theme['body']['color'];
-      outline_ul_ele.style.background = gold_theme['body']['background'];
+      outline_ul_ele.style.color = select_theme['body']['color'];
+      outline_ul_ele.style.background = select_theme['body']['background'];
     }
     function outlineGenerate(tocArray) {
       var html = '';
@@ -682,13 +698,14 @@
       } else {
         outline.style.display = 'block';
       }
+      createToc(book.navigation);
       outline.style.width = window.innerWidth + "px";
       outline.style.height = (window.innerHeight - obj.offsetTop - obj.offsetHeight) + "px";
       outline.style.top = (obj.offsetTop + obj.offsetHeight) + "px";
       outline.style.left = 0 + "px";
       outline.style.zIndex = 1001;
-      outline.style.color = gold_theme['body']['color'];
-      outline.style.background = gold_theme['body']['background'];
+      outline.style.color = select_theme['body']['color'];
+      outline.style.background = select_theme['body']['background'];
     }
     function outlineClose(element_id) {
       var outline = document.getElementById(element_id);
@@ -734,8 +751,8 @@
       dialog.style.top = (obj.offsetTop + obj.offsetHeight) + "px";
       dialog.style.left = 0 + "px";
       dialog.style.zIndex = 1002;
-      dialog.style.color = gold_theme['body']['color'];
-      dialog.style.background = gold_theme['body']['background'];
+      dialog.style.color = select_theme['body']['color'];
+      dialog.style.background = select_theme['body']['background'];
     }
     function fontSet(obj, fontsize) {
       if (rendition != null) {
@@ -803,7 +820,17 @@
       }
     }
     function themeClick(obj) {
-      document.documentElement.classList.toggle('dark-mode');
+      if (epub_iframe_document != null) {
+        var html = document.documentElement;
+        var epub_html = epub_iframe_document.documentElement;
+        if (html.getAttribute('theme') == 'dark') {
+          html.setAttribute('theme', 'light');
+          epub_html.setAttribute('theme', 'light');
+        } else {
+          html.setAttribute('theme', 'dark');
+          epub_html.setAttribute('theme', 'dark');
+        }
+      }
     }
     function epub_toast(str) {
       if (window.xbook && window.xbook.toast) {
