@@ -33,7 +33,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
 
     private final String TAG = getClass().getName();
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "xbook.db";
 
     private final ReentrantLock l = new ReentrantLock();
@@ -122,7 +122,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
             }
         }
 
-        if (oldVersion < 3) {
+        if (oldVersion < 4) {
             try {
                 db.beginTransaction();
 
