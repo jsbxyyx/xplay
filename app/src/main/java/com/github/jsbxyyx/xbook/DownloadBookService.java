@@ -22,6 +22,7 @@ import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.BookV2NetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 
 import java.io.File;
@@ -46,7 +47,8 @@ public class DownloadBookService extends Service {
     private final AtomicInteger notificationIdGenerator = new AtomicInteger(FOREGROUND_NOTIFICATION_ID + 1);
     private volatile boolean isForegroundStarted = false;
 
-    private BookNetHelper bookNetHelper;
+    private BookV2NetHelper bookV2NetHelper;
+    private BookNetHelper bookV1NetHelper;
     private BookDbHelper bookDbHelper;
 
     public DownloadBookService() {
@@ -55,7 +57,8 @@ public class DownloadBookService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        bookNetHelper = new BookNetHelper();
+        bookV2NetHelper = new BookV2NetHelper();
+        bookV1NetHelper = new BookNetHelper();
         bookDbHelper = BookDbHelper.getInstance();
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -130,7 +133,8 @@ public class DownloadBookService extends Service {
         String uid = (String) params.getOrDefault("uid", "");
         String type = (String) params.get("type");
         Book mBook = (Book) params.get("book");
-        bookNetHelper.downloadWithMagicSync(url, dir, uid, new DataCallback<File>() {
+        String hash = mBook.getV2Hash();
+        bookV2NetHelper.download(Integer.parseInt(mBook.getBid()), hash, dir, uid, new DataCallback<File>() {
             @Override
             public void call(File file, Throwable err) {
                 if (err != null) {
@@ -164,7 +168,7 @@ public class DownloadBookService extends Service {
                         bookDbHelper.insertBook(mBook);
                         String sync_data = SPUtils.getData(Common.sync_key);
                         if (Common.checked.equals(sync_data)) {
-                            bookNetHelper.cloudSync(bookDbHelper.findBookByBid(mBook.getBid()), true, new DataCallback<JsonNode>() {
+                            bookV1NetHelper.cloudSync(bookDbHelper.findBookByBid(mBook.getBid()), true, new DataCallback<JsonNode>() {
                                 @Override
                                 public void call(JsonNode o, Throwable err) {
                                     if (err != null) {
@@ -197,14 +201,7 @@ public class DownloadBookService extends Service {
                     stopSelf();
                 }
             }
-        }, (bytesRead, total) -> {
-            int progress = (int) (bytesRead * 1.0 / total * 100);
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - task.lastUpdateTime > 1000) {
-                task.lastUpdateTime = currentTime;
-                updateDownloadNotification(task.title, progress, "下载中...", task.notificationId);
-            }
-        }, Common.MAGIC);
+        });
     }
 
     private void createNotificationChannel() {

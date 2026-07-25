@@ -25,6 +25,7 @@ import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.BookV2NetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 
 import java.util.List;
@@ -42,12 +43,14 @@ public class ListFragment extends Fragment {
     private Spinner sp_type;
     private RecyclerView rv_list;
     private ListBookAdapter listBookAdapter;
-    private BookNetHelper bookNetHelper;
+    private BookV2NetHelper bookV2NetHelper;
+    private BookNetHelper bookV1NetHelper;
 
     private int page = 1;
 
     public ListFragment() {
-        bookNetHelper = new BookNetHelper();
+        bookV2NetHelper = new BookV2NetHelper();
+        bookV1NetHelper = new BookNetHelper();
     }
 
     @Nullable
@@ -138,7 +141,7 @@ public class ListFragment extends Fragment {
         });
 
         if (Common.TYPE_BL.equals(type)) {
-            bookNetHelper.searchBooklist(keyword, page, new DataCallback<List<Book>>() {
+            bookV1NetHelper.searchBooklist(keyword, page, new DataCallback<List<Book>>() {
                 @Override
                 public void call(List<Book> list, Throwable err) {
                     UiUtils.post(() -> {
@@ -171,7 +174,7 @@ public class ListFragment extends Fragment {
         } else {
             List<String> languages = Common.split(SPUtils.getData(Common.search_language_key), Common.comma);
             List<String> extensions = Common.split(SPUtils.getData(Common.search_ext_key), Common.comma);
-            bookNetHelper.search(keyword, page, languages, extensions, new DataCallback<List<Book>>() {
+            bookV2NetHelper.search(keyword, page, languages, extensions, new DataCallback<List<Book>>() {
                 @Override
                 public void call(List<Book> list, Throwable err) {
                     LogUtil.d(TAG, "onResponse: book size: %d", list.size());

@@ -18,6 +18,7 @@ import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.BookV2NetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.Comment;
 import com.squareup.picasso.Picasso;
@@ -31,7 +32,8 @@ import java.util.List;
 public class DetailActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
-    private BookNetHelper bookNetHelper;
+    private BookV2NetHelper bookV2NetHelper;
+    private BookNetHelper bookV1NetHelper;
     private BookDbHelper bookDbHelper;
 
     private RecyclerView rv_detail_suggest;
@@ -45,10 +47,12 @@ public class DetailActivity extends AppCompatActivity {
 
     private String detailUrl;
     private String bid;
+    private String hash;
     private Book mBook;
 
     public DetailActivity() {
-        bookNetHelper = new BookNetHelper();
+        bookV2NetHelper = new BookV2NetHelper();
+        bookV1NetHelper = new BookNetHelper();
     }
 
     @Override
@@ -60,12 +64,13 @@ public class DetailActivity extends AppCompatActivity {
         bookDbHelper = BookDbHelper.getInstance();
 
         detailUrl = getIntent().getStringExtra("detailUrl");
-        if (Common.isEmpty(detailUrl)) {
+        bid = getIntent().getStringExtra("bid");
+        hash = new Book().setDetailUrl(detailUrl).getV2Hash();
+        if (Common.isEmpty(detailUrl) || Common.isBlank(bid)) {
             LogUtil.d(TAG, "book detailUrl is empty.");
             UiUtils.showToast("书籍地址为空");
             return;
         }
-        bid = getIntent().getStringExtra("bid");
 
         TextView tv_detail_title = findViewById(R.id.tv_detail_title);
         ImageView iv_detail_img = findViewById(R.id.iv_detail_img);
@@ -107,7 +112,7 @@ public class DetailActivity extends AppCompatActivity {
 
         DialogLoading loading = new DialogLoading(this);
         loading.show();
-        bookNetHelper.detail(detailUrl, new DataCallback<Book>() {
+        bookV2NetHelper.detail(Integer.parseInt(bid), hash, new DataCallback<Book>() {
             @Override
             public void call(Book book, Throwable err) {
                 UiUtils.post(() -> {
@@ -154,7 +159,7 @@ public class DetailActivity extends AppCompatActivity {
         });
         rv_detail_suggest.setAdapter(listBookAdapter);
 
-        bookNetHelper.detailSuggest(detailUrl, new DataCallback<List<Book>>() {
+        bookV2NetHelper.detailSuggest(Integer.parseInt(bid), hash, new DataCallback<List<Book>>() {
             @Override
             public void call(List<Book> list, Throwable err) {
                 if (err != null) {
@@ -179,7 +184,7 @@ public class DetailActivity extends AppCompatActivity {
         listCommentAdapter = new ListCommentAdapter(this, null);
         rv_detail_comments.setAdapter(listCommentAdapter);
 
-        bookNetHelper.bookComments(bid, new DataCallback<List<Comment>>() {
+        bookV1NetHelper.bookComments(bid, new DataCallback<List<Comment>>() {
 
             @Override
             public void call(List<Comment> list, Throwable err) {

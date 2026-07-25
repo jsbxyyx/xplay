@@ -17,3 +17,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "xbook"
 include ':app'
+include ':lib'

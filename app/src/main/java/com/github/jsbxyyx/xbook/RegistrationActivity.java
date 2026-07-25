@@ -8,14 +8,11 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
-import com.github.jsbxyyx.xbook.common.SPUtils;
-import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.UiUtils;
-import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.BookV2NetHelper;
+import com.github.jsbxyyx.xplay.lib.model.LibUserListing;
 
 /**
  * @author jsbxyyx
@@ -24,14 +21,14 @@ import com.github.jsbxyyx.xbook.data.BookNetHelper;
 public class RegistrationActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
-    private BookNetHelper bookNetHelper;
+    private BookV2NetHelper bookV2NetHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
-        bookNetHelper = new BookNetHelper();
+        bookV2NetHelper = new BookV2NetHelper();
 
         EditText et_login_user = findViewById(R.id.et_login_user);
         EditText et_login_password = findViewById(R.id.et_login_password);
@@ -46,20 +43,20 @@ public class RegistrationActivity extends AppCompatActivity {
             String user = et_login_user.getText().toString();
             String password = et_login_password.getText().toString();
             String nickname = et_nickname.getText().toString();
-            bookNetHelper.sendCode(user, password, nickname, new DataCallback<JsonNode>() {
+            bookV2NetHelper.sendCode("register", user, password, nickname, "", new DataCallback<LibUserListing>() {
                 @Override
-                public void call(JsonNode dataObject, Throwable err) {
+                public void call(LibUserListing dataObject, Throwable err) {
                     if (err != null) {
                         LogUtil.d(TAG, "send code failed. %s", LogUtil.getStackTraceString(err));
                         UiUtils.showToast("发送验证码:" + err.getMessage());
                         return;
                     }
-                    int success = dataObject.get("success").asInt();
+                    int success = dataObject == null ? 0 : 1;
                     if (success == 1) {
                         UiUtils.showToast("发送成功");
                         LogUtil.d(TAG, "send code success.");
                     } else {
-                        String errText = dataObject.get("err").asText("");
+                        String errText = "发送验证码失败";
                         UiUtils.showToast(errText);
                         LogUtil.d(TAG, "send code failed. %s", errText);
                     }
@@ -74,9 +71,9 @@ public class RegistrationActivity extends AppCompatActivity {
             String nickname = et_nickname.getText().toString();
             DialogLoading loading = new DialogLoading(this);
             loading.show();
-            bookNetHelper.registration(user, password, code, nickname, new DataCallback<String>() {
+            bookV2NetHelper.register(user, password, nickname, new DataCallback<LibUserListing>() {
                 @Override
-                public void call(String str, Throwable err) {
+                public void call(LibUserListing dataObject, Throwable err) {
                     UiUtils.post(() -> {
                         loading.dismiss();
                     });
@@ -85,8 +82,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         UiUtils.showToast("注册失败:" + err.getMessage());
                         return;
                     }
-                    SessionManager.setSession(str);
-                    SPUtils.putData(Common.login_key, str);
+                    // V2 已完成 session/profile 保存
                     Intent intent = new Intent(getBaseContext(), MainActivity.class);
                     startActivity(intent);
                 }

@@ -9,22 +9,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.jsbxyyx.xplay.lib.model.LibUserListing;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.UiUtils;
-import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.BookV2NetHelper;
 
 public class ForgetpwdActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
-    private BookNetHelper bookNetHelper;
+    private BookV2NetHelper bookV2NetHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgetpwd);
 
-        bookNetHelper = new BookNetHelper();
+        bookV2NetHelper = new BookV2NetHelper();
 
         EditText et_login_user = findViewById(R.id.et_login_user);
         EditText et_login_password = findViewById(R.id.et_login_password);
@@ -35,20 +36,20 @@ public class ForgetpwdActivity extends AppCompatActivity {
 
         btn_send_code.setOnClickListener((v) -> {
             String user = et_login_user.getText().toString();
-            bookNetHelper.sendCodePasswordRecovery(user, new DataCallback<JsonNode>() {
+            bookV2NetHelper.sendCode("reset_password", user, null, null, "", new DataCallback<LibUserListing>() {
                 @Override
-                public void call(JsonNode dataObject, Throwable err) {
+                public void call(LibUserListing dataObject, Throwable err) {
                     if (err != null) {
                         LogUtil.d(TAG, "send reset code failed. %s", LogUtil.getStackTraceString(err));
                         UiUtils.showToast("发送重置验证码:" + err.getMessage());
                         return;
                     }
-                    int success = dataObject.get("success").asInt();
+                    int success = dataObject == null ? 0 : 1;
                     if (success == 1) {
                         LogUtil.d(TAG, "send reset code success.");
                         UiUtils.showToast("发送成功");
                     } else {
-                        String errText = dataObject.get("err").asText();
+                        String errText = "发送验证码失败";
                         LogUtil.d(TAG, "send reset code failed. %s", errText);
                         UiUtils.showToast(errText);
                     }
@@ -60,7 +61,7 @@ public class ForgetpwdActivity extends AppCompatActivity {
             String user = et_login_user.getText().toString();
             String password = et_login_password.getText().toString();
             String code = et_login_code.getText().toString();
-            bookNetHelper.resetpwd(user, password, code, new DataCallback<JsonNode>() {
+            bookV2NetHelper.resetPassword(user, password, code, new DataCallback<JsonNode>() {
                 @Override
                 public void call(JsonNode respData, Throwable err) {
                     if (err != null) {

@@ -98,8 +98,9 @@ public class Book implements java.io.Serializable {
         return detailUrl;
     }
 
-    public void setDetailUrl(String detailUrl) {
+    public Book setDetailUrl(String detailUrl) {
         this.detailUrl = detailUrl;
+        return this;
     }
 
     public String getYear() {
@@ -242,6 +243,13 @@ public class Book implements java.io.Serializable {
         }
         node.put(key, value);
         remark = JsonUtil.toJson(node);
+    }
+
+    public String getV2Hash() {
+        if (detailUrl == null) {
+            return "";
+        }
+        return detailUrl.substring(detailUrl.lastIndexOf("/") + 1);
     }
 
     @Override

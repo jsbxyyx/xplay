@@ -132,7 +132,6 @@ public class HttpHelper {
                         newCookie = CookieUtils.put(newCookie, "c_token", c_token);
                         newCookie = CookieUtils.put(newCookie, "c_time", c_time);
                         newCookie = CookieUtils.put(newCookie, "siteLanguage", "en");
-                        SPUtils.putData(Common.login_key, newCookie);
                         SessionManager.setSession(SPUtils.getData(Common.login_key));
                         LogUtil.i("HttpHelper", "newCookie:%s", newCookie);
                         response.close();

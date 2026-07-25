@@ -16,3 +16,6 @@ app/debug
 app/release
 *TestDemo.*
 *.epub
+tmp/
+.env
+AGENTS.md

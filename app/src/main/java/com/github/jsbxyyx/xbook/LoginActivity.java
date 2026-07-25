@@ -9,10 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
-import com.github.jsbxyyx.xbook.common.SPUtils;
-import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.UiUtils;
-import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.BookV2NetHelper;
+import com.github.jsbxyyx.xplay.lib.model.LibUserListing;
 
 /**
  * @author jsbxyyx
@@ -21,14 +20,14 @@ import com.github.jsbxyyx.xbook.data.BookNetHelper;
 public class LoginActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
-    private BookNetHelper bookNetHelper;
+    private BookV2NetHelper bookV2NetHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        bookNetHelper = new BookNetHelper();
+        bookV2NetHelper = new BookV2NetHelper();
 
         Intent intent = getIntent();
         String className = intent.getStringExtra("className");
@@ -41,9 +40,9 @@ public class LoginActivity extends AppCompatActivity {
             String password = et_login_password.getText().toString();
             DialogLoading loading = new DialogLoading(this);
             loading.show();
-            bookNetHelper.login(user, password, new DataCallback<String>() {
+            bookV2NetHelper.login(user, password, new DataCallback<LibUserListing>() {
                 @Override
-                public void call(String str, Throwable err) {
+                public void call(LibUserListing userListing, Throwable err) {
                     UiUtils.post(() -> {
                         loading.dismiss();
                     });
@@ -52,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
                         UiUtils.showToast("登录失败 : " + err.getMessage());
                         return;
                     }
-                    SessionManager.setSession(str);
+                    // V2 login 已经保存 session/profile 信息
                     Intent goIntent = new Intent();
                     if (!Common.isEmpty(className)) {
                         goIntent.setClassName(getPackageName(), className);
