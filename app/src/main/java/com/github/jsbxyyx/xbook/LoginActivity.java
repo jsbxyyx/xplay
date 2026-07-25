@@ -53,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
                         return;
                     }
                     SessionManager.setSession(str);
-                    SPUtils.putData(getBaseContext(), Common.login_key, str);
                     Intent goIntent = new Intent();
                     if (!Common.isEmpty(className)) {
                         goIntent.setClassName(getPackageName(), className);

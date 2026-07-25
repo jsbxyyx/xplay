@@ -99,7 +99,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void initData() {
-        if (Common.isEmpty(SPUtils.getData(mActivity, Common.login_key))) {
+        if (Common.isEmpty(SPUtils.getData(Common.login_key))) {
             mView.findViewById(R.id.layout_login_in).setVisibility(View.GONE);
             View layout_login = mView.findViewById(R.id.layout_login);
             layout_login.setVisibility(View.VISIBLE);
@@ -109,9 +109,6 @@ public class ProfileFragment extends Fragment {
                 startActivity(intent);
             });
         } else {
-            LogUtil.d(TAG, "login in : %s", SPUtils.getData(mActivity, Common.login_key));
-            SessionManager.setSession(SPUtils.getData(mActivity, Common.login_key));
-
             mView.findViewById(R.id.layout_login_in).setVisibility(View.VISIBLE);
             mView.findViewById(R.id.layout_login).setVisibility(View.GONE);
             TextView tv_profile_nickname = mView.findViewById(R.id.tv_profile_nickname);
@@ -119,13 +116,22 @@ public class ProfileFragment extends Fragment {
             ImageView iv_profile_avatar = mView.findViewById(R.id.iv_profile_avatar);
 
             mView.findViewById(R.id.btn_logout).setOnClickListener((v) -> {
-                SPUtils.putData(mActivity, Common.login_key, "");
-                SPUtils.putData(mActivity, Common.profile_nickname_key, "");
-                SPUtils.putData(mActivity, Common.profile_email_key, "");
-                SessionManager.setSession(SPUtils.getData(mActivity, Common.login_key));
-                onResume();
+                new DialogConfirm(getContext(), "提示", "确认退出", "", new DialogConfirm.OnConfirmListener() {
+                    @Override
+                    public void onConfirm(boolean extraChecked) {
+                        SessionManager.setSession("");
+                        SPUtils.putData(Common.profile_nickname_key, "");
+                        SPUtils.putData(Common.profile_email_key, "");
+                        onResume();
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                }).show();
             });
-            String email = SPUtils.getData(mActivity, Common.profile_email_key);
+            String email = SPUtils.getData(Common.profile_email_key);
             if (Common.isEmpty(email)) {
                 bookNetHelper.profile(new DataCallback<Profile>() {
                     @Override
@@ -139,13 +145,13 @@ public class ProfileFragment extends Fragment {
                             tv_profile_nickname.setText(profile.getNickname());
                             tv_profile_email.setText(profile.getEmail());
                             iv_profile_avatar.setImageBitmap(headBitmap(profile.getEmail(), 128, "#6750a4"));
-                            SPUtils.putData(mActivity, Common.profile_email_key, profile.getEmail());
-                            SPUtils.putData(mActivity, Common.profile_nickname_key, profile.getNickname());
+                            SPUtils.putData(Common.profile_email_key, profile.getEmail());
+                            SPUtils.putData(Common.profile_nickname_key, profile.getNickname());
                         });
                     }
                 });
             } else {
-                tv_profile_nickname.setText(SPUtils.getData(mActivity, Common.profile_nickname_key));
+                tv_profile_nickname.setText(SPUtils.getData(Common.profile_nickname_key));
                 tv_profile_email.setText(email);
                 iv_profile_avatar.setImageBitmap(headBitmap(email, 128, "#6750a4"));
             }

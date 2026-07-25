@@ -157,12 +157,12 @@ public class DownloadBookService extends Service {
                     }
                 } else if (Common.not_downloaded.equals(type)) {
                     mBook.fillFilePath(file.getAbsolutePath());
-                    mBook.setUser(SPUtils.getData(getBaseContext(), Common.profile_email_key));
+                    mBook.setUser(SPUtils.getData(Common.profile_email_key));
                     Book by = bookDbHelper.findBookByBid(mBook.getBid());
                     if (by == null) {
                         mBook.setId(IdUtil.nextId());
                         bookDbHelper.insertBook(mBook);
-                        String sync_data = SPUtils.getData(getBaseContext(), Common.sync_key);
+                        String sync_data = SPUtils.getData(Common.sync_key);
                         if (Common.checked.equals(sync_data)) {
                             bookNetHelper.cloudSync(bookDbHelper.findBookByBid(mBook.getBid()), true, new DataCallback<JsonNode>() {
                                 @Override

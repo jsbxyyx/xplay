@@ -169,8 +169,8 @@ public class ListFragment extends Fragment {
                 }
             });
         } else {
-            List<String> languages = Common.split(SPUtils.getData(mActivity, Common.search_language_key), Common.comma);
-            List<String> extensions = Common.split(SPUtils.getData(mActivity, Common.search_ext_key), Common.comma);
+            List<String> languages = Common.split(SPUtils.getData(Common.search_language_key), Common.comma);
+            List<String> extensions = Common.split(SPUtils.getData(Common.search_ext_key), Common.comma);
             bookNetHelper.search(keyword, page, languages, extensions, new DataCallback<List<Book>>() {
                 @Override
                 public void call(List<Book> list, Throwable err) {

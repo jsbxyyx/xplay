@@ -60,9 +60,9 @@ public class ListVideoAdapter extends RecyclerView.Adapter<ListVideoAdapter.View
         holder.bind(video);
 
         List<QqVideo.QqPlaylist> playlist = video.getPlaylist();
-        int subPosition = 0;
         holder.video_playlist.removeAllViews();
         if (playlist != null) {
+            int subPosition = 0;
             for (QqVideo.QqPlaylist pl : playlist) {
                 TextView textView = new TextView(context);
                 AutoLinearLayout.LayoutParams params = new AutoLinearLayout.LayoutParams(

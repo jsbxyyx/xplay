@@ -68,29 +68,41 @@ public class ListBookDownloadAdapter extends RecyclerView.Adapter<ListBookDownlo
 
         holder.itemView.setOnClickListener(v -> {
             if (onItemClickListener != null) {
-                LogUtil.d(TAG, "onClick item : %d", position);
-                onItemClickListener.onItemClick(book, position);
+                int pos = holder.getAdapterPosition();
+                LogUtil.d(TAG, "onClick item : %d", pos);
+                if (pos != RecyclerView.NO_POSITION) {
+                    onItemClickListener.onItemClick(dataList.get(pos), pos);
+                }
             }
         });
 
         holder.book_reader_btn_del.setOnClickListener(v -> {
             if (onItemActionClickListener != null) {
-                LogUtil.d(TAG, "onClick btn delete : %d", position);
-                onItemActionClickListener.onItemActionClick(book, Common.action_delete, position);
+                int pos = holder.getAdapterPosition();
+                LogUtil.d(TAG, "onClick btn delete : %d", pos);
+                if (pos != RecyclerView.NO_POSITION) {
+                    onItemActionClickListener.onItemActionClick(dataList.get(pos), Common.action_delete, pos);
+                }
             }
         });
 
         holder.book_reader_btn_download_meta.setOnClickListener(v -> {
             if (onItemActionClickListener != null) {
-                LogUtil.d(TAG, "onClick btn download_meta : %d", position);
-                onItemActionClickListener.onItemActionClick(book, Common.action_download_meta, position);
+                int pos = holder.getAdapterPosition();
+                LogUtil.d(TAG, "onClick btn download_meta : %d", pos);
+                if (pos != RecyclerView.NO_POSITION) {
+                    onItemActionClickListener.onItemActionClick(dataList.get(pos), Common.action_download_meta, pos);
+                }
             }
         });
 
         holder.book_reader_btn_upload.setOnClickListener(v -> {
             if (onItemActionClickListener != null) {
-                LogUtil.d(TAG, "onClick btn upload : %d", position);
-                onItemActionClickListener.onItemActionClick(book, Common.action_upload, position);
+                int pos = holder.getAdapterPosition();
+                LogUtil.d(TAG, "onClick btn upload : %d", pos);
+                if (pos != RecyclerView.NO_POSITION) {
+                    onItemActionClickListener.onItemActionClick(dataList.get(pos), Common.action_upload, pos);
+                }
             }
         });
 
@@ -98,15 +110,21 @@ public class ListBookDownloadAdapter extends RecyclerView.Adapter<ListBookDownlo
         holder.book_reader_btn_file_download.setVisibility(exists ? View.GONE : View.VISIBLE);
         holder.book_reader_btn_file_download.setOnClickListener(v -> {
             if (onItemActionClickListener != null) {
-                LogUtil.d(TAG, "onClick btn file download : %d", position);
-                onItemActionClickListener.onItemActionClick(book, Common.action_file_download, position);
+                int pos = holder.getAdapterPosition();
+                LogUtil.d(TAG, "onClick btn file download : %d", pos);
+                if (pos != RecyclerView.NO_POSITION) {
+                    onItemActionClickListener.onItemActionClick(dataList.get(pos), Common.action_file_download, pos);
+                }
             }
         });
 
         holder.book_reader_image_hide.setOnClickListener(v -> {
             if (onItemActionClickListener != null) {
-                LogUtil.d(TAG, "onClick image view hide : %d", position);
-                onItemActionClickListener.onItemActionClick(book, Common.action_image_hide, position);
+                int pos = holder.getAdapterPosition();
+                LogUtil.d(TAG, "onClick image view hide : %d", pos);
+                if (pos != RecyclerView.NO_POSITION) {
+                    onItemActionClickListener.onItemActionClick(dataList.get(pos), Common.action_image_hide, pos);
+                }
             }
         });
     }
@@ -166,6 +184,14 @@ public class ListBookDownloadAdapter extends RecyclerView.Adapter<ListBookDownlo
 
     public List<Book> getDataList() {
         return dataList;
+    }
+
+    public void removeItem(int position) {
+        if (position < 0 || position >= dataList.size()) {
+            return;
+        }
+        dataList.remove(position);
+        notifyItemRemoved(position);
     }
 
 }

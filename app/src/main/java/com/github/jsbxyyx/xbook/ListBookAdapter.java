@@ -98,7 +98,10 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
 
         holder.itemView.setOnClickListener(v -> {
             if (onItemClickListener != null) {
-                onItemClickListener.onItemClick(book, position);
+                int pos = holder.getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) {
+                    onItemClickListener.onItemClick(dataList.get(pos), pos);
+                }
             }
         });
 
@@ -106,7 +109,10 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
             holder.book_publish.setTextColor(Color.parseColor("#03A9F4"));
             holder.book_publish.setOnClickListener(v -> {
                 if (onSubItemClickListener != null) {
-                    onSubItemClickListener.onSubItemClick(book, Book.publisher_key, position);
+                    int pos = holder.getAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION) {
+                        onSubItemClickListener.onSubItemClick(dataList.get(pos), Book.publisher_key, pos);
+                    }
                 }
             });
         }

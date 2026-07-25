@@ -143,7 +143,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        String ext_data = SPUtils.getData(getBaseContext(), Common.search_ext_key);
+        String ext_data = SPUtils.getData(Common.search_ext_key);
         LinearLayout ll_ext = findViewById(R.id.ll_ext);
         int ll_ext_count = ll_ext.getChildCount();
         for (int i = 0; i < ll_ext_count; i++) {
@@ -156,22 +156,22 @@ public class SettingsActivity extends AppCompatActivity {
                 view.setOnClickListener((v) -> {
                     CheckBox cb = (CheckBox) v;
                     String text_ = cb.getText().toString();
-                    String data_ = SPUtils.getData(getBaseContext(), Common.search_ext_key);
+                    String data_ = SPUtils.getData(Common.search_ext_key);
                     if (cb.isChecked()) {
                         if (!data_.contains(text_ + Common.comma)) {
                             data_ += (text_ + Common.comma);
-                            SPUtils.putData(getBaseContext(), Common.search_ext_key, data_);
+                            SPUtils.putData(Common.search_ext_key, data_);
                         }
                     } else {
                         data_ = data_.replace(text_ + Common.comma, "");
-                        SPUtils.putData(getBaseContext(), Common.search_ext_key, data_);
+                        SPUtils.putData(Common.search_ext_key, data_);
                     }
-                    LogUtil.d(TAG, "ext: %s", SPUtils.getData(getBaseContext(), Common.search_ext_key));
+                    LogUtil.d(TAG, "ext: %s", SPUtils.getData(Common.search_ext_key));
                 });
             }
         }
 
-        String language_data = SPUtils.getData(getBaseContext(), Common.search_language_key);
+        String language_data = SPUtils.getData(Common.search_language_key);
         LinearLayout ll_lang = findViewById(R.id.ll_lang);
         int ll_lang_count = ll_lang.getChildCount();
         for (int i = 0; i < ll_lang_count; i++) {
@@ -184,22 +184,22 @@ public class SettingsActivity extends AppCompatActivity {
                 view.setOnClickListener((v) -> {
                     CheckBox cb = (CheckBox) v;
                     String text_ = cb.getText().toString();
-                    String data_ = SPUtils.getData(getBaseContext(), Common.search_language_key);
+                    String data_ = SPUtils.getData(Common.search_language_key);
                     if (cb.isChecked()) {
                         if (!data_.contains(text_ + Common.comma)) {
                             data_ += (text_ + Common.comma);
-                            SPUtils.putData(getBaseContext(), Common.search_language_key, data_);
+                            SPUtils.putData(Common.search_language_key, data_);
                         }
                     } else {
                         data_ = data_.replace(text_ + Common.comma, "");
-                        SPUtils.putData(getBaseContext(), Common.search_language_key, data_);
+                        SPUtils.putData(Common.search_language_key, data_);
                     }
-                    LogUtil.d(TAG, "language: %s", SPUtils.getData(getBaseContext(), Common.search_language_key));
+                    LogUtil.d(TAG, "language: %s", SPUtils.getData(Common.search_language_key));
                 });
             }
         }
 
-        String sync_data = SPUtils.getData(getBaseContext(), Common.sync_key);
+        String sync_data = SPUtils.getData(Common.sync_key);
         CheckBox cb_sync = findViewById(R.id.cb_sync);
         if (Common.checked.equals(sync_data)) {
             cb_sync.setChecked(true);
@@ -209,14 +209,31 @@ public class SettingsActivity extends AppCompatActivity {
         cb_sync.setOnClickListener((v) -> {
             CheckBox cb = (CheckBox) v;
             if (cb.isChecked()) {
-                SPUtils.putData(getBaseContext(), Common.sync_key, Common.checked);
+                SPUtils.putData(Common.sync_key, Common.checked);
             } else {
-                SPUtils.putData(getBaseContext(), Common.sync_key, Common.unchecked);
+                SPUtils.putData(Common.sync_key, Common.unchecked);
             }
             LogUtil.d(TAG, "sync checked : %s", cb.isChecked());
         });
 
-        String reader_image_show_data = SPUtils.getData(getBaseContext(), Common.reader_image_show_key, Common.checked);
+        String sync_progress_data = SPUtils.getData(Common.sync_progress_key);
+        CheckBox cb_sync_progress = findViewById(R.id.cb_sync_progress);
+        if (Common.checked.equals(sync_progress_data)) {
+            cb_sync_progress.setChecked(true);
+        } else {
+            cb_sync_progress.setChecked(false);
+        }
+        cb_sync_progress.setOnClickListener((v) -> {
+            CheckBox cb = (CheckBox) v;
+            if (cb.isChecked()) {
+                SPUtils.putData(Common.sync_progress_key, Common.checked);
+            } else {
+                SPUtils.putData(Common.sync_progress_key, Common.unchecked);
+            }
+            LogUtil.d(TAG, "sync progress checked : %s", cb.isChecked());
+        });
+
+        String reader_image_show_data = SPUtils.getData(Common.reader_image_show_key, Common.checked);
         CheckBox cb_show_image = findViewById(R.id.cb_show_image);
         if (Common.checked.equals(reader_image_show_data)) {
             cb_show_image.setChecked(true);
@@ -226,14 +243,14 @@ public class SettingsActivity extends AppCompatActivity {
         cb_show_image.setOnClickListener((v) -> {
             CheckBox cb = (CheckBox) v;
             if (cb.isChecked()) {
-                SPUtils.putData(getBaseContext(), Common.reader_image_show_key, Common.checked);
+                SPUtils.putData(Common.reader_image_show_key, Common.checked);
             } else {
-                SPUtils.putData(getBaseContext(), Common.reader_image_show_key, Common.unchecked);
+                SPUtils.putData(Common.reader_image_show_key, Common.unchecked);
             }
             LogUtil.d(TAG, "reader image show checked : %s", cb.isChecked());
         });
 
-        String online_read_data = SPUtils.getData(getBaseContext(), Common.online_read_key, Common.unchecked);
+        String online_read_data = SPUtils.getData(Common.online_read_key, Common.unchecked);
         CheckBox cb_online_read = findViewById(R.id.cb_online_read);
         if (Common.checked.equals(online_read_data)) {
             cb_online_read.setChecked(true);
@@ -243,9 +260,9 @@ public class SettingsActivity extends AppCompatActivity {
         cb_online_read.setOnClickListener((v) -> {
             CheckBox cb = (CheckBox) v;
             if (cb.isChecked()) {
-                SPUtils.putData(getBaseContext(), Common.online_read_key, Common.checked);
+                SPUtils.putData(Common.online_read_key, Common.checked);
             } else {
-                SPUtils.putData(getBaseContext(), Common.online_read_key, Common.unchecked);
+                SPUtils.putData(Common.online_read_key, Common.unchecked);
             }
             LogUtil.d(TAG, "online read checked : %s", cb.isChecked());
         });
@@ -253,7 +270,7 @@ public class SettingsActivity extends AppCompatActivity {
         Button btn_clear_settings = findViewById(R.id.btn_clear_settings);
         btn_clear_settings.setOnClickListener((v) -> {
             for (String key : clearKeys) {
-                SPUtils.putData(this, key, "");
+                SPUtils.putData(key, "");
             }
             LogUtil.i(TAG, "clear settings : %s", Arrays.toString(clearKeys));
         });

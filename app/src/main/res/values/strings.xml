@@ -24,7 +24,8 @@
     <string name="str_show_image">显示图片</string>
     <string name="str_download_list_settings">下载列表设置</string>
     <string name="str_sync">同步</string>
-    <string name="str_is_sync">是否同步</string>
+    <string name="str_is_sync">是否同步书籍</string>
+    <string name="str_is_sync_progress">是否同步书籍进度</string>
     <string name="str_search_book_language">搜索书籍语言</string>
     <string name="str_search_book_format">搜索书籍格式</string>
     <string name="str_search">搜索</string>

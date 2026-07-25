@@ -55,6 +55,10 @@ public class DialogConfirm extends Dialog {
         } else {
             tvExtra.setText(extraText);
             layoutCheck.setVisibility(View.VISIBLE);
+
+            layoutCheck.setOnClickListener(v -> {
+                cbExtra.setChecked(!cbExtra.isChecked());
+            });
         }
 
         btnCancel.setOnClickListener(v -> {

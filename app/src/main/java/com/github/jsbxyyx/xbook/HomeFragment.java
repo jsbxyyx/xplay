@@ -230,7 +230,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void showDownloadBook() {
-        String readerImageShow = SPUtils.getData(mActivity, Common.reader_image_show_key, "1");
+        String readerImageShow = SPUtils.getData(Common.reader_image_show_key, "1");
         List<Book> dataList = bookDbHelper.findAllBook();
         dataList.sort((t1, t2) -> {
             if (t1 == null && t2 == null) {
@@ -287,7 +287,6 @@ public class HomeFragment extends Fragment {
                                     String title = bookNetHelper.getCloudTitle(book, "");
                                     String ext = book.extractFilePath();
                                     bookNetHelper.cloudDelete(title, ext, new DataCallback<>() {
-
                                         @Override
                                         public void call(Object o, Throwable err) {
                                             if (err != null) {
@@ -300,7 +299,8 @@ public class HomeFragment extends Fragment {
                                         }
                                     });
                                 }
-                                onResume();
+                                //onResume();
+                                listBookDownloadAdapter.removeItem(position);
                             }
 
                             @Override

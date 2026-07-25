@@ -86,7 +86,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         return;
                     }
                     SessionManager.setSession(str);
-                    SPUtils.putData(getBaseContext(), Common.login_key, str);
+                    SPUtils.putData(Common.login_key, str);
                     Intent intent = new Intent(getBaseContext(), MainActivity.class);
                     startActivity(intent);
                 }

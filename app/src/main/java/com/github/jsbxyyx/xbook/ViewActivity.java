@@ -127,7 +127,7 @@ public class ViewActivity extends AppCompatActivity {
                 UiUtils.showToast("不支持的文件格式:" + extension);
                 return;
             }
-            String onlineReadData = SPUtils.getData(getBaseContext(), Common.online_read_key, Common.unchecked);
+            String onlineReadData = SPUtils.getData(Common.online_read_key, Common.unchecked);
             String htmlUrl = "";
             String fileUrl = "http://127.0.0.1:" + port;
             if (Common.checked.equals(onlineReadData)) {
@@ -188,7 +188,7 @@ public class ViewActivity extends AppCompatActivity {
         if (webView != null) {
             webView.destroy();
         }
-        String syncData = SPUtils.getData(getBaseContext(), Common.sync_key);
+        String syncData = SPUtils.getData(Common.sync_progress_key);
         if (Common.checked.equals(syncData)) {
             Book book = bookDbHelper.findBookById(bookId);
             if (book != null) {
@@ -197,7 +197,7 @@ public class ViewActivity extends AppCompatActivity {
                     public void call(JsonNode o, Throwable err) {
                         if (err != null) {
                             LogUtil.e(TAG, "view sync meta err. %s", LogUtil.getStackTraceString(err));
-                            UiUtils.showToast("同步书籍失败:" + err.getMessage());
+                            UiUtils.showToast("同步书籍进度失败:" + err.getMessage());
                             return;
                         }
                         LogUtil.d(TAG, "view sync meta: %s : %s", book.getId(), book.getTitle());

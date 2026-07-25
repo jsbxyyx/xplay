@@ -378,7 +378,7 @@ public class BookNetHelper {
                 JsonNode respHeaders = jsonObject.get("headers");
                 String forceRedirection = respResponse.get("forceRedirection").asText();
                 String session = forceRedirection.substring(2).replace("&", ";") + ";";
-                session += respHeaders.get("set-cookie") != null ? respHeaders.get("set-cookie").asText() : "";
+//                session += respHeaders.get("set-cookie") != null ? respHeaders.get("set-cookie").asText() : "";
                 dataCallback.call(session, null);
             }
         });

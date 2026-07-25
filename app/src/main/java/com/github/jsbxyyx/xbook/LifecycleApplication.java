@@ -10,6 +10,7 @@ import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
 import com.github.jsbxyyx.xbook.common.SPUtils;
+import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xbook.data.IpNetHelper;
@@ -40,27 +41,37 @@ public class LifecycleApplication extends Application {
 
         AppUtils.initContext(getApplicationContext());
         UiUtils.initContext(getApplicationContext());
+        SPUtils.init(this);
 
         bookNetHelper = new BookNetHelper();
         ipNetHelper = new IpNetHelper();
 
         String languages = "chinese,japanese,traditional chinese,english,korean,";
-        String languagesData = SPUtils.getData(getBaseContext(), Common.search_language_key, null);
+        String languagesData = SPUtils.getData(Common.search_language_key, null);
         if (Common.isNull(languagesData)) {
-            SPUtils.putData(getBaseContext(), Common.search_language_key, languages);
+            SPUtils.putData(Common.search_language_key, languages);
         }
 
-        String extData = SPUtils.getData(getBaseContext(), Common.search_ext_key, null);
+        String extData = SPUtils.getData(Common.search_ext_key, null);
         if (Common.isNull(extData)) {
             extData = "EPUB,";
-            SPUtils.putData(getBaseContext(), Common.search_ext_key, extData);
+            SPUtils.putData(Common.search_ext_key, extData);
         }
 
-        String syncData = SPUtils.getData(getBaseContext(), Common.sync_key, null);
+        String syncData = SPUtils.getData(Common.sync_key, null);
         if (Common.isNull(syncData)) {
             syncData = Common.checked;
-            SPUtils.putData(getBaseContext(), Common.sync_key, syncData);
+            SPUtils.putData(Common.sync_key, syncData);
         }
+
+        String syncProgressData = SPUtils.getData(Common.sync_progress_key, null);
+        if (Common.isNull(syncProgressData)) {
+            syncProgressData = Common.checked;
+            SPUtils.putData(Common.sync_progress_key, syncProgressData);
+        }
+
+        LogUtil.d(TAG, "login in : %s", SPUtils.getData(Common.login_key));
+        SessionManager.setSession(SPUtils.getData(Common.login_key), false);
 
         ipNetHelper.fetchIP(new DataCallback<List<Ip>>() {
             @Override

@@ -84,9 +84,6 @@ public class MainActivity extends AppCompatActivity {
         fm = getSupportFragmentManager();
         showFragment(1);
 
-        LogUtil.d(TAG, "login in : %s", SPUtils.getData(this, Common.login_key));
-        SessionManager.setSession(SPUtils.getData(this, Common.login_key));
-
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
