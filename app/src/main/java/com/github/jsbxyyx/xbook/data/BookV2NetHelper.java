@@ -256,6 +256,7 @@ public class BookV2NetHelper {
         book.setPublisher(src.publisher);
         book.setYear(String.valueOf(src.year));
         book.setDownloadUrl(src.dl);
+        book.setDetailUrl(src.href);
         return book;
     }
 
