@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.jsbxyyx.xbook.data.BookNetHelper;
 import com.github.jsbxyyx.xplay.lib.model.LibUserListing;
 import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.LogUtil;
@@ -19,12 +20,14 @@ public class ForgetpwdActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
     private BookV2NetHelper bookV2NetHelper;
+    private BookNetHelper bookV1NetHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgetpwd);
 
+        bookV1NetHelper = new BookNetHelper();
         bookV2NetHelper = new BookV2NetHelper();
 
         EditText et_login_user = findViewById(R.id.et_login_user);
@@ -61,7 +64,7 @@ public class ForgetpwdActivity extends AppCompatActivity {
             String user = et_login_user.getText().toString();
             String password = et_login_password.getText().toString();
             String code = et_login_code.getText().toString();
-            bookV2NetHelper.resetPassword(user, password, code, new DataCallback<JsonNode>() {
+            bookV1NetHelper.resetpwd(user, password, code, new DataCallback<JsonNode>() {
                 @Override
                 public void call(JsonNode respData, Throwable err) {
                     if (err != null) {

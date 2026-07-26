@@ -88,6 +88,7 @@ public class ListFragment extends Fragment {
             Intent intent = new Intent(mActivity, DetailActivity.class);
             intent.putExtra("detailUrl", book.getDetailUrl());
             intent.putExtra("bid", book.getBid());
+            intent.putExtra("hash", book.getHash());
             mActivity.startActivity(intent);
         }).setOnSubItemClickListener((book, type, position) -> {
             if (

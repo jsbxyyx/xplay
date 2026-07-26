@@ -120,9 +120,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        int count = dataList.size();
-        LogUtil.d(TAG, "getItemCount: " + count);
-        return count;
+        return dataList.size();
     }
 
     public List<Book> getDataList() {

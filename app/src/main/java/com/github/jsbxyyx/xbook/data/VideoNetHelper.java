@@ -59,7 +59,6 @@ public class VideoNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "search request: %s : %s", reqUrl, s);
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
                 .post(RequestBody.create(s, MediaType.parse("application/json")));
@@ -78,7 +77,6 @@ public class VideoNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "search response: %s", string);
                 try {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
@@ -112,7 +110,6 @@ public class VideoNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "hotrank request: %s : %s", reqUrl, s);
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
                 .post(RequestBody.create(s, MediaType.parse("application/json")));
@@ -131,7 +128,6 @@ public class VideoNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "hotrank response: %s", string);
                 try {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
@@ -165,7 +161,6 @@ public class VideoNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "hotrank request: %s : %s", reqUrl, s);
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
                 .post(RequestBody.create(s, MediaType.parse("application/json")));
@@ -184,7 +179,6 @@ public class VideoNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "hotrank response: %s", string);
                 try {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();

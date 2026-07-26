@@ -18,6 +18,7 @@ import com.github.jsbxyyx.xbook.common.DataCallback;
 import com.github.jsbxyyx.xbook.common.IdUtil;
 import com.github.jsbxyyx.xbook.common.JsonUtil;
 import com.github.jsbxyyx.xbook.common.LogUtil;
+import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
@@ -133,8 +134,8 @@ public class DownloadBookService extends Service {
         String uid = (String) params.getOrDefault("uid", "");
         String type = (String) params.get("type");
         Book mBook = (Book) params.get("book");
-        String hash = mBook.getV2Hash();
-        bookV2NetHelper.download(Integer.parseInt(mBook.getBid()), hash, dir, uid, new DataCallback<File>() {
+        String hash = mBook.getHash();
+        DataCallback<File> dataCallback = new DataCallback<>() {
             @Override
             public void call(File file, Throwable err) {
                 if (err != null) {
@@ -201,7 +202,20 @@ public class DownloadBookService extends Service {
                     stopSelf();
                 }
             }
-        });
+        };
+        ProgressListener listener = (bytesRead, total) -> {
+            int progress = (int) (bytesRead * 1.0 / total * 100);
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - task.lastUpdateTime > 1000) {
+                task.lastUpdateTime = currentTime;
+                updateDownloadNotification(task.title, progress, "下载中...", task.notificationId);
+            }
+        };
+        if (!Common.isBlank(hash)) {
+            bookV2NetHelper.download(Integer.parseInt(mBook.getBid()), hash, dir, uid, dataCallback, listener);
+        } else {
+            bookV1NetHelper.downloadWithMagicSync(url, dir, uid, dataCallback, listener, Common.MAGIC);
+        }
     }
 
     private void createNotificationChannel() {

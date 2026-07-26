@@ -65,8 +65,9 @@ public class DetailActivity extends AppCompatActivity {
 
         detailUrl = getIntent().getStringExtra("detailUrl");
         bid = getIntent().getStringExtra("bid");
-        hash = new Book().setDetailUrl(detailUrl).getV2Hash();
-        if (Common.isEmpty(detailUrl) || Common.isBlank(bid)) {
+        hash = getIntent().getStringExtra("hash");
+        boolean v2 = !Common.isBlank(bid) && !Common.isBlank(hash);
+        if (Common.isEmpty(detailUrl) && !v2) {
             LogUtil.d(TAG, "book detailUrl is empty.");
             UiUtils.showToast("书籍地址为空");
             return;
@@ -112,7 +113,8 @@ public class DetailActivity extends AppCompatActivity {
 
         DialogLoading loading = new DialogLoading(this);
         loading.show();
-        bookV2NetHelper.detail(Integer.parseInt(bid), hash, new DataCallback<Book>() {
+
+        DataCallback<Book> dataCallback = new DataCallback<>() {
             @Override
             public void call(Book book, Throwable err) {
                 UiUtils.post(() -> {
@@ -142,7 +144,12 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 });
             }
-        });
+        };
+        if (v2) {
+            bookV2NetHelper.detail(Integer.parseInt(bid), hash, dataCallback);
+        } else {
+            bookV1NetHelper.detail(detailUrl, dataCallback);
+        }
 
         rv_detail_suggest = findViewById(R.id.rv_detail_suggest);
         LinearLayoutManager suggestLayoutManager = new LinearLayoutManager(this);
@@ -159,7 +166,7 @@ public class DetailActivity extends AppCompatActivity {
         });
         rv_detail_suggest.setAdapter(listBookAdapter);
 
-        bookV2NetHelper.detailSuggest(Integer.parseInt(bid), hash, new DataCallback<List<Book>>() {
+        DataCallback<List<Book>> suggestDataCallback = new DataCallback<>() {
             @Override
             public void call(List<Book> list, Throwable err) {
                 if (err != null) {
@@ -174,7 +181,12 @@ public class DetailActivity extends AppCompatActivity {
                     listBookAdapter.notifyDataSetChanged();
                 });
             }
-        });
+        };
+        if (v2) {
+            bookV2NetHelper.detailSuggest(Integer.parseInt(bid), hash, suggestDataCallback);
+        } else {
+            bookV1NetHelper.detailSuggest(detailUrl, suggestDataCallback);
+        }
 
         rv_detail_comments = findViewById(R.id.rv_detail_comments);
         LinearLayoutManager commentsLayoutManager = new LinearLayoutManager(this);
@@ -184,7 +196,7 @@ public class DetailActivity extends AppCompatActivity {
         listCommentAdapter = new ListCommentAdapter(this, null);
         rv_detail_comments.setAdapter(listCommentAdapter);
 
-        bookV1NetHelper.bookComments(bid, new DataCallback<List<Comment>>() {
+        DataCallback<List<Comment>> commentDataCallback = new DataCallback<>() {
 
             @Override
             public void call(List<Comment> list, Throwable err) {
@@ -200,7 +212,8 @@ public class DetailActivity extends AppCompatActivity {
                     listCommentAdapter.notifyDataSetChanged();
                 });
             }
-        });
+        };
+        bookV1NetHelper.bookComments(bid, commentDataCallback);
 
         findViewById(R.id.btn_detail_download).setOnClickListener(v -> {
             if (mBook == null || Common.isEmpty(mBook.getDownloadUrl())) {

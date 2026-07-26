@@ -34,7 +34,6 @@ public class IpNetHelper {
         Request.Builder builder = new Request.Builder()
                 .url("https://" + h + reqUrl)
                 .get();
-        LogUtil.d(TAG, "fetch ip request: %s", reqUrl);
         HttpHelper.getDnsClient().newCall(builder.build()).enqueue(new Callback() {
 
             @Override
@@ -50,7 +49,6 @@ public class IpNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "fetch ip response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {

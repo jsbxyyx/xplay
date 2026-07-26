@@ -36,6 +36,9 @@ public class Book implements java.io.Serializable {
     private List<Book> related_list;
     // net end
 
+    // net v2
+    private String hash;
+
     // db
     private Long id;
     private String remark;
@@ -167,6 +170,14 @@ public class Book implements java.io.Serializable {
         this.related_list = related_list;
     }
 
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
     public Long getId() {
         return id;
     }
@@ -245,13 +256,6 @@ public class Book implements java.io.Serializable {
         remark = JsonUtil.toJson(node);
     }
 
-    public String getV2Hash() {
-        if (detailUrl == null) {
-            return "";
-        }
-        return detailUrl.substring(detailUrl.lastIndexOf("/") + 1);
-    }
-
     @Override
     public String toString() {
         return "Book{" +
@@ -270,6 +274,7 @@ public class Book implements java.io.Serializable {
                 ", content_type='" + content_type + '\'' +
                 ", extra='" + extra + '\'' +
                 ", id=" + id +
+                ", hash=" + hash +
                 ", remark='" + remark + '\'' +
                 ", created='" + created + '\'' +
                 ", user='" + user + '\'' +

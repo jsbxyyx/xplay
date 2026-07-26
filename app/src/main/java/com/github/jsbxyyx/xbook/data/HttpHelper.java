@@ -23,6 +23,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * @author jsbxyyx
@@ -64,6 +65,7 @@ public class HttpHelper {
                         .writeTimeout(30000, TimeUnit.MILLISECONDS)
                         .dns(customDns)
                         .addInterceptor(new ChallengeInterceptor())
+                        .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                         .build();
             }
             return client;
@@ -82,6 +84,7 @@ public class HttpHelper {
                         .writeTimeout(3600000, TimeUnit.MILLISECONDS)
                         .dns(customDns)
                         .addInterceptor(new ChallengeInterceptor())
+                        .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                         .build();
             }
             return syncClient;

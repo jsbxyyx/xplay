@@ -3,6 +3,7 @@ package com.github.jsbxyyx.xbook.data;
 import com.github.jsbxyyx.xbook.common.Common;
 import com.github.jsbxyyx.xbook.common.ContentDispositionParser;
 import com.github.jsbxyyx.xbook.common.DataCallback;
+import com.github.jsbxyyx.xbook.common.ProgressListener;
 import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.SPUtils;
 import com.github.jsbxyyx.xbook.common.ThreadUtils;
@@ -19,6 +20,8 @@ import com.github.jsbxyyx.xplay.lib.model.LibBooksListing;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +33,7 @@ import java.util.UUID;
  */
 public class BookV2NetHelper {
 
-    private final LibApiClient libApiClient = new LibApiClient(Common.getBurl());
+    private final LibApiClient libApiClient = new LibApiClient(Common.getXurlv2());
 
     private LibApiClient.Auth requireAuth() {
         java.util.Map<String, String> kv = Common.parseKv(SessionManager.getSession());
@@ -77,16 +80,6 @@ public class BookV2NetHelper {
         });
     }
 
-    public void resetPassword(String email, String password, String code, DataCallback callback) {
-        ThreadUtils.submit(() -> {
-            try {
-                callback.call(libApiClient.resetPassword(email, password, code), null);
-            } catch (Exception e) {
-                callback.call(null, e);
-            }
-        });
-    }
-
     private void saveUserSession(LibUserListing listing) {
         if (listing == null || listing.user == null) {
             return;
@@ -95,6 +88,17 @@ public class BookV2NetHelper {
         SessionManager.setSession(session);
         SPUtils.putData(Common.profile_nickname_key, listing.user.name);
         SPUtils.putData(Common.profile_email_key, listing.user.email);
+    }
+
+    public void profile(DataCallback<LibUserListing> callback) {
+        ThreadUtils.submit(() -> {
+            try {
+                LibUserListing listing = libApiClient.userProfile(requireAuth());
+                callback.call(listing, null);
+            } catch (Exception e) {
+                callback.call(null, e);
+            }
+        });
     }
 
     public void detail(int id, String hash, DataCallback<Book> callback) {
@@ -125,7 +129,7 @@ public class BookV2NetHelper {
         });
     }
 
-    public void download(int id, String hash, String destDir, String uid, DataCallback<File> callback) {
+    public void download(int id, String hash, String destDir, String uid, DataCallback<File> callback, ProgressListener progressListener) {
         ThreadUtils.submit(() -> {
             try {
                 LibFileListing listing =
@@ -133,19 +137,60 @@ public class BookV2NetHelper {
                 if (listing == null || listing.file == null || listing.file.dlLink == null) {
                     throw new IllegalStateException("download link unavailable");
                 }
-                LibApiClient.FileDownload download =
-                        libApiClient.downloadFileWithMetadata(listing.file.dlLink);
-                byte[] data = download.data;
                 File dir = new File(destDir);
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-                String filename = extractFilename(download.filename, listing.file.dlLink);
-                File file = new File(dir, Common.isEmpty(uid) ? filename : uid + "-" + filename);
-                try (FileOutputStream output = new FileOutputStream(file)) {
-                    output.write(data);
-                }
-                callback.call(file, null);
+                final File[] resultFile = new File[1];
+                libApiClient.downloadFileToStream(listing.file.dlLink, new LibApiClient.StreamDownloadCallback() {
+                    private FileOutputStream output;
+                    private long downloaded = 0;
+                    private long total;
+
+                    @Override
+                    public void onStart(String contentDisposition, long contentLength) throws IOException {
+                        this.total = contentLength;
+                        String filename = extractFilename(contentDisposition, listing.file.dlLink);
+                        File file = new File(dir, Common.isEmpty(uid) ? filename : uid + "-" + filename);
+                        resultFile[0] = file;
+                        output = new FileOutputStream(file);
+                        
+                        long m = Common.MAGIC ^ Common.MG_XOR;
+                        ByteBuffer buf = ByteBuffer.allocate(8);
+                        buf.putLong(m);
+                        output.write(buf.array());
+                    }
+
+                    @Override
+                    public void onData(byte[] buffer, int length) throws IOException {
+                        downloaded += length;
+                        if (progressListener != null) {
+                            progressListener.onProgress(downloaded, total);
+                        }
+                        output.write(Common.xor(buffer, length, Common.MG_XOR));
+                    }
+
+                    @Override
+                    public void onComplete() throws IOException {
+                        closeOutput();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        closeOutput();
+                    }
+
+                    private void closeOutput() {
+                        if (output != null) {
+                            try {
+                                output.close();
+                            } catch (IOException ignored) {
+                            }
+                            output = null;
+                        }
+                    }
+                });
+                callback.call(resultFile[0], null);
             } catch (Exception e) {
                 callback.call(null, e);
             }
@@ -199,6 +244,7 @@ public class BookV2NetHelper {
             return book;
         }
         book.setBid(String.valueOf(src.id));
+        book.setHash(src.hash);
         book.setIsbn(src.identifier);
         book.setAuthors(src.author);
         book.setTitle(src.title);
@@ -209,7 +255,6 @@ public class BookV2NetHelper {
         book.setContent_type(Book.content_type_book);
         book.setPublisher(src.publisher);
         book.setYear(String.valueOf(src.year));
-        book.setDetailUrl("/book/" + book.getBid() + "/" + src.hash);
         book.setDownloadUrl(src.dl);
         return book;
     }
@@ -223,6 +268,7 @@ public class BookV2NetHelper {
         book.setTitle(src.title);
         book.setAuthors(src.author);
         book.setCoverImage(src.cover);
+        book.setContent_type(Book.content_type_book);
         return book;
     }
 }

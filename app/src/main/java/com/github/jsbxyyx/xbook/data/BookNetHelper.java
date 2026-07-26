@@ -95,7 +95,6 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "search request: %s : %s", reqUrl, s);
         Request.Builder builder = new Request.Builder()
                 .url(getXurl())
                 .post(RequestBody.create(s, MediaType.parse("application/json")));
@@ -114,7 +113,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "search response: %s", string);
                 try {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
@@ -158,7 +156,6 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "search booklists request: %s : %s", reqUrl, s);
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
                 .post(RequestBody.create(s, MediaType.parse("application/json")));
@@ -177,7 +174,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "search booklists response: %s", string);
                 try {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
@@ -212,7 +208,6 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "detail request: %s : %s", reqUrl, s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXurl())
@@ -233,7 +228,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "detail response: %s", string);
                 try {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
@@ -276,7 +270,6 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "booklists detail request: %s : %s", reqUrl, s);
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
                 .post(RequestBody.create(s, MediaType.parse("application/json")));
@@ -295,7 +288,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "booklists detail response: %s", string);
                 try {
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
@@ -340,7 +332,6 @@ public class BookNetHelper {
         object.put("data", data.toString());
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "login request: %s : %s", reqUrl, s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXurl())
@@ -361,7 +352,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "login response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -416,7 +406,6 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "download request: %s : %s", reqUrl, s);
         Request.Builder builder = new Request.Builder()
                 .url(getXurl())
                 .post(RequestBody.create(s, MediaType.parse("application/json")));
@@ -526,7 +515,6 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "download request: %s : %s", reqUrl, s);
         Request.Builder builder = new Request.Builder()
                 .url(getXurl())
                 .post(RequestBody.create(s, MediaType.parse("application/json")));
@@ -619,7 +607,6 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "profile request: %s : %s", reqUrl, s);
         Request.Builder builder = new Request.Builder()
                 .url(getXurl())
                 .post(RequestBody.create(s, MediaType.parse("application/json")));
@@ -639,7 +626,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "profile response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -683,7 +669,6 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "send-code request: %s : %s", reqUrl, s);
         Request.Builder builder = new Request.Builder()
                 .url(getXurl())
                 .post(RequestBody.create(s, MediaType.parse("application/json")));
@@ -703,7 +688,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "send-code response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -740,7 +724,6 @@ public class BookNetHelper {
         object.put("params", params);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "send-code password recovery request: %s : %s", reqUrl, s);
         Request.Builder builder = new Request.Builder()
                 .url(getXurl())
                 .post(RequestBody.create(s, MediaType.parse("application/json")));
@@ -760,7 +743,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "send-code password recovery response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -804,7 +786,6 @@ public class BookNetHelper {
         object.put("data", data.toString());
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "registration request: %s : %s", reqUrl, s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXurl())
@@ -825,7 +806,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "registration response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -881,7 +861,6 @@ public class BookNetHelper {
                 object.put("data", data);
 
                 String s = JsonUtil.toJson(object);
-                LogUtil.d(TAG, "cloud sync meta request: %s : %s", reqUrl, s);
 
                 Request.Builder builder = new Request.Builder()
                         .url(getXburl())
@@ -902,7 +881,6 @@ public class BookNetHelper {
                             return;
                         }
                         String string = response.body().string();
-                        LogUtil.d(TAG, "cloud sync meta response: %s", string);
                         JsonNode jsonObject = JsonUtil.readTree(string);
                         int status = jsonObject.get("status").asInt();
                         if (!Common.statusSuccessful(status)) {
@@ -938,7 +916,6 @@ public class BookNetHelper {
             object.put("data", data);
 
             String s = JsonUtil.toJson(object);
-            LogUtil.d(TAG, "cloud sync data request: %s : %s", reqUrl, s);
             Request.Builder builder = new Request.Builder()
                     .url(getXburl())
                     .post(RequestBody.create(s, MediaType.parse("application/json")));
@@ -958,7 +935,6 @@ public class BookNetHelper {
                         return;
                     }
                     String string = response.body().string();
-                    LogUtil.d(TAG, "cloud sync data response: %s", string);
                     JsonNode jsonObject = JsonUtil.readTree(string);
                     int status = jsonObject.get("status").asInt();
                     if (!Common.statusSuccessful(status)) {
@@ -991,7 +967,6 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud list request: %s : %s", reqUrl, s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
@@ -1012,7 +987,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "cloud list response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -1042,7 +1016,6 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud download request: %s : %s", reqUrl, s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
@@ -1063,7 +1036,6 @@ public class BookNetHelper {
                     return;
                 }
                 byte[] bytes = response.body().bytes();
-                LogUtil.d(TAG, "cloud download response: %s", bytes.length);
                 dataCallback.call(bytes, null);
             }
         });
@@ -1086,7 +1058,6 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "log request: %s : %s", reqUrl, s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
@@ -1108,7 +1079,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "log response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -1138,7 +1108,6 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud get meta request: %s : %s", reqUrl, s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
@@ -1159,7 +1128,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "cloud get meta response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -1189,7 +1157,6 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud b delete request: %s : %s", reqUrl, s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
@@ -1210,7 +1177,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "cloud b delete response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -1238,7 +1204,6 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud versions request: %s : %s", reqUrl, s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
@@ -1259,7 +1224,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "cloud versions response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -1289,7 +1253,6 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "cloud issues request: %s : %s", reqUrl, s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
@@ -1310,7 +1273,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "cloud issues response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -1344,7 +1306,6 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "resetpwd request: %s : %s", reqUrl, s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
@@ -1365,7 +1326,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "resetpwd response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -1398,7 +1358,6 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "detail suggest request: %s", s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
@@ -1419,7 +1378,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "detail suggest response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {
@@ -1456,7 +1414,6 @@ public class BookNetHelper {
         object.put("data", data);
 
         String s = JsonUtil.toJson(object);
-        LogUtil.d(TAG, "detail comment request: %s", s);
 
         Request.Builder builder = new Request.Builder()
                 .url(getXburl())
@@ -1477,7 +1434,6 @@ public class BookNetHelper {
                     return;
                 }
                 String string = response.body().string();
-                LogUtil.d(TAG, "detail comment response: %s", string);
                 JsonNode jsonObject = JsonUtil.readTree(string);
                 int status = jsonObject.get("status").asInt();
                 if (!Common.statusSuccessful(status)) {

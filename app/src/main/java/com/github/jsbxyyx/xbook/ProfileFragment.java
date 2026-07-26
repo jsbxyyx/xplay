@@ -33,8 +33,10 @@ import com.github.jsbxyyx.xbook.common.SessionManager;
 import com.github.jsbxyyx.xbook.common.UiUtils;
 import com.github.jsbxyyx.xbook.data.BookDbHelper;
 import com.github.jsbxyyx.xbook.data.BookNetHelper;
+import com.github.jsbxyyx.xbook.data.BookV2NetHelper;
 import com.github.jsbxyyx.xbook.data.bean.Book;
 import com.github.jsbxyyx.xbook.data.bean.Profile;
+import com.github.jsbxyyx.xplay.lib.model.LibUserListing;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -57,10 +59,12 @@ public class ProfileFragment extends Fragment {
     private RecyclerView rv_download_book;
     private ListBookDownloadAdapter listBookDownloadAdapter;
     private BookNetHelper bookNetHelper;
+    private BookV2NetHelper bookV2NetHelper;
     private BookDbHelper bookDbHelper;
 
     public ProfileFragment() {
         bookNetHelper = new BookNetHelper();
+        bookV2NetHelper = new BookV2NetHelper();
     }
 
     @Nullable
@@ -133,26 +137,29 @@ public class ProfileFragment extends Fragment {
             });
             String email = SPUtils.getData(Common.profile_email_key);
             if (Common.isEmpty(email)) {
-                bookNetHelper.profile(new DataCallback<Profile>() {
+                bookV2NetHelper.profile(new DataCallback<LibUserListing>() {
                     @Override
-                    public void call(Profile profile, Throwable err) {
+                    public void call(LibUserListing o, Throwable err) {
                         if (err != null) {
                             LogUtil.d(TAG, "get profile failed. %s", LogUtil.getStackTraceString(err));
                             UiUtils.showToast("获取个人资料失败:" + err.getMessage());
                             return;
                         }
                         UiUtils.post(() -> {
-                            tv_profile_nickname.setText(profile.getNickname());
-                            tv_profile_email.setText(profile.getEmail());
-                            iv_profile_avatar.setImageBitmap(headBitmap(profile.getEmail(), 128, "#6750a4"));
-                            SPUtils.putData(Common.profile_email_key, profile.getEmail());
-                            SPUtils.putData(Common.profile_nickname_key, profile.getNickname());
+                            if (o == null || o.user == null) {
+                                return;
+                            }
+                            tv_profile_nickname.setText(o.user.name);
+                            tv_profile_email.setText(maskEmail(o.user.email));
+                            iv_profile_avatar.setImageBitmap(headBitmap(o.user.email, 128, "#6750a4"));
+                            SPUtils.putData(Common.profile_email_key, o.user.email);
+                            SPUtils.putData(Common.profile_nickname_key, o.user.name);
                         });
                     }
                 });
             } else {
                 tv_profile_nickname.setText(SPUtils.getData(Common.profile_nickname_key));
-                tv_profile_email.setText(email);
+                tv_profile_email.setText(maskEmail(email));
                 iv_profile_avatar.setImageBitmap(headBitmap(email, 128, "#6750a4"));
             }
         }
@@ -347,6 +354,31 @@ public class ProfileFragment extends Fragment {
         LogUtil.d(TAG, "test: ");
         DialogLoading loading = new DialogLoading(mActivity);
         loading.show();
+    }
+
+    private String maskEmail(String email) {
+        if (Common.isBlank(email)) {
+            return "";
+        }
+        int at = email.indexOf('@');
+        if (at <= 1 || at >= email.length() - 1) {
+            return email;
+        }
+        String prefix = email.substring(0, at);
+        String domain = email.substring(at + 1);
+
+        String maskedPrefix = prefix.length() <= 2
+                ? prefix.charAt(0) + "***"
+                : prefix.substring(0, 2) + "***";
+
+        int dot = domain.indexOf('.');
+        String maskedDomain;
+        if (dot <= 1) {
+            maskedDomain = "***" + domain.substring(Math.max(dot, 0));
+        } else {
+            maskedDomain = domain.charAt(0) + "***" + domain.substring(dot);
+        }
+        return maskedPrefix + "@" + maskedDomain;
     }
 
     private Bitmap headBitmap(String name, int size, String colorHex) {

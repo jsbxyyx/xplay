@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jsbxyyx.xplay.lib.model.LibBookFormats;
 import com.github.jsbxyyx.xplay.lib.model.LibBookSingle;
@@ -18,13 +17,14 @@ import com.github.jsbxyyx.xplay.lib.model.LibHost;
 import com.github.jsbxyyx.xplay.lib.model.LibHostsListing;
 import com.github.jsbxyyx.xplay.lib.model.LibInfo;
 import com.github.jsbxyyx.xplay.lib.model.LibMinBookListing;
-import com.github.jsbxyyx.xplay.lib.model.plans.LibPlanLimitListing;
 import com.github.jsbxyyx.xplay.lib.model.LibServiceInfo;
 import com.github.jsbxyyx.xplay.lib.model.LibStatus;
 import com.github.jsbxyyx.xplay.lib.model.LibTypedBooksListing;
 import com.github.jsbxyyx.xplay.lib.model.LibUserListing;
+import com.github.jsbxyyx.xplay.lib.model.plans.LibPlanLimitListing;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +38,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Typed Android client built from tmp/api.md.
@@ -80,17 +81,17 @@ public class LibApiClient {
         addOptionalField(form, "page", request.getPage());
         addOptionalField(form, "limit", request.getLimit());
         addOptionalField(form, "order", request.getOrder());
-        return execute(buildAuthedRequest(auth, "eapi/book/search", "POST", form.build()), LibBooksListing.class);
+        return execute(buildAuthedRequest(auth, "/eapi/book/search", "POST", form.build()), LibBooksListing.class);
     }
 
     @NonNull
     public LibBooksExtensions getExtensions() throws IOException {
-        return execute(buildRequest("eapi/info/extensions"), LibBooksExtensions.class);
+        return execute(buildRequest("/eapi/info/extensions"), LibBooksExtensions.class);
     }
 
     @NonNull
     public LibBooksLanguages getLanguages() throws IOException {
-        return execute(buildRequest("eapi/info/languages"), LibBooksLanguages.class);
+        return execute(buildRequest("/eapi/info/languages"), LibBooksLanguages.class);
     }
 
     @NonNull
@@ -99,7 +100,7 @@ public class LibApiClient {
                 .add("id_token", idToken)
                 .add("name", name)
                 .build();
-        return execute(buildRequest("eapi/user/token-sign-in", "POST", body), LibUserListing.class);
+        return execute(buildRequest("/eapi/user/token-sign-in", "POST", body), LibUserListing.class);
     }
 
     @NonNull
@@ -109,7 +110,7 @@ public class LibApiClient {
                 .add("password", password)
                 .add("name", nickname)
                 .build();
-        return execute(buildRequest("eapi/user/registration", "POST", body), LibUserListing.class);
+        return execute(buildRequest("/eapi/user/registration", "POST", body), LibUserListing.class);
     }
 
     @NonNull
@@ -119,7 +120,7 @@ public class LibApiClient {
                 .add("password", password)
                 .add("name", nickname)
                 .build();
-        return execute(buildRequest("eapi/user/email/confirmation/resend", "POST", body), LibUserListing.class);
+        return execute(buildRequest("/eapi/user/email/confirmation/resend", "POST", body), LibUserListing.class);
     }
 
     @NonNull
@@ -171,16 +172,6 @@ public class LibApiClient {
                 .add("email", email);
         addOptionalField(body, "verifyCode", verifyCode);
         return execute(buildRequest("/eapi/user/password-recovery", "POST", body.build()), LibUserListing.class);
-    }
-
-    @NonNull
-    public JsonNode resetPassword(@NonNull String email, @NonNull String password, @NonNull String code) throws IOException {
-        FormBody body = new FormBody.Builder()
-                .add("email", email)
-                .add("password", password)
-                .add("code", code)
-                .build();
-        return execute(buildRequest("/zlib_resetpwd", "POST", body), JsonNode.class);
     }
 
     @NonNull
@@ -281,14 +272,6 @@ public class LibApiClient {
         return execute(buildAuthedRequest(auth, "/eapi/user/donations"), LibDonationsListing.class);
     }
 
-    public int testConnection(@NonNull String url) throws IOException {
-        return executeCode(new Request.Builder().url(HttpUrl.get(url)).get().build());
-    }
-
-    public int testConnectionPersonal(@NonNull String url) throws IOException {
-        return executeCode(new Request.Builder().url(HttpUrl.get(url)).get().build());
-    }
-
     @NonNull
     public LibStatus resendConfMail(@NonNull Auth auth) throws IOException {
         return execute(buildAuthedRequest(auth, "/eapi/user/email/confirmation/resend", "POST", emptyJsonBody()), LibStatus.class);
@@ -335,6 +318,16 @@ public class LibApiClient {
         return execute(buildAuthedRequest(auth, "/eapi/user/hide-banner"), LibStatus.class);
     }
 
+    public interface StreamDownloadCallback {
+        void onStart(String filename, long contentLength) throws IOException;
+
+        void onData(byte[] buffer, int length) throws IOException;
+
+        void onComplete() throws IOException;
+
+        void onError(Throwable e);
+    }
+
     public static class FileDownload {
         public final byte[] data;
         public final String filename;
@@ -365,6 +358,36 @@ public class LibApiClient {
                     body == null ? new byte[0] : body.bytes(),
                     response.header("Content-Disposition")
             );
+        }
+    }
+
+    public void downloadFileToStream(@NonNull String fileUrl,
+                                     @NonNull StreamDownloadCallback callback) throws IOException {
+        Request request = new Request.Builder()
+                .url(HttpUrl.get(fileUrl))
+                .get()
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new LibApiException(response.code(), readBodySafely(response.body()));
+            }
+            ResponseBody body = response.body();
+            callback.onStart(
+                    response.header("Content-Disposition"),
+                    body == null ? 0 : body.contentLength()
+            );
+            if (body != null) {
+                try (InputStream input = body.byteStream()) {
+                    byte[] buffer = new byte[8192];
+                    int n;
+                    while ((n = input.read(buffer)) != -1) {
+                        callback.onData(buffer, n);
+                    }
+                }
+            }
+            callback.onComplete();
+        } catch (Throwable e) {
+            callback.onError(e);
         }
     }
 
@@ -527,7 +550,8 @@ public class LibApiClient {
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
-                .addInterceptor(new LibHeaderInterceptor());
+                .addInterceptor(new LibHeaderInterceptor())
+                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         if (errorListener != null) {
             builder.addInterceptor(new LibErrorInterceptor(errorListener));
         }
